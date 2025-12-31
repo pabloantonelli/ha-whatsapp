@@ -1,3 +1,18 @@
+## 2.0.7
+
+**Diagnostic Release**
+
+- 🔍 **Using bashio::addon.ip_address** - Get add-on's actual IP address
+- 📝 **Extensive logging** - Added detailed logs for debugging
+- 🐛 **Network diagnostics** - Shows IP, hostname, network interfaces
+- ✅ **Verification** - Checks custom component before and after installation
+
+This version adds extensive logging to diagnose the connection issue. Logs will show:
+- Add-on IP address
+- Network configuration
+- Custom component HOST value before and after update
+- Installed component verification
+
 ## 2.0.6
 
 **Critical Fix Release**
