@@ -1,11 +1,11 @@
 #!/usr/bin/with-contenv bashio
 set +u
 
-# Get the add-on slug from the config
-ADDON_SLUG=$(bashio::addon.slug)
+# Use the add-on slug directly (from config.yaml)
+# This is the correct hostname for internal communication in Home Assistant
+ADDON_SLUG="whatsapp_addon"
 
 # Update hostname in custom component if file exists
-# Use the add-on slug for reliable internal communication in Home Assistant
 if [ -f "/custom_component/whatsapp.py" ]; then
     bashio::log.info "Configuring custom component with add-on slug: $ADDON_SLUG"
     sed -i "s/{{HOSTNAME}}/$ADDON_SLUG/g" /custom_component/whatsapp.py

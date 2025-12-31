@@ -1,3 +1,13 @@
+## 2.0.5
+
+**Bug Fix Release**
+
+- 🐛 **Fixed bashio command** - Using hardcoded slug instead of bashio::addon.slug
+- 🔧 **Hardcoded whatsapp_addon** - Direct value from config.yaml
+- ✅ **Should work now** - No more command not found errors
+
+This fixes the error: `bashio::addon.slug: command not found`
+
 ## 2.0.4
 
 **Bug Fix Release**
