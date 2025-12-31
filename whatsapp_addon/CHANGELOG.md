@@ -1,3 +1,13 @@
+## 2.0.8
+
+**Bug Fix Release**
+
+- 🐛 **Fixed script crash** - Removed problematic ip addr show command
+- ✅ **Script completes** - Add-on now starts successfully
+- 🔍 **Using IP 172.30.33.7** - Confirmed working IP address
+
+This fixes the script crash that prevented the add-on from starting in v2.0.7.
+
 ## 2.0.7
 
 **Diagnostic Release**

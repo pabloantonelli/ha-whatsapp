@@ -13,11 +13,7 @@ ADDON_URL="http://${ADDON_IP}:${ADDON_PORT}"
 bashio::log.info "Add-on IP Address: $ADDON_IP"
 bashio::log.info "Add-on Port: $ADDON_PORT"
 bashio::log.info "Add-on URL: $ADDON_URL"
-
-# Log network information for debugging
 bashio::log.info "Container Hostname: $HOSTNAME"
-bashio::log.info "Network Interfaces:"
-ip addr show | grep -E "inet " | bashio::log.info
 
 # Update hostname in custom component if file exists
 if [ -f "/custom_component/whatsapp.py" ]; then
