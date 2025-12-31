@@ -1,11 +1,12 @@
-const EventEmitter = require("eventemitter2");
-
-const makeWASocket = require("./Baileys").default;
-const {
+import { EventEmitter } from "eventemitter2";
+import makeWASocket, {
   DisconnectReason,
   useMultiFileAuthState,
   fetchLatestBaileysVersion,
-} = require("./Baileys");
+  makeCacheableSignalKeyStore,
+  Browsers,
+} from "@whiskeysockets/baileys";
+import pino from "pino";
 
 const MessageType = {
   text: "conversation",
@@ -58,26 +59,36 @@ class WhatsappClient extends EventEmitter {
     const { version } = await fetchLatestBaileysVersion();
     const { state, saveCreds } = await useMultiFileAuthState(this.#path);
 
+    // Create socket with Baileys 7.0 configuration
     this.#conn = makeWASocket({
       version,
-      auth: state,
+      auth: {
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "silent" })),
+      },
       syncFullHistory: false,
       markOnlineOnConnect: !this.#offline,
-      logger: require("pino")({ level: "silent" }),
+      logger: pino({ level: "silent" }),
       generateHighQualityLinkPreview: true,
-      browser: ["Ubuntu", "Chrome", "20.0.04"],
+      browser: Browsers.ubuntu("Chrome"),
       defaultQueryTimeoutMs: undefined,
+      // Baileys 7.0 improvements
+      getMessage: async (key) => {
+        // Return undefined to let Baileys handle message retrieval
+        return undefined;
+      },
     });
 
-    this.#conn.ev.on("creds.update", (state) => {
-      if (state.me) {
+    this.#conn.ev.on("creds.update", async () => {
+      await saveCreds();
+      
+      // Emit pair event when credentials are updated with user info
+      if (state.creds.me) {
         this.emit("pair", {
-          phone: state.me.id.split(":")[0],
-          name: state.me.name,
+          phone: state.creds.me.id.split(":")[0],
+          name: state.creds.me.name,
         });
       }
-
-      saveCreds(state);
     });
 
     this.#conn.ev.on("connection.update", this.#onConnectionUpdate);
@@ -90,7 +101,7 @@ class WhatsappClient extends EventEmitter {
     this.#status.disconnected = !reconnect;
     this.#status.reconnecting = !!reconnect;
 
-    return this.#conn.end();
+    return this.#conn?.end();
   };
 
   restart = () => {
@@ -144,7 +155,7 @@ class WhatsappClient extends EventEmitter {
       const msg = messages[0];
 
       if (msg.hasOwnProperty("message") && !msg.key.fromMe) {
-        delete msg.message.messageContextInfo;
+        delete msg.message?.messageContextInfo;
         const messageType = Object.keys(msg.message)[0];
         this.emit("msg", { type: messageType, ...msg });
       }
@@ -216,7 +227,7 @@ class WhatsappClient extends EventEmitter {
       try {
         return await this.#conn.sendMessage(id, msg, options);
       } catch (err) {
-        throw new WhatsappError(err.output.payload.statusCode);
+        throw new WhatsappError(err.output?.payload?.statusCode || 500);
       }
     }
 
@@ -237,7 +248,7 @@ class WhatsappClient extends EventEmitter {
     try {
       await this.#conn.sendPresenceUpdate(type, id);
     } catch (err) {
-      throw new WhatsappError(err.output.payload.statusCode);
+      throw new WhatsappError(err.output?.payload?.statusCode || 500);
     }
   };
 
@@ -254,7 +265,7 @@ class WhatsappClient extends EventEmitter {
       try {
         await this.#conn.presenceSubscribe(id);
       } catch (err) {
-        throw new WhatsappError(err.output.payload.statusCode);
+        throw new WhatsappError(err.output?.payload?.statusCode || 500);
       }
     } else {
       throw new WhatsappNumberNotFoundError(phone);
@@ -269,7 +280,7 @@ class WhatsappClient extends EventEmitter {
     try {
       await this.#conn.updateProfileStatus(status);
     } catch (err) {
-      throw new WhatsappError(err.output.payload.statusCode);
+      throw new WhatsappError(err.output?.payload?.statusCode || 500);
     }
   };
 }
@@ -297,7 +308,6 @@ class WhatsappError extends Error {
     428: "Connection Closed",
     408: "Connection Lost",
     440: "Connection Replaced",
-    408: "Timed Out",
     401: "Logged Out",
     500: "Bad Session",
     515: "Restart Required",
@@ -309,9 +319,9 @@ class WhatsappError extends Error {
     this.name = "WhatsappError";
     this.code = Number(this.message);
     this.message = `Send message failed. Whatsapp error ${this.message}: ${
-      this.#errors[this.code]
+      this.#errors[this.code] || "Unknown Error"
     }`;
   }
 }
 
-module.exports = { WhatsappClient, MessageType };
+export { WhatsappClient, MessageType };

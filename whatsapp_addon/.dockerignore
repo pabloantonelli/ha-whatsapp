@@ -1,0 +1,41 @@
+# Git files
+.git
+.gitignore
+.github
+
+# Documentation
+*.md
+!README.md
+MIGRATION.md
+CHANGELOG.md
+DOCS.md
+
+# Development files
+.vscode
+.devcontainer
+devcontainer.json
+
+# Node modules (will be installed during build)
+node_modules
+
+# Baileys folder (now using npm package)
+Baileys
+
+# Examples
+examples
+
+# Translations (if not needed)
+translations
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Custom component (separate from add-on)
+custom_component
+
+# Build artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

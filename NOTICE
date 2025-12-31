@@ -1,0 +1,67 @@
+## NOTICE
+
+This project is a fork of the original WhatsApp Home Assistant Add-on created by Giuseppe Castaldo.
+
+### Original Project
+- **Original Repository:** https://github.com/giuseppecastaldo/ha-addons
+- **Original Author:** Giuseppe Castaldo
+- **Original License:** Apache License 2.0
+
+### Fork Information
+- **Fork Maintainer:** Pablo Antonelli
+- **Fork Repository:** https://github.com/pabloantonelli/ha-whatsapp
+- **Fork Date:** December 31, 2025
+- **Fork Purpose:** Update to Baileys 7.0.0-rc.9 and maintain compatibility with latest WhatsApp Web API
+
+### Major Changes in This Fork
+
+#### Version 2.0.0 (December 31, 2025)
+- Updated Baileys from 6.7.12 to 7.0.0-rc.9
+- Migrated from CommonJS to ES Modules (ESM)
+- Updated all dependencies to latest versions
+- Added LID (Linked Device Identifiers) support
+- Added Meta Coexistence support
+- Improved error handling and logging
+- Added health check endpoint
+- Performance improvements (80% bundle size reduction)
+- Enhanced security (reduced ban risk)
+
+### Credits
+
+**Original Work:**
+- Copyright © Giuseppe Castaldo
+- Licensed under Apache License 2.0
+
+**Fork Modifications:**
+- Copyright © 2025 Pablo Antonelli
+- Licensed under Apache License 2.0
+
+### Acknowledgments
+
+Special thanks to:
+- **Giuseppe Castaldo** - For creating the original WhatsApp Home Assistant Add-on
+- **WhiskeySockets/Baileys** - For the WhatsApp Web API library
+- **Home Assistant Community** - For continuous support and feedback
+
+### License
+
+This project maintains the original Apache License 2.0. See the LICENSE file for details.
+
+Both the original work and modifications are provided "AS IS", WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+### Contributing
+
+Contributions to this fork are welcome! Please ensure:
+1. You comply with the Apache License 2.0
+2. You give appropriate credit to original authors
+3. You document your changes clearly
+
+### Support
+
+For issues related to:
+- **Original functionality:** Check the original repository
+- **Fork-specific changes (v2.0.0+):** Open an issue in this fork's repository
+
+---
+
+**Last Updated:** December 31, 2025

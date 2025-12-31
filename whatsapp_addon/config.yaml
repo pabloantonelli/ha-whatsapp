@@ -1,8 +1,9 @@
 name: Whatsapp
-version: "1.5.0"
+version: "2.0.0"
 slug: whatsapp_addon
-description: Whatsapp addon for send message from Home Assistant
-url: "https://github.com/giuseppecastaldo/ha-addons/tree/main/whatsapp_addon"
+description: Whatsapp addon for Home Assistant using Baileys 7.0 (Latest WhatsApp Web API)
+url: "https://github.com/pabloantonelli/ha-whatsapp"
+# Original: https://github.com/giuseppecastaldo/ha-addons by Giuseppe Castaldo
 homeassistant_api: true
 hassio_api: true
 arch:

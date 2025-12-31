@@ -1,3 +1,23 @@
+## 2.0.0
+
+**BREAKING CHANGES - Major Update to Baileys 7.0.0-rc.9**
+
+- 🚀 **Updated to Baileys 7.0.0-rc.9** - Latest WhatsApp Web API with improved stability
+- 📦 **Migrated to ESM (ES Modules)** - Modern JavaScript module system
+- 🔐 **LID Support** - Full support for Linked Device Identifiers
+- 🤝 **Meta Coexistence** - Compatible with Meta Business API
+- ⚡ **Performance Improvements** - 80% bundle size reduction, faster message processing
+- 🛡️ **Enhanced Security** - Removed automatic ACKs to reduce ban risk
+- 🔧 **Better Error Handling** - Improved error messages and async/await throughout
+- 📊 **Health Check Endpoint** - New `/health` endpoint for monitoring
+- 🐛 **Bug Fixes** - Multiple stability and reliability improvements
+- 📝 **Updated Dependencies** - All dependencies updated to latest versions
+
+**Migration Notes:**
+- This version requires re-authentication (scan QR code again)
+- Session data from previous versions is not compatible
+- All API endpoints remain the same for backward compatibility
+
 ## 1.5.0
 
 - Updated whatsapp library

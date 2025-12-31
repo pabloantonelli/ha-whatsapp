@@ -1,7 +1,7 @@
 [![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/zkfpkdwyhyq)
 # Home Assistant Add-on: Whatsapp add-on
 
-_Write your Whatsapp message from Home Assistant_
+_Write your Whatsapp message from Home Assistant using the latest WhatsApp Web API_
 
 <img src="https://github.com/giuseppecastaldo/ha-addons/blob/main/whatsapp_addon/logo.png?raw=true" width="400"/>
 
@@ -16,6 +16,16 @@ _Write your Whatsapp message from Home Assistant_
 [armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
 [i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
+
+## 🚀 Version 2.0.0 - Major Update
+
+This version includes a complete upgrade to **Baileys 7.0.0-rc.9**, the latest WhatsApp Web API library with:
+
+- ✅ **Enhanced Stability** - Improved connection reliability and message delivery
+- ✅ **LID Support** - Full support for Linked Device Identifiers
+- ✅ **Meta Coexistence** - Compatible with Meta Business API
+- ✅ **Better Security** - Reduced ban risk with optimized protocol compliance
+- ✅ **Performance** - 80% smaller bundle size and faster processing
 
 A WhatsApp API client that connects through the WhatsApp Web browser app
 

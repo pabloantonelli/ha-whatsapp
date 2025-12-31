@@ -1,14 +1,14 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const axios = require("axios");
-const fs = require("fs");
-const { WhatsappClient } = require("./whatsapp");
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import axios from "axios";
+import fs from "fs";
+import { WhatsappClient } from "./whatsapp.js";
+import log4js from "log4js";
+import qrimage from "qr-image";
 
-var logger = require("log4js").getLogger();
+const logger = log4js.getLogger();
 logger.level = "info";
-
-var qrimage = require("qr-image");
 
 const app = express();
 const port = 3000;
@@ -31,7 +31,7 @@ const onReady = (key) => {
         Authorization: `Bearer ${process.env.SUPERVISOR_TOKEN}`,
       },
     }
-  );
+  ).catch(err => logger.error("Error dismissing notification:", err.message));
 };
 
 const onQr = (qr, key) => {
@@ -40,10 +40,10 @@ const onQr = (qr, key) => {
     "require authentication over QRCode, please see your notifications..."
   );
 
-  var code = qrimage.image(qr, { type: "png" });
+  const code = qrimage.image(qr, { type: "png" });
 
   code.on("readable", function () {
-    var img_string = code.read().toString("base64");
+    const img_string = code.read().toString("base64");
     axios.post(
       "http://supervisor/core/api/services/persistent_notification/create",
       {
@@ -56,7 +56,7 @@ const onQr = (qr, key) => {
           Authorization: `Bearer ${process.env.SUPERVISOR_TOKEN}`,
         },
       }
-    );
+    ).catch(err => logger.error("Error creating notification:", err.message));
   });
 };
 
@@ -69,7 +69,7 @@ const onMsg = (msg, key) => {
         Authorization: `Bearer ${process.env.SUPERVISOR_TOKEN}`,
       },
     }
-  );
+  ).catch(err => logger.error("Error firing message event:", err.message));
   logger.debug(`New message event fired from ${key}.`);
 };
 
@@ -82,13 +82,19 @@ const onPresenceUpdate = (presence, key) => {
         Authorization: `Bearer ${process.env.SUPERVISOR_TOKEN}`,
       },
     }
-  );
+  ).catch(err => logger.error("Error firing presence event:", err.message));
   logger.debug(`New presence event fired from ${key}.`);
 };
 
 const onLogout = async (key) => {
   logger.info(`Client ${key} was logged out. Restarting...`);
-  fs.rm(`/data/${key}`, { recursive: true });
+
+  // Use promises version of fs for better async handling
+  try {
+    await fs.promises.rm(`/data/${key}`, { recursive: true, force: true });
+  } catch (err) {
+    logger.error(`Error removing data for ${key}:`, err.message);
+  }
 
   init(key);
 };
@@ -106,140 +112,161 @@ const init = (key) => {
   );
 };
 
+// Read options and initialize clients
 fs.readFile("data/options.json", function (error, content) {
-  var options = JSON.parse(content);
+  if (error) {
+    logger.error("Error reading options.json:", error.message);
+    process.exit(1);
+  }
+
+  const options = JSON.parse(content);
 
   options.clients.forEach((key) => {
     init(key);
   });
 
-  app.listen(port, () => logger.info(`Whatsapp Addon started.`));
+  app.listen(port, () => logger.info(`Whatsapp Addon started on port ${port}.`));
 
-  app.post("/sendMessage", (req, res) => {
+  // Send message endpoint
+  app.post("/sendMessage", async (req, res) => {
     const message = req.body;
-    if (message.hasOwnProperty("clientId")) {
-      if (clients.hasOwnProperty(message.clientId)) {
-        const wapp = clients[message.clientId];
-        wapp
-          .sendMessage(message.to, message.body, message.options)
-          .then(() => {
-            res.send("OK");
-            logger.debug("Message successfully sended from addon.");
-          })
-          .catch((error) => {
-            res.send("KO");
-            logger.error(error.message);
-          });
-      } else {
-        logger.error("Error in sending message. Client ID not found.");
-        res.send("KO");
-      }
-    } else {
+
+    if (!message.hasOwnProperty("clientId")) {
       logger.error("Error in sending message. Please specify client ID.");
-      res.send("KO");
+      return res.status(400).json({ status: "KO", error: "Client ID required" });
+    }
+
+    if (!clients.hasOwnProperty(message.clientId)) {
+      logger.error("Error in sending message. Client ID not found.");
+      return res.status(404).json({ status: "KO", error: "Client not found" });
+    }
+
+    const wapp = clients[message.clientId];
+
+    try {
+      await wapp.sendMessage(message.to, message.body, message.options);
+      logger.debug("Message successfully sent from addon.");
+      res.json({ status: "OK" });
+    } catch (error) {
+      logger.error(error.message);
+      res.status(500).json({ status: "KO", error: error.message });
     }
   });
 
-  app.post("/setStatus", (req, res) => {
+  // Set status endpoint
+  app.post("/setStatus", async (req, res) => {
     const status = req.body.status;
-    if (req.body.hasOwnProperty("clientId")) {
-      if (clients.hasOwnProperty(req.body.clientId)) {
-        const wapp = clients[req.body.clientId];
 
-        wapp
-          .updateProfileStatus(status)
-          .then(() => {
-            res.send("OK");
-          })
-          .catch((error) => {
-            res.send("KO");
-            logger.error(error.message);
-          });
-      } else {
-        logger.error("Error in set status. Client ID not found.");
-        res.send("KO");
-      }
-    } else {
+    if (!req.body.hasOwnProperty("clientId")) {
       logger.error("Error in set status. Please specify client ID.");
-      res.send("KO");
+      return res.status(400).json({ status: "KO", error: "Client ID required" });
+    }
+
+    if (!clients.hasOwnProperty(req.body.clientId)) {
+      logger.error("Error in set status. Client ID not found.");
+      return res.status(404).json({ status: "KO", error: "Client not found" });
+    }
+
+    const wapp = clients[req.body.clientId];
+
+    try {
+      await wapp.updateProfileStatus(status);
+      res.json({ status: "OK" });
+    } catch (error) {
+      logger.error(error.message);
+      res.status(500).json({ status: "KO", error: error.message });
     }
   });
 
-  app.post("/presenceSubscribe", (req, res) => {
+  // Presence subscribe endpoint
+  app.post("/presenceSubscribe", async (req, res) => {
     const request = req.body;
 
-    if (req.body.hasOwnProperty("clientId")) {
-      if (clients.hasOwnProperty(req.body.clientId)) {
-        const wapp = clients[req.body.clientId];
-
-        wapp
-          .presenceSubscribe(request.userId)
-          .then(() => {
-            res.send("OK");
-          })
-          .catch((error) => {
-            res.send("KO");
-            logger.error(error.message);
-          });
-      } else {
-        logger.error("Error in subscribe presence. Client ID not found.");
-        res.send("KO");
-      }
-    } else {
+    if (!req.body.hasOwnProperty("clientId")) {
       logger.error("Error in subscribe presence. Please specify client ID.");
-      res.send("KO");
+      return res.status(400).json({ status: "KO", error: "Client ID required" });
+    }
+
+    if (!clients.hasOwnProperty(req.body.clientId)) {
+      logger.error("Error in subscribe presence. Client ID not found.");
+      return res.status(404).json({ status: "KO", error: "Client not found" });
+    }
+
+    const wapp = clients[req.body.clientId];
+
+    try {
+      await wapp.presenceSubscribe(request.userId);
+      res.json({ status: "OK" });
+    } catch (error) {
+      logger.error(error.message);
+      res.status(500).json({ status: "KO", error: error.message });
     }
   });
 
-  app.post("/sendPresenceUpdate", (req, res) => {
+  // Send presence update endpoint
+  app.post("/sendPresenceUpdate", async (req, res) => {
     const request = req.body;
 
-    if (req.body.hasOwnProperty("clientId")) {
-      if (clients.hasOwnProperty(req.body.clientId)) {
-        const wapp = clients[req.body.clientId];
-
-        wapp
-          .sendPresenceUpdate(request.type, request.to)
-          .then(() => {
-            res.send("OK");
-          })
-          .catch((error) => {
-            res.send("KO");
-            logger.error(error.message);
-          });
-      } else {
-        logger.error("Error in presence update. Client ID not found.");
-        res.send("KO");
-      }
-    } else {
+    if (!req.body.hasOwnProperty("clientId")) {
       logger.error("Error in presence update. Please specify client ID.");
-      res.send("KO");
+      return res.status(400).json({ status: "KO", error: "Client ID required" });
+    }
+
+    if (!clients.hasOwnProperty(req.body.clientId)) {
+      logger.error("Error in presence update. Client ID not found.");
+      return res.status(404).json({ status: "KO", error: "Client not found" });
+    }
+
+    const wapp = clients[req.body.clientId];
+
+    try {
+      await wapp.sendPresenceUpdate(request.type, request.to);
+      res.json({ status: "OK" });
+    } catch (error) {
+      logger.error(error.message);
+      res.status(500).json({ status: "KO", error: error.message });
     }
   });
 
-  app.post("/sendInfinityPresenceUpdate", (req, res) => {
+  // Send infinity presence update endpoint
+  app.post("/sendInfinityPresenceUpdate", async (req, res) => {
     const request = req.body;
 
-    if (req.body.hasOwnProperty("clientId")) {
-      if (clients.hasOwnProperty(req.body.clientId)) {
-        const wapp = clients[req.body.clientId];
-
-        wapp
-          .setSendPresenceUpdateInterval(request.type, request.to)
-          .then(() => {
-            res.send("OK");
-          })
-          .catch((error) => {
-            res.send("KO");
-            logger.error(error.message);
-          });
-      } else {
-        logger.error("Error in presence update. Client ID not found.");
-        res.send("KO");
-      }
-    } else {
+    if (!req.body.hasOwnProperty("clientId")) {
       logger.error("Error in presence update. Please specify client ID.");
-      res.send("KO");
+      return res.status(400).json({ status: "KO", error: "Client ID required" });
     }
+
+    if (!clients.hasOwnProperty(req.body.clientId)) {
+      logger.error("Error in presence update. Client ID not found.");
+      return res.status(404).json({ status: "KO", error: "Client not found" });
+    }
+
+    const wapp = clients[req.body.clientId];
+
+    try {
+      wapp.setSendPresenceUpdateInterval(request.type, request.to);
+      res.json({ status: "OK" });
+    } catch (error) {
+      logger.error(error.message);
+      res.status(500).json({ status: "KO", error: error.message });
+    }
+  });
+
+  // Health check endpoint
+  app.get("/health", (req, res) => {
+    const clientsStatus = {};
+    Object.keys(clients).forEach(key => {
+      clientsStatus[key] = {
+        connected: clients[key]?._status?.connected || false,
+      };
+    });
+
+    res.json({
+      status: "OK",
+      version: "2.0.0",
+      baileys: "7.0.0-rc.9",
+      clients: clientsStatus,
+    });
   });
 });
