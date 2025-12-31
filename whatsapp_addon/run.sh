@@ -18,16 +18,25 @@ bashio::log.info "Container Hostname: $HOSTNAME"
 # Update hostname in custom component if file exists
 if [ -f "/custom_component/whatsapp.py" ]; then
     bashio::log.info "Updating custom component file..."
-    bashio::log.info "Before update:"
-    grep "HOST = " /custom_component/whatsapp.py | bashio::log.info
     
-    sed -i "s|http://{{HOSTNAME}}:3000|$ADDON_URL|g" /custom_component/whatsapp.py
+    # Show current content (for debug)
+    CURRENT_HOST=$(grep "HOST =" /custom_component/whatsapp.py)
+    bashio::log.info "Current HOST line: $CURRENT_HOST"
     
-    bashio::log.info "After update:"
-    grep "HOST = " /custom_component/whatsapp.py | bashio::log.info
-    bashio::log.info "✅ Custom component configured successfully"
+    # Robust replacement: replace whatever is between quotes in HOST = '...'
+    sed -i "s|HOST = '.*'|HOST = '$ADDON_URL'|g" /custom_component/whatsapp.py
+    
+    # Verify update
+    UPDATED_HOST=$(grep "HOST =" /custom_component/whatsapp.py)
+    bashio::log.info "Updated HOST line: $UPDATED_HOST"
+    
+    if [[ "$UPDATED_HOST" == *"$ADDON_IP"* ]]; then
+        bashio::log.info "✅ Variable HOST updated correctly with IP $ADDON_IP"
+    else
+        bashio::log.error "❌ Failed to update HOST variable!"
+    fi
 else
-    bashio::log.error "❌ Custom component file not found at /custom_component/whatsapp.py"
+    bashio::log.error "❌ Source file NOT FOUND at /custom_component/whatsapp.py"
 fi
 
 # Install custom component to Home Assistant
@@ -38,11 +47,11 @@ bashio::log.info "✅ Custom component files copied"
 
 # Verify the installed component
 if [ -f "/config/custom_components/whatsapp/whatsapp.py" ]; then
-    bashio::log.info "Verifying installed custom component:"
-    grep "HOST = " /config/custom_components/whatsapp/whatsapp.py | bashio::log.info
+    INSTALLED_HOST=$(grep "HOST =" /config/custom_components/whatsapp/whatsapp.py)
+    bashio::log.info "Final verification in /config: $INSTALLED_HOST"
     bashio::log.info "✅ Custom component installed and verified"
 else
-    bashio::log.error "❌ Custom component not found after installation!"
+    bashio::log.error "❌ Custom component NOT FOUND in /config after copy!"
 fi
 
 bashio::log.info "=========================================="

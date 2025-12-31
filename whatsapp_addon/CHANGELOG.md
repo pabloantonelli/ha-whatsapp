@@ -1,3 +1,14 @@
+## 2.0.9
+
+**Fix & Logging Improvement**
+
+- 🐛 **Robust IP replacement** - Replaces `HOST` variable regardless of previous value
+- 📝 **Real-time logging** - Fixed empty log lines, now showing actual file content
+- ✅ **Double verification** - Checks file content in both source and destination
+- 🚀 **IP 172.30.33.7** - Ensuring this IP is correctly written to the custom component
+
+This version ensures the custom component is updated correctly with the current add-on IP.
+
 ## 2.0.8
 
 **Bug Fix Release**
