@@ -31,9 +31,6 @@ translations
 .DS_Store
 Thumbs.db
 
-# Custom component (separate from add-on)
-custom_component
-
 # Build artifacts
 *.log
 npm-debug.log*

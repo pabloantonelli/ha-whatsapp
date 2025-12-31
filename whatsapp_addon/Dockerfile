@@ -11,6 +11,9 @@ COPY whatsapp.js /
 COPY run.sh /
 COPY finish.sh /
 
+# Copy custom component for Home Assistant integration
+COPY custom_component /custom_component
+
 # Set permissions
 RUN chmod a+x /run.sh
 RUN chmod a+x /finish.sh

@@ -1,3 +1,14 @@
+## 2.0.1
+
+**Bug Fix Release**
+
+- 🐛 **Fixed Docker build** - Added custom_component to Dockerfile
+- 🐛 **Fixed run.sh paths** - Corrected paths for custom component installation
+- 🐛 **Fixed .dockerignore** - Removed exclusion of custom_component folder
+- 📝 **Improved logging** - Added better startup messages
+
+This fixes the issue where the add-on would fail to start with "No such file or directory" error.
+
 ## 2.0.0
 
 **BREAKING CHANGES - Major Update to Baileys 7.0.0-rc.9**
