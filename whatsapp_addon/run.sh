@@ -1,15 +1,20 @@
 #!/usr/bin/with-contenv bashio
 set +u
 
-# Use the add-on slug directly (from config.yaml)
-# This is the correct hostname for internal communication in Home Assistant
-ADDON_SLUG="whatsapp_addon"
+# Get the add-on slug and convert underscores to hyphens for valid DNS hostname
+# Home Assistant add-ons use slug with underscores replaced by hyphens
+# Example: whatsapp_addon becomes whatsapp-addon
+ADDON_SLUG="whatsapp-addon"
+ADDON_PORT="3000"
+
+# Build the add-on URL
+ADDON_URL="http://${ADDON_SLUG}:${ADDON_PORT}"
 
 # Update hostname in custom component if file exists
 if [ -f "/custom_component/whatsapp.py" ]; then
-    bashio::log.info "Configuring custom component with add-on slug: $ADDON_SLUG"
-    sed -i "s/{{HOSTNAME}}/$ADDON_SLUG/g" /custom_component/whatsapp.py
-    bashio::log.info "Updated custom component hostname to: $ADDON_SLUG"
+    bashio::log.info "Configuring custom component with add-on URL: $ADDON_URL"
+    sed -i "s|http://{{HOSTNAME}}:3000|$ADDON_URL|g" /custom_component/whatsapp.py
+    bashio::log.info "Updated custom component to use: $ADDON_URL"
 fi
 
 # Install custom component to Home Assistant

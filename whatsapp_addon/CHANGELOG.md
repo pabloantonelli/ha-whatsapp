@@ -1,3 +1,15 @@
+## 2.0.6
+
+**Critical Fix Release**
+
+- 🐛 **Fixed DNS hostname** - Using `whatsapp-addon` (with hyphen) instead of `whatsapp_addon`
+- 🔧 **Valid DNS name** - Underscores are not valid in DNS hostnames, must use hyphens
+- 📚 **Based on HA docs** - Following Home Assistant's internal network naming convention
+
+This fixes the error: `Failed to resolve 'whatsapp_addon'`
+
+According to Home Assistant documentation, add-on slugs with underscores must be converted to hyphens for valid DNS hostnames.
+
 ## 2.0.5
 
 **Bug Fix Release**
