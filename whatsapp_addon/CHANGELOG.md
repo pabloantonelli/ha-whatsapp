@@ -1,3 +1,13 @@
+## 2.0.3
+
+**Bug Fix Release**
+
+- 🐛 **Fixed custom component hostname** - Restored {{HOSTNAME}} placeholder
+- 📝 **Improved logging** - Added hostname logging in run.sh
+- 🔧 **Fixed connection issue** - Custom component can now connect to add-on
+
+This fixes the error: `Failed to resolve '0a91b8e8-whatsapp-addon'`
+
 ## 2.0.2
 
 **Bug Fix Release**

@@ -2,9 +2,11 @@
 set +u
 
 # Update hostname in custom component if file exists
+# The HOSTNAME variable contains the correct add-on hostname for internal communication
 if [ -f "/custom_component/whatsapp.py" ]; then
+    bashio::log.info "Configuring custom component with hostname: $HOSTNAME"
     sed -i "s/{{HOSTNAME}}/$HOSTNAME/g" /custom_component/whatsapp.py
-    bashio::log.info "Updated custom component hostname."
+    bashio::log.info "Updated custom component hostname to: $HOSTNAME"
 fi
 
 # Install custom component to Home Assistant
