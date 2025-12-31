@@ -1,3 +1,13 @@
+## 2.0.4
+
+**Bug Fix Release**
+
+- 🐛 **Fixed hostname using add-on slug** - Using bashio::addon.slug instead of $HOSTNAME
+- 🔧 **Improved reliability** - Add-on slug is consistent across installations
+- 📝 **Better logging** - Shows configured slug for debugging
+
+This should finally fix the hostname resolution issue by using the add-on slug (whatsapp_addon) instead of the container hostname.
+
 ## 2.0.3
 
 **Bug Fix Release**
