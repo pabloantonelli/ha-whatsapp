@@ -1,5 +1,32 @@
 # 🎉 Actualización Completada - WhatsApp Add-on v2.0.0
 
+## ⚠️ CRÍTICO: Instrucciones de Actualización v2.0.5
+
+### 🔴 DEBES REINICIAR HOME ASSISTANT CORE (No solo el add-on)
+
+Después de actualizar a v2.0.5, **DEBES reiniciar Home Assistant Core** para que el custom component se actualice con el nuevo hostname.
+
+#### Pasos Obligatorios:
+
+1. **Actualiza el add-on** a v2.0.5
+2. **Inicia el add-on**
+3. **⚠️ REINICIA HOME ASSISTANT CORE** ← **CRÍTICO**
+   - Ve a **Configuración** → **Sistema** → **Reiniciar**
+   - Click en **Reiniciar Home Assistant**
+   - Espera a que vuelva a estar online
+4. **Prueba enviar un mensaje**
+
+#### ¿Por qué es necesario reiniciar?
+
+El add-on actualiza el custom component con el hostname correcto (`whatsapp_addon`), pero Home Assistant ya cargó la versión anterior con el hostname incorrecto. Solo un reinicio de Home Assistant Core recarga el custom component.
+
+**Sin reiniciar Home Assistant Core, seguirás viendo el error:**
+```
+Failed to resolve '0a91b8e8-whatsapp-addon'
+```
+
+---
+
 ## ✅ Resumen de la Actualización
 
 He actualizado exitosamente tu add-on de WhatsApp para Home Assistant a la **versión 2.0.0**, que incluye la última versión de la API de WhatsApp Web (Baileys 7.0.0-rc.9).
@@ -30,9 +57,10 @@ Debido a cambios internos en la API, necesitarás escanear el código QR nuevame
 
 1. **Actualiza el add-on** en Home Assistant
 2. **Reinicia el add-on**
-3. **Busca la notificación** con el código QR
-4. **Escanea el QR** con tu WhatsApp móvil
-5. **¡Listo!** El add-on estará conectado
+3. **⚠️ REINICIA HOME ASSISTANT CORE** ← **NUEVO PASO CRÍTICO**
+4. **Busca la notificación** con el código QR
+5. **Escanea el QR** con tu WhatsApp móvil
+6. **¡Listo!** El add-on estará conectado
 
 > **Nota:** Tus automaciones de Home Assistant seguirán funcionando sin cambios.
 
