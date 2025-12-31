@@ -1,4 +1,4 @@
-import { EventEmitter } from "eventemitter2";
+import EventEmitter2 from "eventemitter2";
 import makeWASocket, {
   DisconnectReason,
   useMultiFileAuthState,
@@ -18,7 +18,7 @@ const MessageType = {
   contact: "contactMessage",
 };
 
-class WhatsappClient extends EventEmitter {
+class WhatsappClient extends EventEmitter2 {
   #conn;
   #path;
   #refreshInterval;
@@ -81,7 +81,7 @@ class WhatsappClient extends EventEmitter {
 
     this.#conn.ev.on("creds.update", async () => {
       await saveCreds();
-      
+
       // Emit pair event when credentials are updated with user info
       if (state.creds.me) {
         this.emit("pair", {
@@ -113,13 +113,12 @@ class WhatsappClient extends EventEmitter {
     phone = phone.toString();
     if (!phone) throw new Error("Invalid phone");
 
-    return `${phone.replace("+", "")}${
-      !phone.endsWith("@s.whatsapp.net") &&
+    return `${phone.replace("+", "")}${!phone.endsWith("@s.whatsapp.net") &&
       !phone.endsWith("@g.us") &&
       !phone.endsWith("@broadcast")
-        ? "@s.whatsapp.net"
-        : ""
-    }`;
+      ? "@s.whatsapp.net"
+      : ""
+      }`;
   };
 
   #reconnect = () => {
@@ -318,9 +317,8 @@ class WhatsappError extends Error {
     super(message, ...args);
     this.name = "WhatsappError";
     this.code = Number(this.message);
-    this.message = `Send message failed. Whatsapp error ${this.message}: ${
-      this.#errors[this.code] || "Unknown Error"
-    }`;
+    this.message = `Send message failed. Whatsapp error ${this.message}: ${this.#errors[this.code] || "Unknown Error"
+      }`;
   }
 }
 

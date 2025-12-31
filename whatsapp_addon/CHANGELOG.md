@@ -1,3 +1,12 @@
+## 2.0.2
+
+**Bug Fix Release**
+
+- 🐛 **Fixed EventEmitter import** - Changed to default import for CommonJS compatibility
+- 🔧 **Fixed ESM/CommonJS interop** - eventemitter2 is a CommonJS module
+
+This fixes the error: `SyntaxError: Named export 'EventEmitter' not found`
+
 ## 2.0.1
 
 **Bug Fix Release**
