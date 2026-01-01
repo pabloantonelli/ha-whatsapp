@@ -1,3 +1,15 @@
+## 2.1.0
+
+**Stable Release**
+
+- 🚀 **Stable release** - Incorporates all connectivity fixes
+- 🔒 **Robust IP replacement** - Ensures reliable communication
+- 📝 **Improved logging** - Better visibility for diagnostics
+- 🐛 **Bug fixes** - Resolved DNS and network resolution issues
+- 📦 **Dependencies** - Updated to Baileys v7.0.0-rc.9
+
+This is the recommended stable version for all users. It fixes the `Failed to resolve` and `NameResolutionError` issues by intelligently using the add-on's internal IP address.
+
 ## 2.0.9
 
 **Fix & Logging Improvement**
