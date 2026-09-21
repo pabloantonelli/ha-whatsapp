@@ -1,0 +1,36 @@
+---
+name: Build
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test add-on
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: whatsapp_addon
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v4
+      - name: 🏗 Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: whatsapp_addon/package-lock.json
+      - name: 📦 Install dependencies
+        run: npm ci
+      - name: 🧪 Run tests
+        run: npm test
+
+  lint:
+    name: Lint add-on
+    uses: ./.github/workflows/ci.yaml
+    secrets: inherit

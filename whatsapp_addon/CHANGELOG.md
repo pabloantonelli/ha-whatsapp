@@ -1,3 +1,58 @@
+## 3.0.0
+
+Released as a new add-on (`ha_whatsapp`) with its own identity, based on the
+original WhatsApp add-on by Giuseppe Castaldo.
+
+### ⚠️ Breaking changes
+
+- **The add-on slug changed** from `whatsapp_addon` to `ha_whatsapp`. The
+  Supervisor treats it as a new install, so **you must pair your phone again**
+  and uninstall the v2 add-on first. See MIGRATION.md.
+- **Node 20 or newer is required** (Baileys 7 is ESM-only).
+- The `/api/v1` endpoints require a bearer token. The five v2 endpoints stay
+  unauthenticated and unchanged.
+
+**Automations are not affected:** the integration is still `whatsapp` and all
+five services keep the same names and fields.
+
+### ✨ New
+
+- **Sidebar panel (ingress)** showing each client's state, with pairing by QR
+  code or by 8-digit code — no more scanning a picture inside a notification.
+- **Authenticated `/api/v1`** with schema-validated payloads, clear error
+  messages and real HTTP status codes.
+- **Sends return the message id**, so delivery can be tracked.
+- New `whatsapp_message_ack` event for delivery and read receipts.
+- Endpoints to check a number, restart a client, log out, and fetch the QR.
+- Supervisor watchdog on `/health`, so a dead add-on is restarted.
+- New options: `api_token`, `log_level`, `mark_online`, `refresh_hours`.
+
+### 🐛 Fixed
+
+- `/health` always reported `connected: false`, even while connected.
+- The integration's address was a container IP rewritten into `whatsapp.py` at
+  every start, and broke whenever Docker reassigned it. The add-on now
+  publishes a stable hostname that the integration re-reads at call time.
+- Failed service calls were silently ignored; they now surface in the UI.
+- Only the first message of an incoming batch raised an event.
+- Reconnections retried every second forever; they now back off exponentially,
+  and reconnect immediately on `restartRequired` (515).
+- A failed WhatsApp version lookup no longer breaks a whole reconnection.
+- Errors from Baileys kept only a status code; the original message is kept.
+- `connect()` ran unawaited from the constructor, producing unhandled
+  rejections.
+
+### 🧹 Internals
+
+- Baileys pinned to `7.0.0-rc14` with a committed `package-lock.json`, so the
+  build is identical on any machine. Renovate proposes updates.
+- Sources reorganised under `src/`; dropped the vendored copy of Baileys 6.7.12
+  and the `log4js`, `body-parser`, `events` and `qr-image` dependencies.
+- Express 5, single `pino` logger, send queue per client, and a cache for
+  number lookups.
+- Test suite (`npm test`) covering the v2 compatibility layer, and CI that
+  actually runs.
+
 ## 2.1.0
 
 **Stable Release**

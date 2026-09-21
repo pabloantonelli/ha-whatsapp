@@ -1,50 +1,18 @@
-[![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/zkfpkdwyhyq)
-# Home Assistant Add-on: Whatsapp add-on
+# Home Assistant Add-on: WhatsApp
 
-_Write your Whatsapp message from Home Assistant using the latest WhatsApp Web API_
+Send and receive WhatsApp messages from Home Assistant, powered by
+[Baileys](https://github.com/WhiskeySockets/Baileys).
 
-<img src="https://github.com/giuseppecastaldo/ha-addons/blob/main/whatsapp_addon/logo.png?raw=true" width="400"/>
+Pair your phone from the sidebar panel — with a QR code or an 8-digit code —
+then call `whatsapp.send_message` from any automation.
 
-![Supports aarch64 Architecture][aarch64-shield]
-![Supports amd64 Architecture][amd64-shield]
-![Supports armhf Architecture][armhf-shield]
-![Supports armv7 Architecture][armv7-shield]
-![Supports i386 Architecture][i386-shield]
+Based on the original add-on by
+[Giuseppe Castaldo](https://github.com/giuseppecastaldo/ha-addons).
 
-[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
-[armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
-[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
+- [Installation and usage](https://github.com/pabloantonelli/ha-whatsapp#readme)
+- [Service and event reference](DOCS.md)
+- [Upgrading from v2.x](https://github.com/pabloantonelli/ha-whatsapp/blob/main/MIGRATION.md)
 
-## 🚀 Version 2.0.0 - Major Update
-
-This version includes a complete upgrade to **Baileys 7.0.0-rc.9**, the latest WhatsApp Web API library with:
-
-- ✅ **Enhanced Stability** - Improved connection reliability and message delivery
-- ✅ **LID Support** - Full support for Linked Device Identifiers
-- ✅ **Meta Coexistence** - Compatible with Meta Business API
-- ✅ **Better Security** - Reduced ban risk with optimized protocol compliance
-- ✅ **Performance** - 80% smaller bundle size and faster processing
-
-A WhatsApp API client that connects through the WhatsApp Web browser app
-
-**NOTE:** I can't guarantee you will not be blocked by using this method, although it has worked for me. WhatsApp does not allow bots or unofficial clients on their platform, so this shouldn't be considered totally safe.
-
-# Installation guide
-
-Install add-on from this repository:
-
-```
-https://github.com/giuseppecastaldo/ha-addons
-```
-
-Start the add-on and in a few seconds you will see a persistent notification with QRCode, please scan this one with Whatsapp Mobile app.
-
-After add-on installation restart Home Assistant and then copy the following code in _configuration.yaml_
-
-```yaml
-whatsapp:
-```
-
-Then restart Home Assistant. If all went well you will se a _whatsapp.send_message_ service.
+> This add-on uses an unofficial WhatsApp API. Accounts can be blocked for
+> automated or unusual activity. Do not use it for bulk or unsolicited
+> messaging.

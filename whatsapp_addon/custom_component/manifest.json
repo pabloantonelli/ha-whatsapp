@@ -1,11 +1,11 @@
 {
   "domain": "whatsapp",
-  "name": "Whatsapp",
+  "name": "WhatsApp",
+  "documentation": "https://github.com/pabloantonelli/ha-whatsapp",
+  "issue_tracker": "https://github.com/pabloantonelli/ha-whatsapp/issues",
   "dependencies": [],
-  "codeowners": [],
-  "requirements": [
-    "url-normalize==1.4.3"
-  ],
-  "iot_class": "local_polling",
-  "version": "1.0.2"
+  "codeowners": ["@pabloantonelli"],
+  "requirements": [],
+  "iot_class": "local_push",
+  "version": "3.0.0"
 }

@@ -1,10 +1,22 @@
-# Home Assistant Add-on: Whatsapp add-on
+# Home Assistant Add-on: WhatsApp
+
+Service and event reference. For installation and upgrading, see the
+[project README](https://github.com/pabloantonelli/ha-whatsapp#readme).
 
 ## How to use
+
+### **How to pair an account**
+
+Open **WhatsApp** in the Home Assistant sidebar. Each configured client shows
+its own card, where you can either scan the QR code or enter your phone number
+to get an 8-digit pairing code (**WhatsApp → Linked devices → Link with phone
+number**).
 
 ### **How to add other Whatsapp sessions**
 
 Go to configuration page in clients input box digit the desired clientId. This one represents an identifier for the session.
+
+Each client is paired separately from the sidebar panel.
 
 ### **How to get a User ID**
 
@@ -79,10 +91,26 @@ data:
 
 ## Events
 
-| Event type               | Description                           |
-| ------------------------ | ------------------------------------- |
-| new_whatsapp_message     | The message that was received         |
-| whatsapp_presence_update | Presence of contact in a chat updated |
+| Event type               | Description                                    |
+| ------------------------ | ---------------------------------------------- |
+| new_whatsapp_message     | The message that was received                  |
+| whatsapp_presence_update | Presence of contact in a chat updated          |
+| whatsapp_message_ack     | A message you sent was delivered or read       |
+
+Every event carries the `clientId` it came from.
+
+### whatsapp_message_ack
+
+```yaml
+automation:
+  - triggers:
+      - trigger: event
+        event_type: whatsapp_message_ack
+    actions:
+      - action: system_log.write
+        data:
+          message: "Message {{ trigger.event.data.messageId }} status {{ trigger.event.data.status }}"
+```
 
 ---
 

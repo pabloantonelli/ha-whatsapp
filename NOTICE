@@ -1,67 +1,64 @@
-## NOTICE
+# NOTICE
 
-This project is a fork of the original WhatsApp Home Assistant Add-on created by Giuseppe Castaldo.
+This product includes software developed by Giuseppe Castaldo.
 
-### Original Project
-- **Original Repository:** https://github.com/giuseppecastaldo/ha-addons
-- **Original Author:** Giuseppe Castaldo
-- **Original License:** Apache License 2.0
+## Original work
 
-### Fork Information
-- **Fork Maintainer:** Pablo Antonelli
-- **Fork Repository:** https://github.com/pabloantonelli/ha-whatsapp
-- **Fork Date:** December 31, 2025
-- **Fork Purpose:** Update to Baileys 7.0.0-rc.9 and maintain compatibility with latest WhatsApp Web API
+This project is derived from the WhatsApp Home Assistant add-on created by
+Giuseppe Castaldo.
 
-### Major Changes in This Fork
+- **Original repository:** https://github.com/giuseppecastaldo/ha-addons
+- **Original author:** Giuseppe Castaldo
+- **Original license:** Apache License 2.0
+- **Copyright © Giuseppe Castaldo**
 
-#### Version 2.0.0 (December 31, 2025)
-- Updated Baileys from 6.7.12 to 7.0.0-rc.9
-- Migrated from CommonJS to ES Modules (ESM)
-- Updated all dependencies to latest versions
-- Added LID (Linked Device Identifiers) support
-- Added Meta Coexistence support
-- Improved error handling and logging
-- Added health check endpoint
-- Performance improvements (80% bundle size reduction)
-- Enhanced security (reduced ban risk)
+## This project
 
-### Credits
+- **Repository:** https://github.com/pabloantonelli/ha-whatsapp
+- **Maintainer:** Pablo Antonelli
+- **License:** Apache License 2.0
+- **Copyright © 2025-2026 Pablo Antonelli**
+- **Derived on:** December 31, 2025
 
-**Original Work:**
-- Copyright © Giuseppe Castaldo
-- Licensed under Apache License 2.0
+It started as a fork of the original add-on and is now maintained
+independently, under the same license. Substantial parts of the design —
+the Home Assistant service surface, the event names and the multi-client
+model — originate in the original work.
 
-**Fork Modifications:**
-- Copyright © 2025 Pablo Antonelli
-- Licensed under Apache License 2.0
+## Modifications
 
-### Acknowledgments
+### Version 3.0.0
 
-Special thanks to:
-- **Giuseppe Castaldo** - For creating the original WhatsApp Home Assistant Add-on
-- **WhiskeySockets/Baileys** - For the WhatsApp Web API library
-- **Home Assistant Community** - For continuous support and feedback
+Published under its own add-on slug (`ha_whatsapp`).
 
-### License
+- Pinned Baileys to 7.0.0-rc14 with a committed lockfile; removed the vendored
+  copy of Baileys 6.7.12.
+- Added an ingress panel for pairing by QR code or 8-digit pairing code.
+- Added an authenticated, schema-validated `/api/v1`, keeping the original
+  endpoints working unchanged for backwards compatibility.
+- Replaced the container-IP rewriting of the custom component with a stable
+  hostname published by the add-on at startup.
+- Reworked reconnection, error handling, logging and connection state
+  reporting; added a test suite and working CI.
 
-This project maintains the original Apache License 2.0. See the LICENSE file for details.
+### Version 2.0.0 (December 31, 2025)
 
-Both the original work and modifications are provided "AS IS", WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- Updated Baileys from 6.7.12 to 7.0.0-rc.9.
+- Migrated from CommonJS to ES Modules.
+- Added a health check endpoint.
 
-### Contributing
+## Third-party components
 
-Contributions to this fork are welcome! Please ensure:
-1. You comply with the Apache License 2.0
-2. You give appropriate credit to original authors
-3. You document your changes clearly
+- **[Baileys](https://github.com/WhiskeySockets/Baileys)** — WhatsApp Web API
+  library, MIT License.
+- Additional dependencies are listed in `whatsapp_addon/package.json`, each
+  under its own license.
 
-### Support
+## Disclaimer
 
-For issues related to:
-- **Original functionality:** Check the original repository
-- **Fork-specific changes (v2.0.0+):** Open an issue in this fork's repository
+Both the original work and these modifications are provided "AS IS", WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+LICENSE file for the full terms.
 
----
-
-**Last Updated:** December 31, 2025
+This project is not affiliated with, endorsed by, or connected to WhatsApp LLC
+or Meta Platforms, Inc.

@@ -1,4 +1,4 @@
-name: WhatsApp Add-on (Maintained Fork)
+name: WhatsApp Add-on
 url: https://github.com/pabloantonelli/ha-whatsapp
 maintainer: Pablo Antonelli
-# Original repository: https://github.com/giuseppecastaldo/ha-addons by Giuseppe Castaldo
+# Based on https://github.com/giuseppecastaldo/ha-addons by Giuseppe Castaldo

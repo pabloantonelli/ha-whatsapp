@@ -2,4 +2,26 @@
 configuration:
   clients:
     name: Clients
-    description: Create other clients
+    description: >-
+      One entry per WhatsApp account. Each client is paired separately and is
+      addressed by this name in the clientId field of every service call.
+  api_token:
+    name: API token
+    description: >-
+      Bearer token protecting the add-on HTTP API. Leave empty to have one
+      generated automatically on first start.
+  log_level:
+    name: Log level
+    description: >-
+      How much detail to write to the add-on log. Raise it to debug or trace
+      when diagnosing connection problems.
+  mark_online:
+    name: Appear online
+    description: >-
+      Mark the account as online while the add-on is connected. Leaving this off
+      keeps notifications flowing to your phone.
+  refresh_hours:
+    name: Periodic reconnect (hours)
+    description: >-
+      Force a reconnection every N hours. Leave at 0 unless you are working
+      around a stability problem; it is not needed on Baileys 7.

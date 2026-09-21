@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WhatsApp</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --fg: #1c1f24;
+    --muted: #6b7280;
+    --border: #e2e5ea;
+    --accent: #25d366;
+    --danger: #d93025;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --card: #1e2126;
+      --fg: #e8eaed;
+      --muted: #9aa0a6;
+      --border: #32363c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: .9rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .name { font-weight: 600; font-size: 1.05rem; }
+  .pill {
+    font-size: .75rem; padding: 3px 10px; border-radius: 999px;
+    border: 1px solid var(--border); color: var(--muted);
+  }
+  .pill.on { background: rgba(37,211,102,.14); color: var(--accent); border-color: transparent; }
+  .pill.off { background: rgba(217,48,37,.12); color: var(--danger); border-color: transparent; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 16px 0 0; font-size: .9rem; }
+  dt { color: var(--muted); }
+  dd { margin: 0; }
+  .qr { margin-top: 18px; text-align: center; }
+  .qr img { width: 260px; max-width: 100%; border-radius: 8px; background: #fff; padding: 10px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  input, button {
+    font: inherit; padding: 9px 14px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--card); color: var(--fg);
+  }
+  input { flex: 1 1 200px; }
+  button { cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #05240f; font-weight: 600; }
+  button:disabled { opacity: .5; cursor: default; }
+  .code {
+    margin-top: 14px; text-align: center; font-size: 1.8rem;
+    letter-spacing: .28em; font-weight: 600; font-family: ui-monospace, monospace;
+  }
+  .msg { margin-top: 12px; font-size: .88rem; color: var(--muted); }
+  .msg.err { color: var(--danger); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 28px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>WhatsApp</h1>
+  <p class="sub">Pair your phone and check the status of each configured client.</p>
+  <div id="clients"></div>
+  <footer>
+    <span id="version"></span> ·
+    Based on the original add-on by
+    <a href="https://github.com/giuseppecastaldo/ha-addons" target="_blank" rel="noreferrer">Giuseppe Castaldo</a>
+  </footer>
+</div>
+<script>
+const api = (p, opts) => fetch("api/v1" + p, opts).then(async (r) => {
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+});
+
+const state = {};
+
+function render(clients, version) {
+  document.getElementById("version").textContent = "v" + version;
+  const root = document.getElementById("clients");
+
+  root.innerHTML = clients.map((c) => {
+    const connected = c.connected;
+    const label = connected ? "Connected" : c.reconnecting ? "Reconnecting" : "Disconnected";
+    const cls = connected ? "on" : "off";
+    return `
+      <div class="card" data-id="${c.clientId}">
+        <div class="head">
+          <span class="name">${c.clientId}</span>
+          <span class="pill ${cls}">${label}</span>
+        </div>
+        <dl>
+          <dt>Number</dt><dd>${c.phone || "—"}</dd>
+          <dt>Name</dt><dd>${c.name || "—"}</dd>
+          <dt>Connected since</dt>
+          <dd>${c.lastConnectedAt ? new Date(c.lastConnectedAt).toLocaleString() : "—"}</dd>
+        </dl>
+        <div class="body"></div>
+      </div>`;
+  }).join("");
+
+  clients.forEach((c) => renderBody(c));
+}
+
+async function renderBody(c) {
+  const card = document.querySelector(`.card[data-id="${c.clientId}"] .body`);
+  if (!card) return;
+
+  if (c.connected) {
+    card.innerHTML = `<div class="row">
+      <button data-act="restart">Restart</button>
+      <button data-act="logout">Log out</button>
+    </div>`;
+  } else {
+    let qrHtml = '<p class="msg">Waiting for a QR code…</p>';
+    try {
+      const { dataUrl } = await api(`/clients/${c.clientId}/qr`);
+      qrHtml = `<div class="qr"><img src="${dataUrl}" alt="QR code"></div>`;
+    } catch { /* no QR yet */ }
+
+    card.innerHTML = `${qrHtml}
+      <p class="msg">Or pair with an 8-digit code — enter your number with country code:</p>
+      <div class="row">
+        <input type="tel" placeholder="5491111111111" data-field="phone">
+        <button class="primary" data-act="pair">Get code</button>
+      </div>
+      <div class="code" data-field="code">${state[c.clientId]?.code || ""}</div>
+      <p class="msg ${state[c.clientId]?.error ? "err" : ""}" data-field="msg">${state[c.clientId]?.error || ""}</p>`;
+  }
+}
+
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const card = btn.closest(".card");
+  const id = card.dataset.id;
+  const act = btn.dataset.act;
+
+  btn.disabled = true;
+  try {
+    if (act === "pair") {
+      const phone = card.querySelector('[data-field="phone"]').value.trim();
+      if (!phone) throw new Error("Enter a phone number first.");
+      const { code } = await api(`/clients/${id}/pairing-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+      state[id] = { code };
+      card.querySelector('[data-field="code"]').textContent = code;
+      card.querySelector('[data-field="msg"]').textContent =
+        "In WhatsApp: Linked devices › Link with phone number, then enter this code.";
+      card.querySelector('[data-field="msg"]').classList.remove("err");
+    } else {
+      await api(`/clients/${id}/${act}`, { method: "POST" });
+    }
+  } catch (err) {
+    state[id] = { error: err.message };
+    const msg = card.querySelector('[data-field="msg"]');
+    if (msg) { msg.textContent = err.message; msg.classList.add("err"); }
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+let lastSignature = null;
+
+async function tick() {
+  try {
+    const [{ clients }, health] = await Promise.all([
+      api("/clients"),
+      fetch("health").then((r) => r.json()),
+    ]);
+
+    // Re-render only on real changes, otherwise polling would wipe whatever
+    // the user is typing into the phone field every few seconds.
+    const signature = JSON.stringify(
+      clients.map((c) => [c.clientId, c.connected, c.reconnecting, c.phone, c.lastConnectedAt, c.hasQr])
+    );
+    if (signature === lastSignature) return;
+    lastSignature = signature;
+
+    render(clients, health.version);
+  } catch (err) {
+    lastSignature = null;
+    document.getElementById("clients").innerHTML =
+      `<div class="card"><p class="msg err">Cannot reach the add-on: ${err.message}</p></div>`;
+  }
+}
+
+tick();
+setInterval(tick, 5000);
+</script>
+</body>
+</html>

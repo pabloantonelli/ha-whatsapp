@@ -1,29 +1,39 @@
 {
-  "name": "whatsapp_hass_addon",
-  "version": "2.0.0",
-  "description": "WhatsApp integration for Home Assistant using Baileys 7.0",
+  "name": "ha-whatsapp-addon",
+  "version": "3.0.0",
+  "description": "WhatsApp integration for Home Assistant, powered by Baileys",
   "type": "module",
-  "main": "index.js",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./index.js"
+    "start": "node ./src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pabloantonelli/ha-whatsapp.git"
+    "url": "git+https://github.com/pabloantonelli/ha-whatsapp.git"
   },
-  "author": "Giuseppe Castaldo (original), Pablo Antonelli (fork maintainer)",
+  "author": "Pablo Antonelli",
+  "contributors": [
+    "Giuseppe Castaldo (original add-on this project is based on)"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@whiskeysockets/baileys": "^7.0.0-rc.9",
-    "axios": "^1.7.9",
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "eventemitter2": "^6.4.9",
-    "events": "^3.3.0",
-    "express": "^4.21.2",
-    "log4js": "^6.9.1",
-    "pino": "^9.5.0",
-    "qr-image": "^3.2.0"
+    "baileys": "7.0.0-rc14",
+    "axios": "1.20.0",
+    "cors": "2.8.6",
+    "eventemitter2": "6.4.9",
+    "express": "5.2.1",
+    "p-queue": "9.3.3",
+    "pino": "10.3.1",
+    "qrcode": "1.5.4",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "supertest": "7.2.2",
+    "vitest": "4.0.18"
   }
 }

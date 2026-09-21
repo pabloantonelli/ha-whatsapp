@@ -1,38 +1,22 @@
-# Git files
+# Git and CI
 .git
 .gitignore
 .github
 
 # Documentation
 *.md
-!README.md
-MIGRATION.md
-CHANGELOG.md
-DOCS.md
 
-# Development files
+# Development
 .vscode
 .devcontainer
 devcontainer.json
-
-# Node modules (will be installed during build)
+test
 node_modules
 
-# Baileys folder (now using npm package)
-Baileys
-
-# Examples
+# Assets not used at runtime
 examples
 
-# Translations (if not needed)
-translations
-
-# System files
+# System and build artifacts
 .DS_Store
 Thumbs.db
-
-# Build artifacts
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

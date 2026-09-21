@@ -1,26 +1,20 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-# Install required packages
-RUN apk add --no-cache git npm nodejs
+# Baileys 7 is ESM-only and requires Node 20 or newer.
+RUN apk add --no-cache nodejs npm \
+    && node -e "if (+process.versions.node.split('.')[0] < 20) { console.error('Node 20+ required, got ' + process.version); process.exit(1) }"
 
-# Copy application files
-COPY package.json /
-COPY index.js /
-COPY whatsapp.js /
-COPY run.sh /
-COPY finish.sh /
+WORKDIR /app
 
-# Copy custom component for Home Assistant integration
-COPY custom_component /custom_component
+# Dependencies first, so the layer is cached while only sources change.
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Set permissions
-RUN chmod a+x /run.sh
-RUN chmod a+x /finish.sh
-
-# Install dependencies
-WORKDIR /
-RUN npm install --production
+COPY src/ ./src/
+COPY custom_component/ /custom_component/
+COPY run.sh finish.sh /
+RUN chmod a+x /run.sh /finish.sh
 
 EXPOSE 3000
 CMD [ "/run.sh" ]

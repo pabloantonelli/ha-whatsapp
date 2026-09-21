@@ -1,199 +1,196 @@
-[![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/zkfpkdwyhyq)
+# WhatsApp Add-on for Home Assistant
 
-# Home Assistant Add-on: WhatsApp (Maintained Fork)
+[Español](README.es.md)
 
-> **🔔 This is a maintained fork of the [original repository](https://github.com/giuseppecastaldo/ha-addons) by Giuseppe Castaldo**
->
-> This fork focuses on keeping the add-on updated with the latest WhatsApp Web API (Baileys) and adding new features.
+Send and receive WhatsApp messages from Home Assistant. Pair your phone from a
+panel in the sidebar, then call `whatsapp.send_message` from any automation.
 
-_Send WhatsApp messages from Home Assistant using the latest WhatsApp Web API_
-
-<img src="https://github.com/giuseppecastaldo/ha-addons/blob/main/whatsapp_addon/logo.png?raw=true" width="400"/>
-
-![Supports aarch64 Architecture][aarch64-shield]
-![Supports amd64 Architecture][amd64-shield]
-![Supports armhf Architecture][armhf-shield]
-![Supports armv7 Architecture][armv7-shield]
-![Supports i386 Architecture][i386-shield]
-
-[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
-[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
-[armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
-[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
-
-## 🚀 What's New in This Fork
-
-### Version 2.0.0 (December 31, 2025)
-
-This fork has been updated to **Baileys 7.0.0-rc.9**, the latest WhatsApp Web API library with:
-
-- ✅ **Enhanced Stability** - Improved connection reliability and message delivery
-- ✅ **LID Support** - Full support for Linked Device Identifiers
-- ✅ **Meta Coexistence** - Compatible with Meta Business API
-- ✅ **Better Security** - Reduced ban risk with optimized protocol compliance
-- ✅ **Performance** - 80% smaller bundle size and faster processing
-- ✅ **Modern Architecture** - Migrated to ES Modules (ESM)
-- ✅ **Health Check** - New monitoring endpoint
-
-See [CHANGELOG](whatsapp_addon/CHANGELOG.md) for detailed changes.
-
-## 📋 About This Fork
-
-### Original Project
-- **Original Author:** [Giuseppe Castaldo](https://github.com/giuseppecastaldo)
-- **Original Repository:** https://github.com/giuseppecastaldo/ha-addons
-- **License:** Apache License 2.0
-
-### Fork Maintainer
-- **Maintainer:** Pablo Antonelli
-- **Fork Repository:** https://github.com/pabloantonelli/ha-whatsapp
-- **Fork Date:** December 31, 2025
-
-### Why This Fork?
-
-The original repository has not been updated since version 1.5.0 (Baileys 6.7.12). This fork aims to:
-
-1. **Keep Updated** - Maintain compatibility with latest WhatsApp Web API
-2. **Add Features** - Implement new capabilities as they become available
-3. **Fix Issues** - Address bugs and improve stability
-4. **Improve Documentation** - Better guides and troubleshooting
-
-**Note:** This fork maintains full compatibility with the original add-on's API and configuration.
-
-## 🔧 Installation
-
-### Option 1: Add This Repository to Home Assistant
-
-1. Go to **Supervisor** → **Add-on Store** → **⋮** (three dots) → **Repositories**
-2. Add this repository URL:
-   ```
-   https://github.com/pabloantonelli/ha-whatsapp
-   ```
-3. Find **Whatsapp** in the add-on store
-4. Click **Install**
-
-### Option 2: One-Click Installation
-
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpabloantonelli%2Fha-whatsapp)
-
-## 📖 Usage
-
-### 1. Start the Add-on
-
-After installation:
-1. Go to the **Whatsapp** add-on page
-2. Click **Start**
-3. Wait for a notification with a QR code
-
-### 2. Scan QR Code
-
-1. Open WhatsApp on your phone
-2. Go to **Settings** → **Linked Devices**
-3. Tap **Link a Device**
-4. Scan the QR code from the Home Assistant notification
-
-### 3. Configure Home Assistant
-
-Add to your `configuration.yaml`:
-
-```yaml
-whatsapp:
-```
-
-Then restart Home Assistant.
-
-### 4. Send Messages
-
-Use the `whatsapp.send_message` service:
-
-```yaml
-service: whatsapp.send_message
-data:
-  clientId: default
-  to: "+1234567890"
-  body:
-    text: "Hello from Home Assistant!"
-```
-
-## 📚 Documentation
-
-- **[Migration Guide](whatsapp_addon/MIGRATION.md)** - Upgrading from v1.5.0 to v2.0.0
-- **[Technical Notes](whatsapp_addon/TECHNICAL_NOTES.md)** - Developer documentation
-- **[Changelog](whatsapp_addon/CHANGELOG.md)** - Version history
-- **[README (Español)](whatsapp_addon/README_ES.md)** - Spanish documentation
-
-## ⚠️ Important Notes
-
-### Compatibility
-
-- ✅ **API Compatible** - All services work the same as the original
-- ✅ **Configuration Compatible** - No changes needed in `configuration.yaml`
-- ⚠️ **Re-authentication Required** - v2.0.0 requires scanning QR code again
-
-### WhatsApp Policy
-
-**IMPORTANT:** WhatsApp does not officially support bots or unofficial clients. While this add-on works, there is always a risk of being blocked. Use at your own risk.
-
-**Best Practices:**
-- Don't send spam or unsolicited messages
-- Avoid sending too many messages in a short time
-- Don't use for commercial purposes without proper authorization
-- Keep the add-on updated
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork this repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-Please ensure your contributions comply with the Apache License 2.0.
-
-## 🐛 Issues & Support
-
-### For This Fork (v2.0.0+)
-- Open an issue in this repository
-- Include add-on version, Home Assistant version, and logs
-
-### For Original Functionality
-- Check the [original repository](https://github.com/giuseppecastaldo/ha-addons)
-
-## 📜 License
-
-This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
-
-### Credits
-
-**Original Work:**
-- Copyright © Giuseppe Castaldo
-- Licensed under Apache License 2.0
-
-**Fork Modifications (v2.0.0+):**
-- Copyright © 2025 Pablo Antonelli
-- Licensed under Apache License 2.0
-
-See [NOTICE](NOTICE) file for detailed attribution.
-
-## 🙏 Acknowledgments
-
-- **Giuseppe Castaldo** - For creating the original WhatsApp Home Assistant Add-on
-- **WhiskeySockets/Baileys** - For the WhatsApp Web API library
-- **Home Assistant Community** - For continuous support
-
-## ☕ Support
-
-If you find this fork useful, consider:
-
-- ⭐ Starring this repository
-- 🐛 Reporting issues
-- 🔧 Contributing improvements
-- ☕ [Buying the original author a coffee](https://www.buymeacoffee.com/zkfpkdwyhyq)
+> **Based on the work of [Giuseppe Castaldo](https://github.com/giuseppecastaldo/ha-addons).**
+> This project started as a fork of his WhatsApp add-on and would not exist
+> without it. It is now maintained independently, under the same Apache-2.0
+> license. See [NOTICE](NOTICE) for the full attribution.
 
 ---
 
-**Maintained by:** Pablo Antonelli  
-**Based on:** [giuseppe castaldo/ha-addons](https://github.com/giuseppecastaldo/ha-addons)  
-**License:** Apache License 2.0
+## What it does
+
+- Sends text, images, audio, video, documents, locations and reactions to
+  contacts and groups.
+- Fires a Home Assistant event for every incoming message, presence change and
+  delivery receipt, so automations can react to them.
+- Runs several WhatsApp accounts side by side, each paired separately.
+- Pairs from a panel in the sidebar, with a QR code or an 8-digit code.
+
+## Requirements
+
+- Home Assistant OS or Supervised (this is an add-on; Container and Core
+  installations cannot run it).
+- Architectures: `aarch64`, `amd64`, `armhf`, `armv7`, `i386`.
+- A phone with WhatsApp installed, to pair the account.
+
+> **This add-on uses an unofficial WhatsApp API.** WhatsApp does not support
+> this kind of client and accounts can be blocked for automated or unusual
+> activity. Do not use it for bulk or unsolicited messaging. Read
+> [LEGAL.md](LEGAL.md) before installing.
+
+## Installation
+
+1. **Add the repository.** In Home Assistant go to **Settings → Add-ons →
+   Add-on Store**, open the ⋮ menu, choose **Repositories** and add:
+
+   ```text
+   https://github.com/pabloantonelli/ha-whatsapp
+   ```
+
+2. **Install.** Find **WhatsApp** in the store and click **Install**.
+
+3. **Start it.** Turn on **Show in sidebar**, then click **Start**.
+
+4. **Restart Home Assistant Core** (**Settings → System → Restart**). This is
+   needed once, the first time, so the `whatsapp` integration the add-on
+   installs gets loaded.
+
+5. **Pair your phone.** Open **WhatsApp** in the sidebar and either:
+   - scan the QR code with **WhatsApp → Linked devices → Link a device**, or
+   - type your number and press **Get code**, then enter the 8 digits in
+     **WhatsApp → Linked devices → Link with phone number**.
+
+   The panel shows *Connected* once pairing succeeds.
+
+6. **Send a test message.** In **Developer tools → Actions**, run:
+
+   ```yaml
+   action: whatsapp.send_message
+   data:
+     clientId: default
+     to: "34600000000"
+     body:
+       text: Hello from Home Assistant
+   ```
+
+Full service and event reference: [whatsapp_addon/DOCS.md](whatsapp_addon/DOCS.md).
+
+## Configuration
+
+```yaml
+clients:
+  - default        # one entry per WhatsApp account
+api_token: ""      # generated automatically when empty
+log_level: info    # trace | debug | info | warn | error | fatal
+mark_online: false # appear online while connected
+refresh_hours: 0   # force a reconnect every N hours (0 = off)
+```
+
+Every extra name in `clients` is a separate account to pair, addressed by that
+name in the `clientId` field of each service call.
+
+## Upgrading from v2.x
+
+**v3.0.0 is installed as a separate add-on.** Its slug changed from
+`whatsapp_addon` to `ha_whatsapp`, so the Supervisor treats it as a new
+install with empty storage.
+
+**What this means for you**
+
+- ⚠️ **You have to pair your phone again.** The v2 session is not carried over.
+- ⚠️ **Uninstall the old add-on first.** Two add-ons signed into the same
+  number will fight over the session and neither will stay connected.
+- ✅ **Your automations keep working, unchanged.** The integration is still
+  `whatsapp`, and all five services keep the same names and fields.
+
+**Steps**
+
+1. Stop and uninstall the old **Whatsapp** add-on.
+2. Install **WhatsApp** v3 as described above.
+3. Restart Home Assistant Core.
+4. Pair your phone from the sidebar panel.
+
+Step-by-step details, the endpoint mapping and how to roll back:
+[MIGRATION.md](MIGRATION.md).
+
+## HTTP API
+
+The add-on serves an HTTP API on port 3000, used by the integration and
+available to any other client on your network.
+
+All `/api/v1` routes require a bearer token — the `api_token` option, or the
+one generated on first start (readable in `/config/custom_components/whatsapp/connection.json`):
+
+```bash
+curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"to":"34600000000","body":{"text":"Hello"}}'
+```
+
+| Method | Route | Purpose |
+|---|---|---|
+| `GET` | `/health` | Version and per-client connection state (no token needed) |
+| `GET` | `/api/v1/clients` | List clients and their state |
+| `GET` | `/api/v1/clients/:id` | One client's state |
+| `POST` | `/api/v1/clients/:id/messages` | Send a message; returns its `messageId` |
+| `GET` | `/api/v1/clients/:id/qr` | Current QR code (`?format=png` for an image) |
+| `POST` | `/api/v1/clients/:id/pairing-code` | Request an 8-digit pairing code |
+| `GET` | `/api/v1/clients/:id/check/:phone` | Check whether a number is on WhatsApp |
+| `POST` | `/api/v1/clients/:id/status` | Set the profile status text |
+| `POST` | `/api/v1/clients/:id/presence` | Send a presence update |
+| `POST` | `/api/v1/clients/:id/presence/subscribe` | Subscribe to a contact's presence |
+| `POST` | `/api/v1/clients/:id/restart` | Reconnect the client |
+| `POST` | `/api/v1/clients/:id/logout` | Drop the session and pair again |
+
+The v2 endpoints (`/sendMessage`, `/setStatus`, `/presenceSubscribe`,
+`/sendPresenceUpdate`, `/sendInfinityPresenceUpdate`) still work, with the same
+request and response shape as before, so existing scripts keep running.
+
+## Events
+
+| Event | Fired when |
+|---|---|
+| `new_whatsapp_message` | A message arrives |
+| `whatsapp_presence_update` | A subscribed contact changes presence |
+| `whatsapp_message_ack` | A sent message is delivered or read |
+
+## Troubleshooting
+
+**The QR code never appears.** Open the sidebar panel — it renders the QR
+directly. If it stays on *Waiting for a QR code*, check the add-on log for
+connection errors and make sure the host can reach `web.whatsapp.com`.
+
+**`Client not found`.** The `clientId` in your service call must match a name
+in the `clients` option. The default is `default`.
+
+**The integration cannot reach the add-on.** The add-on writes its address to
+`/config/custom_components/whatsapp/connection.json` on every start, and the
+integration re-reads it automatically. Make sure the add-on is running, then
+retry. (v2.x wrote a fixed IP into the Python source, which broke whenever
+Docker reassigned it; that is no longer the case.)
+
+**Services are missing after installing.** Restart Home Assistant Core once so
+the `whatsapp` integration is loaded.
+
+## Development
+
+```bash
+cd whatsapp_addon
+npm ci
+npm test
+```
+
+The build is pinned by `package-lock.json` and runs on Node 20+, so it produces
+the same result on any machine. Dependency updates arrive as Renovate pull
+requests.
+
+## Credits
+
+- **[Giuseppe Castaldo](https://github.com/giuseppecastaldo/ha-addons)** — author
+  of the original WhatsApp add-on this project is based on.
+- **[WhiskeySockets/Baileys](https://github.com/WhiskeySockets/Baileys)** — the
+  WhatsApp Web library doing the heavy lifting.
+- The Home Assistant community.
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+Not affiliated with, endorsed by, or connected to WhatsApp LLC or Meta
+Platforms, Inc.
