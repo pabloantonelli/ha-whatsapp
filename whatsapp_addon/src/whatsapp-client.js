@@ -198,7 +198,10 @@ export class WhatsappClient extends EventEmitter2 {
       if (state.creds.me) {
         this.#status.phone = state.creds.me.id.split(":")[0];
         this.#status.name = state.creds.me.name ?? null;
-        this.emit("pair", { phone: this.#status.phone, name: this.#status.name });
+        this.emit("pair", {
+          phone: this.#status.phone,
+          name: this.#status.name,
+        });
       }
     });
 
@@ -206,7 +209,7 @@ export class WhatsappClient extends EventEmitter2 {
     this.#conn.ev.on("messages.upsert", this.#onMessagesUpsert);
     this.#conn.ev.on("messages.update", this.#onMessagesUpdate);
     this.#conn.ev.on("presence.update", (presence) =>
-      this.emit("presence_update", presence)
+      this.emit("presence_update", presence),
     );
   }
 
@@ -221,7 +224,7 @@ export class WhatsappClient extends EventEmitter2 {
     } catch (err) {
       this.#logger.warn(
         { err: err.message },
-        "could not fetch latest WhatsApp Web version, using cached/default"
+        "could not fetch latest WhatsApp Web version, using cached/default",
       );
     }
     return this.#version;
@@ -247,7 +250,10 @@ export class WhatsappClient extends EventEmitter2 {
 
     clearInterval(this.#refreshInterval);
     if (this.#refreshMs > 0) {
-      this.#refreshInterval = setInterval(() => this.restart(), this.#refreshMs);
+      this.#refreshInterval = setInterval(
+        () => this.restart(),
+        this.#refreshMs,
+      );
     }
     if (this.#offline) this.setSendPresenceUpdateInterval("unavailable");
 
@@ -287,7 +293,11 @@ export class WhatsappClient extends EventEmitter2 {
   #onMessagesUpdate = (updates) => {
     for (const { key, update } of updates) {
       if (update?.status === undefined) continue;
-      this.emit("ack", { messageId: key?.id, to: key?.remoteJid, status: update.status });
+      this.emit("ack", {
+        messageId: key?.id,
+        to: key?.remoteJid,
+        status: update.status,
+      });
     }
   };
 
@@ -312,7 +322,7 @@ export class WhatsappClient extends EventEmitter2 {
 
     setTimeout(() => {
       this.#connect().catch((err) =>
-        this.#logger.error({ err: err.message }, "reconnection attempt failed")
+        this.#logger.error({ err: err.message }, "reconnection attempt failed"),
       );
     }, delay);
   }
@@ -334,7 +344,11 @@ export class WhatsappClient extends EventEmitter2 {
    * else the answer is cached, since the lookup counts towards rate limits.
    */
   async #exists(id) {
-    if (id.endsWith("@g.us") || id.endsWith("@broadcast") || id.endsWith("@lid")) {
+    if (
+      id.endsWith("@g.us") ||
+      id.endsWith("@broadcast") ||
+      id.endsWith("@lid")
+    ) {
       return true;
     }
 
@@ -343,7 +357,10 @@ export class WhatsappClient extends EventEmitter2 {
 
     const [result] = await this.#conn.onWhatsApp(id);
     const exists = Boolean(result?.exists ?? result);
-    this.#existsCache.set(id, { exists, expiresAt: Date.now() + this.#existsTtlMs });
+    this.#existsCache.set(id, {
+      exists,
+      expiresAt: Date.now() + this.#existsTtlMs,
+    });
     return exists;
   }
 
@@ -390,7 +407,10 @@ export class WhatsappClient extends EventEmitter2 {
   async sendPresenceUpdate(type, phone) {
     this.#assertConnected();
     try {
-      await this.#conn.sendPresenceUpdate(type, phone ? this.toJid(phone) : undefined);
+      await this.#conn.sendPresenceUpdate(
+        type,
+        phone ? this.toJid(phone) : undefined,
+      );
     } catch (err) {
       throw wrapError(err);
     }
@@ -427,7 +447,7 @@ export class WhatsappClient extends EventEmitter2 {
 
     const push = () =>
       this.sendPresenceUpdate(type, phone).catch(() =>
-        clearInterval(this.#presenceInterval)
+        clearInterval(this.#presenceInterval),
       );
 
     push();

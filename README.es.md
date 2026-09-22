@@ -62,7 +62,7 @@ automatización.
      dígitos en **WhatsApp → Dispositivos vinculados → Vincular con número de
      teléfono**.
 
-   El panel muestra *Connected* cuando la vinculación termina.
+   El panel muestra _Connected_ cuando la vinculación termina.
 
 6. **Probá un mensaje.** En **Herramientas para desarrolladores → Acciones**:
 
@@ -82,11 +82,11 @@ La referencia completa de servicios y eventos está en
 
 ```yaml
 clients:
-  - default        # una entrada por cada cuenta de WhatsApp
-api_token: ""      # se genera solo si se deja vacío
-log_level: info    # trace | debug | info | warn | error | fatal
+  - default # una entrada por cada cuenta de WhatsApp
+api_token: "" # se genera solo si se deja vacío
+log_level: info # trace | debug | info | warn | error | fatal
 mark_online: false # aparecer en línea mientras está conectado
-refresh_hours: 0   # reconectar cada N horas (0 = desactivado)
+refresh_hours: 0 # reconectar cada N horas (0 = desactivado)
 ```
 
 Cada nombre adicional en `clients` es otra cuenta para vincular, y se
@@ -133,20 +133,20 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
   -d '{"to":"34600000000","body":{"text":"Hola"}}'
 ```
 
-| Método | Ruta | Para qué sirve |
-|---|---|---|
-| `GET` | `/health` | Versión y estado de conexión por cliente (sin token) |
-| `GET` | `/api/v1/clients` | Lista de clientes y su estado |
-| `GET` | `/api/v1/clients/:id` | Estado de un cliente |
-| `POST` | `/api/v1/clients/:id/messages` | Enviar un mensaje; devuelve su `messageId` |
-| `GET` | `/api/v1/clients/:id/qr` | Código QR actual (`?format=png` para la imagen) |
-| `POST` | `/api/v1/clients/:id/pairing-code` | Pedir un código de 8 dígitos |
-| `GET` | `/api/v1/clients/:id/check/:phone` | Comprobar si un número está en WhatsApp |
-| `POST` | `/api/v1/clients/:id/status` | Cambiar el texto de estado del perfil |
-| `POST` | `/api/v1/clients/:id/presence` | Enviar una actualización de presencia |
-| `POST` | `/api/v1/clients/:id/presence/subscribe` | Suscribirse a la presencia de un contacto |
-| `POST` | `/api/v1/clients/:id/restart` | Reconectar el cliente |
-| `POST` | `/api/v1/clients/:id/logout` | Cerrar la sesión y volver a vincular |
+| Método | Ruta                                     | Para qué sirve                                       |
+| ------ | ---------------------------------------- | ---------------------------------------------------- |
+| `GET`  | `/health`                                | Versión y estado de conexión por cliente (sin token) |
+| `GET`  | `/api/v1/clients`                        | Lista de clientes y su estado                        |
+| `GET`  | `/api/v1/clients/:id`                    | Estado de un cliente                                 |
+| `POST` | `/api/v1/clients/:id/messages`           | Enviar un mensaje; devuelve su `messageId`           |
+| `GET`  | `/api/v1/clients/:id/qr`                 | Código QR actual (`?format=png` para la imagen)      |
+| `POST` | `/api/v1/clients/:id/pairing-code`       | Pedir un código de 8 dígitos                         |
+| `GET`  | `/api/v1/clients/:id/check/:phone`       | Comprobar si un número está en WhatsApp              |
+| `POST` | `/api/v1/clients/:id/status`             | Cambiar el texto de estado del perfil                |
+| `POST` | `/api/v1/clients/:id/presence`           | Enviar una actualización de presencia                |
+| `POST` | `/api/v1/clients/:id/presence/subscribe` | Suscribirse a la presencia de un contacto            |
+| `POST` | `/api/v1/clients/:id/restart`            | Reconectar el cliente                                |
+| `POST` | `/api/v1/clients/:id/logout`             | Cerrar la sesión y volver a vincular                 |
 
 Los endpoints de la v2 (`/sendMessage`, `/setStatus`, `/presenceSubscribe`,
 `/sendPresenceUpdate`, `/sendInfinityPresenceUpdate`) siguen funcionando, con
@@ -155,16 +155,16 @@ rompen.
 
 ## Eventos
 
-| Evento | Cuándo se dispara |
-|---|---|
-| `new_whatsapp_message` | Llega un mensaje |
+| Evento                     | Cuándo se dispara                        |
+| -------------------------- | ---------------------------------------- |
+| `new_whatsapp_message`     | Llega un mensaje                         |
 | `whatsapp_presence_update` | Un contacto suscrito cambia de presencia |
-| `whatsapp_message_ack` | Un mensaje enviado se entrega o se lee |
+| `whatsapp_message_ack`     | Un mensaje enviado se entrega o se lee   |
 
 ## Solución de problemas
 
 **El código QR no aparece.** Abrí el panel de la barra lateral: el QR se
-muestra ahí directamente. Si queda en *Waiting for a QR code*, revisá el log
+muestra ahí directamente. Si queda en _Waiting for a QR code_, revisá el log
 del add-on y verificá que el equipo llegue a `web.whatsapp.com`.
 
 **`Client not found`.** El `clientId` del servicio tiene que coincidir con un

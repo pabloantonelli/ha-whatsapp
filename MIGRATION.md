@@ -7,15 +7,15 @@ not carry over.
 
 ## Summary
 
-| | v2.x | v3.0.0 |
-|---|---|---|
-| Add-on slug | `whatsapp_addon` | `ha_whatsapp` |
-| Integration domain | `whatsapp` | `whatsapp` — unchanged |
-| Service names and fields | 5 services | the same 5, unchanged |
-| Pairing | QR in a persistent notification | sidebar panel: QR **or** 8-digit code |
-| Session | must be re-paired | — |
-| HTTP API | 5 unauthenticated endpoints | `/api/v1` with a token; old endpoints still work |
-| Node | unpinned | 20+ |
+|                          | v2.x                            | v3.0.0                                           |
+| ------------------------ | ------------------------------- | ------------------------------------------------ |
+| Add-on slug              | `whatsapp_addon`                | `ha_whatsapp`                                    |
+| Integration domain       | `whatsapp`                      | `whatsapp` — unchanged                           |
+| Service names and fields | 5 services                      | the same 5, unchanged                            |
+| Pairing                  | QR in a persistent notification | sidebar panel: QR **or** 8-digit code            |
+| Session                  | must be re-paired               | —                                                |
+| HTTP API                 | 5 unauthenticated endpoints     | `/api/v1` with a token; old endpoints still work |
+| Node                     | unpinned                        | 20+                                              |
 
 **Your automations do not need any changes.** The integration domain and all
 five service names and fields are identical.
@@ -52,12 +52,12 @@ The v2 endpoints still exist and behave exactly as before, so nothing breaks.
 Moving to `/api/v1` gets you authentication, payload validation and, for sends,
 the message id in the response.
 
-| v2 endpoint | v1 equivalent |
-|---|---|
-| `POST /sendMessage` | `POST /api/v1/clients/:id/messages` |
-| `POST /setStatus` | `POST /api/v1/clients/:id/status` |
-| `POST /presenceSubscribe` | `POST /api/v1/clients/:id/presence/subscribe` |
-| `POST /sendPresenceUpdate` | `POST /api/v1/clients/:id/presence` |
+| v2 endpoint                        | v1 equivalent                                               |
+| ---------------------------------- | ----------------------------------------------------------- |
+| `POST /sendMessage`                | `POST /api/v1/clients/:id/messages`                         |
+| `POST /setStatus`                  | `POST /api/v1/clients/:id/status`                           |
+| `POST /presenceSubscribe`          | `POST /api/v1/clients/:id/presence/subscribe`               |
+| `POST /sendPresenceUpdate`         | `POST /api/v1/clients/:id/presence`                         |
 | `POST /sendInfinityPresenceUpdate` | `POST /api/v1/clients/:id/presence` with `"infinity": true` |
 
 Differences to be aware of:

@@ -5,6 +5,7 @@ Thank you for your interest in contributing to this project! This is a maintaine
 ## 📋 About This Fork
 
 This fork was created to:
+
 - Keep the add-on updated with the latest WhatsApp Web API (Baileys)
 - Add new features and improvements
 - Fix bugs and improve stability
@@ -73,7 +74,7 @@ async function sendMessage(phone, message) {
     const result = await client.sendMessage(phone, message);
     return result;
   } catch (error) {
-    logger.error('Failed to send message:', error);
+    logger.error("Failed to send message:", error);
     throw error;
   }
 }
@@ -111,6 +112,7 @@ This project is licensed under **Apache License 2.0**, same as the original.
 ### When Contributing:
 
 By submitting a contribution, you agree that:
+
 - Your contribution is your original work
 - You have the right to submit it
 - Your contribution will be licensed under Apache License 2.0
@@ -121,18 +123,21 @@ By submitting a contribution, you agree that:
 We especially welcome contributions in these areas:
 
 ### High Priority
+
 - 🐛 **Bug fixes** - Stability improvements
 - 📚 **Documentation** - Better guides and examples
 - 🔒 **Security** - Reduce ban risk
 - ⚡ **Performance** - Speed and efficiency
 
 ### Medium Priority
+
 - ✨ **Features** - New WhatsApp capabilities
 - 🧪 **Testing** - Automated tests
 - 🌍 **Translations** - Multi-language support
 - 🎨 **UI/UX** - Better user experience
 
 ### Low Priority
+
 - 🔧 **Refactoring** - Code cleanup
 - 📊 **Monitoring** - Better logging and metrics
 
@@ -155,6 +160,7 @@ We especially welcome contributions in these areas:
 ### Syncing with Original
 
 If the original repository gets updated:
+
 1. We will review the changes
 2. Merge relevant updates
 3. Maintain our improvements
@@ -163,11 +169,13 @@ If the original repository gets updated:
 ## 📞 Communication
 
 ### Questions?
+
 - Open a **Discussion** for general questions
 - Open an **Issue** for bugs or feature requests
 - Check **existing documentation** first
 
 ### Need Help?
+
 - Review the [MIGRATION.md](whatsapp_addon/MIGRATION.md) guide
 - Check [TECHNICAL_NOTES.md](whatsapp_addon/TECHNICAL_NOTES.md) for details
 - Look at existing code for examples
@@ -175,6 +183,7 @@ If the original repository gets updated:
 ## 🙏 Recognition
 
 Contributors will be:
+
 - Listed in release notes
 - Credited in CHANGELOG.md
 - Mentioned in relevant documentation

@@ -38,7 +38,10 @@ export const createLegacyRouter = (clients, logger) => {
       await action(client, req.body);
       res.json(OK);
     } catch (error) {
-      logger.error({ err: error.message, endpoint: name }, "legacy request failed");
+      logger.error(
+        { err: error.message, endpoint: name },
+        "legacy request failed",
+      );
       res.status(500).json({ status: "KO", error: error.message });
     }
   };
@@ -46,34 +49,36 @@ export const createLegacyRouter = (clients, logger) => {
   router.post(
     "/sendMessage",
     handle("sendMessage", (client, body) =>
-      client.sendMessage(body.to, body.body, body.options)
-    )
+      client.sendMessage(body.to, body.body, body.options),
+    ),
   );
 
   router.post(
     "/setStatus",
-    handle("setStatus", (client, body) => client.updateProfileStatus(body.status))
+    handle("setStatus", (client, body) =>
+      client.updateProfileStatus(body.status),
+    ),
   );
 
   router.post(
     "/presenceSubscribe",
     handle("presenceSubscribe", (client, body) =>
-      client.presenceSubscribe(body.userId)
-    )
+      client.presenceSubscribe(body.userId),
+    ),
   );
 
   router.post(
     "/sendPresenceUpdate",
     handle("sendPresenceUpdate", (client, body) =>
-      client.sendPresenceUpdate(body.type, body.to)
-    )
+      client.sendPresenceUpdate(body.type, body.to),
+    ),
   );
 
   router.post(
     "/sendInfinityPresenceUpdate",
     handle("sendInfinityPresenceUpdate", (client, body) =>
-      client.setSendPresenceUpdateInterval(body.type, body.to)
-    )
+      client.setSendPresenceUpdateInterval(body.type, body.to),
+    ),
   );
 
   return router;

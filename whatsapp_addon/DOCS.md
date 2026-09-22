@@ -91,11 +91,11 @@ data:
 
 ## Events
 
-| Event type               | Description                                    |
-| ------------------------ | ---------------------------------------------- |
-| new_whatsapp_message     | The message that was received                  |
-| whatsapp_presence_update | Presence of contact in a chat updated          |
-| whatsapp_message_ack     | A message you sent was delivered or read       |
+| Event type               | Description                              |
+| ------------------------ | ---------------------------------------- |
+| new_whatsapp_message     | The message that was received            |
+| whatsapp_presence_update | Presence of contact in a chat updated    |
+| whatsapp_message_ack     | A message you sent was delivered or read |
 
 Every event carries the `clientId` it came from.
 

@@ -59,9 +59,10 @@ export const asyncRoute = (handler) => (req, res, next) =>
 
 /** Centralised error handler; replaces the try/catch repeated in every route. */
 export const errorHandler = (logger) => (err, req, res, _next) => {
-  const status = Number.isInteger(err.code) && err.code >= 400 && err.code < 600
-    ? err.code
-    : 500;
+  const status =
+    Number.isInteger(err.code) && err.code >= 400 && err.code < 600
+      ? err.code
+      : 500;
 
   logger.error({ err: err.message, path: req.path }, "request failed");
   res.status(status).json({ error: err.message });

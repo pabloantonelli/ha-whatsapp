@@ -9,22 +9,26 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 1. Mantener la Licencia Apache 2.0
 
 **Obligatorio por ley:**
+
 - ✅ Mantener el archivo `LICENSE` sin modificaciones
 - ✅ Mantener el archivo `NOTICE` actualizado
 - ✅ Incluir el aviso de copyright del autor original
 
 **Ubicación:**
+
 - `/LICENSE` - Licencia completa Apache 2.0
 - `/NOTICE` - Avisos de atribución
 
 ### 2. Dar Crédito al Autor Original
 
 **Obligatorio por ley:**
+
 - ✅ Mencionar a Giuseppe Castaldo como autor original
 - ✅ Incluir enlace al repositorio original
 - ✅ No remover avisos de copyright existentes
 
 **Dónde dar crédito:**
+
 - `README.md` - Sección destacada sobre el fork
 - `NOTICE` - Información detallada de atribución
 - `package.json` - Campo "author"
@@ -34,13 +38,16 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 3. Documentar Cambios
 
 **Obligatorio por ley (Apache 2.0, Sección 4b):**
+
 - ✅ Documentar todos los cambios que hagas
 - ✅ Indicar claramente qué archivos modificaste
 - ✅ Mantener un CHANGELOG actualizado
 
 **Cómo documentar:**
+
 ```markdown
 ## Archivos Modificados en v2.0.0
+
 - whatsapp.js - Migrado a ESM y Baileys 7.0
 - index.js - Actualizado a async/await
 - package.json - Actualizadas dependencias
@@ -49,6 +56,7 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 4. Mantener Avisos de Atribución
 
 **Obligatorio por ley (Apache 2.0, Sección 4c):**
+
 - ✅ Mantener todos los avisos de copyright
 - ✅ Mantener avisos de patentes
 - ✅ Mantener avisos de marcas registradas
@@ -57,6 +65,7 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 5. Incluir Copia de la Licencia
 
 **Obligatorio por ley (Apache 2.0, Sección 4a):**
+
 - ✅ Incluir copia completa de Apache License 2.0
 - ✅ Hacer la licencia fácilmente accesible
 - ✅ No modificar el texto de la licencia
@@ -66,11 +75,13 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 1. NO Cambiar la Licencia
 
 **Prohibido:**
+
 - ❌ Cambiar a otra licencia (MIT, GPL, etc.)
 - ❌ Agregar restricciones adicionales
 - ❌ Hacer el código propietario
 
 **Permitido:**
+
 - ✅ Mantener Apache 2.0
 - ✅ Agregar tu copyright a TUS modificaciones
 - ✅ Dual-license (Apache 2.0 + otra compatible)
@@ -78,6 +89,7 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 2. NO Remover Créditos
 
 **Prohibido:**
+
 - ❌ Remover el nombre de Giuseppe Castaldo
 - ❌ Remover enlaces al repositorio original
 - ❌ Pretender que es 100% tu trabajo
@@ -86,11 +98,13 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 3. NO Usar Marcas Registradas
 
 **Prohibido (Apache 2.0, Sección 6):**
+
 - ❌ Usar el nombre del autor original para promocionar
 - ❌ Implicar endorsement del autor original
 - ❌ Usar marcas sin permiso
 
 **Permitido:**
+
 - ✅ Decir "Fork de [proyecto original]"
 - ✅ Mencionar compatibilidad
 - ✅ Dar crédito apropiado
@@ -98,6 +112,7 @@ Este documento explica cómo mantener este fork de manera legal y ética, cumpli
 ### 4. NO Dar Garantías en Nombre del Original
 
 **Prohibido:**
+
 - ❌ Dar garantías sobre el código original
 - ❌ Asumir responsabilidad por el autor original
 - ❌ Implicar que el autor original respalda tu fork
@@ -187,10 +202,10 @@ This is a maintained fork of the [original repository](URL) by [Author].
 ```javascript
 /**
  * WhatsApp Home Assistant Add-on
- * 
+ *
  * Original work Copyright © Giuseppe Castaldo
  * Modified work Copyright © 2025 Pablo Antonelli
- * 
+ *
  * Licensed under the Apache License, Version 2.0
  * See LICENSE file for details
  */
@@ -238,11 +253,13 @@ Aunque no son legalmente obligatorias, considera:
 ### Si el Original Se Actualiza
 
 **Puedes:**
+
 - ✅ Incorporar cambios del original
 - ✅ Mantener tus mejoras
 - ✅ Dar crédito por los cambios
 
 **Debes:**
+
 - ✅ Mantener atribución del original
 - ✅ Documentar qué incorporaste
 - ✅ Respetar la licencia
@@ -250,10 +267,12 @@ Aunque no son legalmente obligatorias, considera:
 ### Si Quieres Cambiar de Licencia
 
 **Para código original:**
+
 - ❌ NO puedes cambiar la licencia
 - ❌ Debe permanecer Apache 2.0
 
 **Para TUS adiciones:**
+
 - ✅ Puedes dual-license (Apache 2.0 + otra)
 - ✅ Debe ser compatible con Apache 2.0
 - ⚠️ Complejo, consulta abogado si es crítico
@@ -261,11 +280,13 @@ Aunque no son legalmente obligatorias, considera:
 ### Si Quieres Comercializar
 
 **Permitido:**
+
 - ✅ Uso comercial está permitido
 - ✅ Puedes cobrar por servicios
 - ✅ Puedes ofrecer soporte pago
 
 **Obligatorio:**
+
 - ✅ Mantener licencia Apache 2.0
 - ✅ Dar crédito al original
 - ✅ Incluir LICENSE y NOTICE
@@ -275,6 +296,7 @@ Aunque no son legalmente obligatorias, considera:
 ### Preguntas Legales
 
 Para preguntas legales específicas:
+
 - Consulta un abogado especializado en software
 - Revisa la [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 - Consulta [Apache License FAQ](https://www.apache.org/foundation/license-faq.html)
@@ -282,6 +304,7 @@ Para preguntas legales específicas:
 ### Preguntas Técnicas
 
 Para preguntas sobre el fork:
+
 - Abre un issue en este repositorio
 - Consulta la documentación
 - Pregunta a la comunidad

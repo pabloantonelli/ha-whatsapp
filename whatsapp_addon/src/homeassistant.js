@@ -48,7 +48,7 @@ export class HomeAssistant {
           `![QR code](${dataUrl})`,
         notification_id: `whatsapp_addon_qrcode_${clientId}`,
       },
-      "create QR notification"
+      "create QR notification",
     );
   }
 
@@ -56,7 +56,7 @@ export class HomeAssistant {
     return this.#post(
       "/services/persistent_notification/dismiss",
       { notification_id: `whatsapp_addon_qrcode_${clientId}` },
-      "dismiss QR notification"
+      "dismiss QR notification",
     );
   }
 }

@@ -1,0 +1,19 @@
+---
+extends: default
+
+# GitHub issue form templates are generated markdown with unbreakable badge
+# URLs, so they are not worth linting for layout.
+ignore: |
+  .github/ISSUE_TEMPLATE/
+  node_modules/
+
+rules:
+  # 80 columns is tighter than this project's YAML needs; descriptions and
+  # URLs read better on one line.
+  line-length:
+    max: 120
+    level: error
+  truthy:
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1

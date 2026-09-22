@@ -55,7 +55,7 @@ panel in the sidebar, then call `whatsapp.send_message` from any automation.
    - type your number and press **Get code**, then enter the 8 digits in
      **WhatsApp → Linked devices → Link with phone number**.
 
-   The panel shows *Connected* once pairing succeeds.
+   The panel shows _Connected_ once pairing succeeds.
 
 6. **Send a test message.** In **Developer tools → Actions**, run:
 
@@ -74,11 +74,11 @@ Full service and event reference: [whatsapp_addon/DOCS.md](whatsapp_addon/DOCS.m
 
 ```yaml
 clients:
-  - default        # one entry per WhatsApp account
-api_token: ""      # generated automatically when empty
-log_level: info    # trace | debug | info | warn | error | fatal
+  - default # one entry per WhatsApp account
+api_token: "" # generated automatically when empty
+log_level: info # trace | debug | info | warn | error | fatal
 mark_online: false # appear online while connected
-refresh_hours: 0   # force a reconnect every N hours (0 = off)
+refresh_hours: 0 # force a reconnect every N hours (0 = off)
 ```
 
 Every extra name in `clients` is a separate account to pair, addressed by that
@@ -123,20 +123,20 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
   -d '{"to":"34600000000","body":{"text":"Hello"}}'
 ```
 
-| Method | Route | Purpose |
-|---|---|---|
-| `GET` | `/health` | Version and per-client connection state (no token needed) |
-| `GET` | `/api/v1/clients` | List clients and their state |
-| `GET` | `/api/v1/clients/:id` | One client's state |
-| `POST` | `/api/v1/clients/:id/messages` | Send a message; returns its `messageId` |
-| `GET` | `/api/v1/clients/:id/qr` | Current QR code (`?format=png` for an image) |
-| `POST` | `/api/v1/clients/:id/pairing-code` | Request an 8-digit pairing code |
-| `GET` | `/api/v1/clients/:id/check/:phone` | Check whether a number is on WhatsApp |
-| `POST` | `/api/v1/clients/:id/status` | Set the profile status text |
-| `POST` | `/api/v1/clients/:id/presence` | Send a presence update |
-| `POST` | `/api/v1/clients/:id/presence/subscribe` | Subscribe to a contact's presence |
-| `POST` | `/api/v1/clients/:id/restart` | Reconnect the client |
-| `POST` | `/api/v1/clients/:id/logout` | Drop the session and pair again |
+| Method | Route                                    | Purpose                                                   |
+| ------ | ---------------------------------------- | --------------------------------------------------------- |
+| `GET`  | `/health`                                | Version and per-client connection state (no token needed) |
+| `GET`  | `/api/v1/clients`                        | List clients and their state                              |
+| `GET`  | `/api/v1/clients/:id`                    | One client's state                                        |
+| `POST` | `/api/v1/clients/:id/messages`           | Send a message; returns its `messageId`                   |
+| `GET`  | `/api/v1/clients/:id/qr`                 | Current QR code (`?format=png` for an image)              |
+| `POST` | `/api/v1/clients/:id/pairing-code`       | Request an 8-digit pairing code                           |
+| `GET`  | `/api/v1/clients/:id/check/:phone`       | Check whether a number is on WhatsApp                     |
+| `POST` | `/api/v1/clients/:id/status`             | Set the profile status text                               |
+| `POST` | `/api/v1/clients/:id/presence`           | Send a presence update                                    |
+| `POST` | `/api/v1/clients/:id/presence/subscribe` | Subscribe to a contact's presence                         |
+| `POST` | `/api/v1/clients/:id/restart`            | Reconnect the client                                      |
+| `POST` | `/api/v1/clients/:id/logout`             | Drop the session and pair again                           |
 
 The v2 endpoints (`/sendMessage`, `/setStatus`, `/presenceSubscribe`,
 `/sendPresenceUpdate`, `/sendInfinityPresenceUpdate`) still work, with the same
@@ -144,16 +144,16 @@ request and response shape as before, so existing scripts keep running.
 
 ## Events
 
-| Event | Fired when |
-|---|---|
-| `new_whatsapp_message` | A message arrives |
+| Event                      | Fired when                            |
+| -------------------------- | ------------------------------------- |
+| `new_whatsapp_message`     | A message arrives                     |
 | `whatsapp_presence_update` | A subscribed contact changes presence |
-| `whatsapp_message_ack` | A sent message is delivered or read |
+| `whatsapp_message_ack`     | A sent message is delivered or read   |
 
 ## Troubleshooting
 
 **The QR code never appears.** Open the sidebar panel — it renders the QR
-directly. If it stays on *Waiting for a QR code*, check the add-on log for
+directly. If it stays on _Waiting for a QR code_, check the add-on log for
 connection errors and make sure the host can reach `web.whatsapp.com`.
 
 **`Client not found`.** The `clientId` in your service call must match a name

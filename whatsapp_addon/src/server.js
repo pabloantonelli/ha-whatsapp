@@ -31,31 +31,48 @@ const main = async () => {
 
     client.on("restart", () => logger.debug({ client: key }, "restarting"));
     client.on("qr", (qr) => {
-      logger.info({ client: key }, "pairing required, see the WhatsApp panel or your notifications");
+      logger.info(
+        { client: key },
+        "pairing required, see the WhatsApp panel or your notifications",
+      );
       ha.notifyQr(key, qr);
     });
     client.on("ready", () => {
       logger.info({ client: key }, "client is ready");
       ha.dismissQr(key);
     });
-    client.on("pair", (info) => logger.info({ client: key, ...info }, "paired"));
-    client.on("msg", (msg) => ha.fireEvent("new_whatsapp_message", { clientId: key, ...msg }));
+    client.on("pair", (info) =>
+      logger.info({ client: key, ...info }, "paired"),
+    );
+    client.on("msg", (msg) =>
+      ha.fireEvent("new_whatsapp_message", { clientId: key, ...msg }),
+    );
     client.on("presence_update", (presence) =>
-      ha.fireEvent("whatsapp_presence_update", { clientId: key, ...presence })
+      ha.fireEvent("whatsapp_presence_update", { clientId: key, ...presence }),
     );
-    client.on("ack", (ack) => ha.fireEvent("whatsapp_message_ack", { clientId: key, ...ack }));
+    client.on("ack", (ack) =>
+      ha.fireEvent("whatsapp_message_ack", { clientId: key, ...ack }),
+    );
     client.on("disconnected", (code) =>
-      logger.warn({ client: key, code }, "disconnected, reconnecting")
+      logger.warn({ client: key, code }, "disconnected, reconnecting"),
     );
-    client.on("gave_up", () => logger.error({ client: key }, "gave up reconnecting"));
+    client.on("gave_up", () =>
+      logger.error({ client: key }, "gave up reconnecting"),
+    );
 
     client.on("logout", async () => {
       logger.info({ client: key }, "logged out, wiping session and restarting");
       await client.stop();
       try {
-        await fs.rm(path.join(config.dataDir, key), { recursive: true, force: true });
+        await fs.rm(path.join(config.dataDir, key), {
+          recursive: true,
+          force: true,
+        });
       } catch (err) {
-        logger.error({ client: key, err: err.message }, "could not remove session data");
+        logger.error(
+          { client: key, err: err.message },
+          "could not remove session data",
+        );
       }
       await createClient(key);
     });
@@ -63,9 +80,14 @@ const main = async () => {
     clients[key] = client;
 
     // A failure here must not abort the other clients.
-    await client.start().catch((err) =>
-      logger.error({ client: key, err: err.message }, "could not start client")
-    );
+    await client
+      .start()
+      .catch((err) =>
+        logger.error(
+          { client: key, err: err.message },
+          "could not start client",
+        ),
+      );
 
     return client;
   };
@@ -83,15 +105,18 @@ const main = async () => {
   app.listen(config.port, () =>
     logger.info(
       { port: config.port, version: VERSION, clients: config.clients },
-      "WhatsApp add-on started"
-    )
+      "WhatsApp add-on started",
+    ),
   );
 
   process.on("unhandledRejection", (reason) =>
-    logger.error({ err: reason instanceof Error ? reason.message : reason }, "unhandled rejection")
+    logger.error(
+      { err: reason instanceof Error ? reason.message : reason },
+      "unhandled rejection",
+    ),
   );
   process.on("uncaughtException", (err) =>
-    logger.error({ err: err.message, stack: err.stack }, "uncaught exception")
+    logger.error({ err: err.message, stack: err.stack }, "uncaught exception"),
   );
 
   const shutdown = async () => {

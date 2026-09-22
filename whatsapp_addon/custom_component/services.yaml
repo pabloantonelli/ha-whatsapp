@@ -1,3 +1,4 @@
+---
 send_message:
   name: Send message
   description: Send a Whatsapp message
@@ -35,7 +36,10 @@ set_status:
 
 presence_subscribe:
   name: Presence subscribe
-  description: Subscribe to user presence update like online, offline, typing, etc... Please first use send infinity presence update service to always appear online.
+  description: >-
+    Subscribe to user presence update like online, offline, typing, etc...
+    Please first use send infinity presence update service to always appear
+    online.
   fields:
     clientId:
       name: Client ID

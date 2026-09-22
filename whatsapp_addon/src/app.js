@@ -11,7 +11,10 @@ import { authenticate, errorHandler } from "./routes/middleware.js";
 import { createApiRouter } from "./routes/api.js";
 import { createLegacyRouter } from "./routes/legacy.js";
 
-const publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "public");
+const publicDir = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "public",
+);
 
 /** Builds the Express app. Kept separate from the server so tests can mount it. */
 export const createApp = ({ clients, token, logger }) => {
@@ -28,7 +31,7 @@ export const createApp = ({ clients, token, logger }) => {
       version: VERSION,
       baileys: BAILEYS_VERSION,
       clients: Object.fromEntries(
-        Object.entries(clients).map(([id, client]) => [id, client.status])
+        Object.entries(clients).map(([id, client]) => [id, client.status]),
       ),
     });
   });

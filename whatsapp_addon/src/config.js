@@ -43,7 +43,9 @@ export const loadConfig = async () => {
 
   const clients = Array.isArray(options.clients) ? options.clients : [];
   if (clients.length === 0) {
-    throw new Error("No clients configured. Set at least one in the add-on options.");
+    throw new Error(
+      "No clients configured. Set at least one in the add-on options.",
+    );
   }
 
   return {

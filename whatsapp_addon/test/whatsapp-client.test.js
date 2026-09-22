@@ -13,7 +13,9 @@ describe("toJid", () => {
   });
 
   it("quita el prefijo + y los separadores", () => {
-    expect(client.toJid("+54 9 11 1111-1111")).toBe("5491111111111@s.whatsapp.net");
+    expect(client.toJid("+54 9 11 1111-1111")).toBe(
+      "5491111111111@s.whatsapp.net",
+    );
   });
 
   it("respeta los JID que ya vienen completos", () => {
@@ -66,14 +68,14 @@ describe("errores", () => {
 
 describe("guardas de conexión", () => {
   it("no intenta enviar si el socket está caído", async () => {
-    await expect(client.sendMessage("5491111111111", { text: "hola" })).rejects.toBeInstanceOf(
-      WhatsappDisconnectedError
-    );
+    await expect(
+      client.sendMessage("5491111111111", { text: "hola" }),
+    ).rejects.toBeInstanceOf(WhatsappDisconnectedError);
   });
 
   it("no pide código de emparejamiento sin socket", async () => {
-    await expect(client.requestPairingCode("5491111111111")).rejects.toBeInstanceOf(
-      WhatsappDisconnectedError
-    );
+    await expect(
+      client.requestPairingCode("5491111111111"),
+    ).rejects.toBeInstanceOf(WhatsappDisconnectedError);
   });
 });

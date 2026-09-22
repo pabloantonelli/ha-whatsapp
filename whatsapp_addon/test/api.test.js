@@ -6,7 +6,12 @@ import { createApp } from "../src/app.js";
 const TOKEN = "test-token";
 
 const makeClient = (overrides = {}) => ({
-  status: { connected: true, disconnected: false, reconnecting: false, phone: "5491100000000" },
+  status: {
+    connected: true,
+    disconnected: false,
+    reconnecting: false,
+    phone: "5491100000000",
+  },
   qr: null,
   sendMessage: vi.fn(async () => ({
     key: { id: "3EB0ABC", remoteJid: "5491111111111@s.whatsapp.net" },
@@ -39,15 +44,25 @@ describe("compatibilidad con la API v2", () => {
   it("POST /sendMessage responde exactamente {status:'OK'}", async () => {
     const res = await request(app)
       .post("/sendMessage")
-      .send({ clientId: "default", to: "5491111111111", body: { text: "hola" } });
+      .send({
+        clientId: "default",
+        to: "5491111111111",
+        body: { text: "hola" },
+      });
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ status: "OK" });
-    expect(client.sendMessage).toHaveBeenCalledWith("5491111111111", { text: "hola" }, undefined);
+    expect(client.sendMessage).toHaveBeenCalledWith(
+      "5491111111111",
+      { text: "hola" },
+      undefined,
+    );
   });
 
   it("devuelve 400 y {status:'KO'} cuando falta clientId", async () => {
-    const res = await request(app).post("/sendMessage").send({ to: "549111", body: {} });
+    const res = await request(app)
+      .post("/sendMessage")
+      .send({ to: "549111", body: {} });
 
     expect(res.status).toBe(400);
     expect(res.body).toEqual({ status: "KO", error: "Client ID required" });
@@ -63,22 +78,43 @@ describe("compatibilidad con la API v2", () => {
   });
 
   it("devuelve 500 con el mensaje de error del cliente", async () => {
-    client.sendMessage.mockRejectedValueOnce(new Error("Whatsapp disconnected error."));
+    client.sendMessage.mockRejectedValueOnce(
+      new Error("Whatsapp disconnected error."),
+    );
 
     const res = await request(app)
       .post("/sendMessage")
       .send({ clientId: "default", to: "549111", body: {} });
 
     expect(res.status).toBe(500);
-    expect(res.body).toEqual({ status: "KO", error: "Whatsapp disconnected error." });
+    expect(res.body).toEqual({
+      status: "KO",
+      error: "Whatsapp disconnected error.",
+    });
   });
 
   it("mantiene los otros cuatro endpoints heredados", async () => {
     const calls = [
-      ["/setStatus", { clientId: "default", status: "Disponible" }, () => client.updateProfileStatus],
-      ["/presenceSubscribe", { clientId: "default", userId: "549111" }, () => client.presenceSubscribe],
-      ["/sendPresenceUpdate", { clientId: "default", type: "composing", to: "549111" }, () => client.sendPresenceUpdate],
-      ["/sendInfinityPresenceUpdate", { clientId: "default", type: "available" }, () => client.setSendPresenceUpdateInterval],
+      [
+        "/setStatus",
+        { clientId: "default", status: "Disponible" },
+        () => client.updateProfileStatus,
+      ],
+      [
+        "/presenceSubscribe",
+        { clientId: "default", userId: "549111" },
+        () => client.presenceSubscribe,
+      ],
+      [
+        "/sendPresenceUpdate",
+        { clientId: "default", type: "composing", to: "549111" },
+        () => client.sendPresenceUpdate,
+      ],
+      [
+        "/sendInfinityPresenceUpdate",
+        { clientId: "default", type: "available" },
+        () => client.setSendPresenceUpdateInterval,
+      ],
     ];
 
     for (const [route, body, getSpy] of calls) {
@@ -106,12 +142,16 @@ describe("API v1", () => {
   });
 
   it("acepta peticiones de ingress sin token", async () => {
-    const res = await request(app).get("/api/v1/clients").set("X-Ingress-Path", "/api/hassio_ingress/x");
+    const res = await request(app)
+      .get("/api/v1/clients")
+      .set("X-Ingress-Path", "/api/hassio_ingress/x");
     expect(res.status).toBe(200);
   });
 
   it("devuelve el messageId al enviar", async () => {
-    const res = await auth(request(app).post("/api/v1/clients/default/messages")).send({
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/messages"),
+    ).send({
       to: "5491111111111",
       body: { text: "hola" },
     });
@@ -125,7 +165,9 @@ describe("API v1", () => {
   });
 
   it("valida el cuerpo y explica el fallo", async () => {
-    const res = await auth(request(app).post("/api/v1/clients/default/messages")).send({ to: "549111" });
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/messages"),
+    ).send({ to: "549111" });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid request body");
@@ -136,11 +178,16 @@ describe("API v1", () => {
     const res = await auth(request(app).get("/api/v1/clients"));
 
     expect(res.status).toBe(200);
-    expect(res.body.clients[0]).toMatchObject({ clientId: "default", connected: true });
+    expect(res.body.clients[0]).toMatchObject({
+      clientId: "default",
+      connected: true,
+    });
   });
 
   it("entrega un código de emparejamiento", async () => {
-    const res = await auth(request(app).post("/api/v1/clients/default/pairing-code")).send({
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/pairing-code"),
+    ).send({
       phone: "5491111111111",
     });
 

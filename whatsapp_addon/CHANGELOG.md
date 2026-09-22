@@ -96,6 +96,7 @@ This fixes the script crash that prevented the add-on from starting in v2.0.7.
 - ✅ **Verification** - Checks custom component before and after installation
 
 This version adds extensive logging to diagnose the connection issue. Logs will show:
+
 - Add-on IP address
 - Network configuration
 - Custom component HOST value before and after update
@@ -179,6 +180,7 @@ This fixes the issue where the add-on would fail to start with "No such file or 
 - 📝 **Updated Dependencies** - All dependencies updated to latest versions
 
 **Migration Notes:**
+
 - This version requires re-authentication (scan QR code again)
 - Session data from previous versions is not compatible
 - All API endpoints remain the same for backward compatibility

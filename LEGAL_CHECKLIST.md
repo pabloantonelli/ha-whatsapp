@@ -10,21 +10,21 @@ Tu fork ahora cumple **100%** con los requisitos de la **Licencia Apache 2.0**.
 
 ### ✅ Archivos Legales Principales
 
-| Archivo | Estado | Propósito |
-|---------|--------|-----------|
-| **LICENSE** | ✅ Mantenido | Licencia Apache 2.0 original sin cambios |
-| **NOTICE** | ✅ Creado | Atribución al autor original y cambios del fork |
-| **LEGAL.md** | ✅ Creado | Guía legal completa en español |
-| **CONTRIBUTING.md** | ✅ Creado | Guías para contribuidores |
+| Archivo             | Estado       | Propósito                                       |
+| ------------------- | ------------ | ----------------------------------------------- |
+| **LICENSE**         | ✅ Mantenido | Licencia Apache 2.0 original sin cambios        |
+| **NOTICE**          | ✅ Creado    | Atribución al autor original y cambios del fork |
+| **LEGAL.md**        | ✅ Creado    | Guía legal completa en español                  |
+| **CONTRIBUTING.md** | ✅ Creado    | Guías para contribuidores                       |
 
 ### ✅ Archivos con Atribución Actualizada
 
-| Archivo | Cambio | Cumplimiento |
-|---------|--------|--------------|
-| **README.md** | ✅ Actualizado | Indica claramente que es un fork, crédito a Giuseppe Castaldo |
-| **repository.yaml** | ✅ Actualizado | URL del fork + comentario al original |
-| **config.yaml** | ✅ Actualizado | URL del fork + comentario al original |
-| **package.json** | ✅ Actualizado | Autor original + maintainer del fork |
+| Archivo             | Cambio         | Cumplimiento                                                  |
+| ------------------- | -------------- | ------------------------------------------------------------- |
+| **README.md**       | ✅ Actualizado | Indica claramente que es un fork, crédito a Giuseppe Castaldo |
+| **repository.yaml** | ✅ Actualizado | URL del fork + comentario al original                         |
+| **config.yaml**     | ✅ Actualizado | URL del fork + comentario al original                         |
+| **package.json**    | ✅ Actualizado | Autor original + maintainer del fork                          |
 
 ---
 
@@ -33,20 +33,24 @@ Tu fork ahora cumple **100%** con los requisitos de la **Licencia Apache 2.0**.
 ### ✅ Todos los Requisitos Cumplidos
 
 #### 1. Incluir Copia de la Licencia
+
 - ✅ **Archivo LICENSE presente** - Sin modificaciones
 - ✅ **Fácilmente accesible** - En raíz del repositorio
 
 #### 2. Documentar Cambios (Sección 4b)
+
 - ✅ **CHANGELOG.md** - Todos los cambios documentados
 - ✅ **NOTICE** - Cambios principales listados
 - ✅ **Archivos modificados** - Claramente indicados
 
 #### 3. Mantener Avisos de Atribución (Sección 4c)
+
 - ✅ **Copyright original** - Giuseppe Castaldo mencionado
 - ✅ **Avisos en README** - Sección destacada sobre el fork
 - ✅ **Avisos en código** - package.json, config.yaml
 
 #### 4. Incluir NOTICE (Sección 4d)
+
 - ✅ **NOTICE creado** - Con toda la información requerida
 - ✅ **Atribución completa** - Autor original, fork, cambios
 - ✅ **Fácilmente visible** - En raíz del repositorio
@@ -58,6 +62,7 @@ Tu fork ahora cumple **100%** con los requisitos de la **Licencia Apache 2.0**.
 ### ✅ Checklist Legal Completo
 
 #### Requisitos Obligatorios
+
 - [x] Licencia Apache 2.0 mantenida sin cambios
 - [x] Archivo NOTICE creado y completo
 - [x] Autor original (Giuseppe Castaldo) acreditado
@@ -68,6 +73,7 @@ Tu fork ahora cumple **100%** con los requisitos de la **Licencia Apache 2.0**.
 - [x] No se dan garantías en nombre del original
 
 #### Buenas Prácticas (Recomendadas)
+
 - [x] Fork claramente identificado como tal
 - [x] Razón del fork explicada
 - [x] Compatibilidad con original mantenida
@@ -123,6 +129,7 @@ Tu fork ahora cumple **100%** con los requisitos de la **Licencia Apache 2.0**.
 ### Ejemplos Concretos
 
 ✅ **Puedes:**
+
 - Publicar este fork en GitHub
 - Distribuirlo como add-on de Home Assistant
 - Ofrecer soporte pago
@@ -148,6 +155,7 @@ Tu fork ahora cumple **100%** con los requisitos de la **Licencia Apache 2.0**.
 ### Ejemplos Concretos
 
 ❌ **NO puedes:**
+
 - Decir que es 100% tu trabajo
 - Cambiar a licencia MIT, GPL, o propietaria
 - Remover el nombre de Giuseppe Castaldo
@@ -223,15 +231,18 @@ git push origin v2.0.0
 ## 📚 Documentación de Referencia
 
 ### Para Ti (Usuario)
+
 - **LEGAL.md** - Guía legal completa en español
 - **README_ES.md** - Instrucciones en español
 - **MIGRATION.md** - Guía de migración
 
 ### Para Contribuidores
+
 - **CONTRIBUTING.md** - Cómo contribuir legalmente
 - **TECHNICAL_NOTES.md** - Detalles técnicos
 
 ### Para Usuarios Finales
+
 - **README.md** - Información del fork
 - **CHANGELOG.md** - Historial de cambios
 

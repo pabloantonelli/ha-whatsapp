@@ -1,21 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:base"],
   "rebaseWhen": "behind-base-branch",
   "dependencyDashboard": true,
-  "labels": [
-    "dependencies",
-    "no-stale"
-  ],
+  "labels": ["dependencies", "no-stale"],
   "commitMessagePrefix": "\u2b06\ufe0f",
   "regexManagers": [
     {
-      "fileMatch": [
-        "/Dockerfile$",
-        "/build.yaml$"
-      ],
+      "fileMatch": ["/Dockerfile$", "/build.yaml$"],
       "matchStringsStrategy": "any",
       "matchStrings": [
         "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
@@ -24,9 +16,7 @@
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": [
-        "/Dockerfile$"
-      ],
+      "fileMatch": ["/Dockerfile$"],
       "matchStrings": [
         "(?<packages>(?<depName>php[0-9]+(?:-[a-z0-9-]+)*)(\\s+php[0-9]+(?:-[a-z0-9-]+)*)*)",
         "php(?<currentValue>\\d+)"
@@ -38,82 +28,52 @@
   "packageRules": [
     {
       "groupName": "Baileys",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchPackageNames": [
-        "baileys"
-      ],
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["baileys"],
       "rangeStrategy": "pin",
       "ignoreUnstable": false,
       "automerge": false,
-      "addLabels": [
-        "baileys"
-      ]
+      "addLabels": ["baileys"]
     },
     {
       "groupName": "Add-on npm dependencies",
-      "matchManagers": [
-        "npm"
-      ],
-      "excludePackageNames": [
-        "baileys"
-      ],
+      "matchManagers": ["npm"],
+      "excludePackageNames": ["baileys"],
       "rangeStrategy": "pin"
     },
     {
-      "matchManagers": [
-        "github-actions"
-      ],
+      "matchManagers": ["github-actions"],
       "automerge": true,
       "ignoreTests": true
     },
     {
       "groupName": "Add-on base image",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchDepNames": [
-        "ghcr.io/hassio-addons/base"
-      ],
+      "matchDatasources": ["docker"],
+      "matchDepNames": ["ghcr.io/hassio-addons/base"],
       "automerge": true,
       "ignoreTests": true
     },
     {
       "groupName": "Add-on Debian base image",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchDepNames": [
-        "ghcr.io/hassio-addons/debian-base"
-      ],
+      "matchDatasources": ["docker"],
+      "matchDepNames": ["ghcr.io/hassio-addons/debian-base"],
       "automerge": true,
       "ignoreTests": true
     },
     {
       "groupName": "Add-on python base image",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchDepNames": [
-        "ghcr.io/hassio-addons/base-python"
-      ],
+      "matchDatasources": ["docker"],
+      "matchDepNames": ["ghcr.io/hassio-addons/base-python"],
       "automerge": true,
       "ignoreTests": true
     },
     {
-      "matchManagers": [
-        "pip_requirements"
-      ],
-      "addLabels": [
-        "python"
-      ],
+      "matchManagers": ["pip_requirements"],
+      "addLabels": ["python"],
       "rangeStrategy": "pin"
     },
     {
-      "matchManagers": [
-        "pip_requirements"
-      ],
+      "matchManagers": ["pip_requirements"],
       "automerge": true
     }
   ]

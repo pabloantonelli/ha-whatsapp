@@ -14,7 +14,13 @@ const messageSchema = z.object({
 });
 
 const presenceSchema = z.object({
-  type: z.enum(["unavailable", "available", "composing", "recording", "paused"]),
+  type: z.enum([
+    "unavailable",
+    "available",
+    "composing",
+    "recording",
+    "paused",
+  ]),
   to: z.union([z.string().min(1), z.number()]).optional(),
   infinity: z.boolean().optional(),
 });
@@ -43,7 +49,9 @@ export const createApiRouter = (clients) => {
 
   router.get("/clients", (req, res) => {
     res.json({
-      clients: Object.entries(clients).map(([id, client]) => describe(id, client)),
+      clients: Object.entries(clients).map(([id, client]) =>
+        describe(id, client),
+      ),
     });
   });
 
@@ -68,8 +76,11 @@ export const createApiRouter = (clients) => {
         res.type("png");
         return QRCode.toFileStream(res, qr, { margin: 1, width: 512 });
       }
-      return res.json({ qr, dataUrl: await QRCode.toDataURL(qr, { margin: 1, width: 512 }) });
-    })
+      return res.json({
+        qr,
+        dataUrl: await QRCode.toDataURL(qr, { margin: 1, width: 512 }),
+      });
+    }),
   );
 
   router.post(
@@ -79,7 +90,7 @@ export const createApiRouter = (clients) => {
     asyncRoute(async (req, res) => {
       const code = await req.client.requestPairingCode(req.validated.phone);
       res.json({ code });
-    })
+    }),
   );
 
   router.post(
@@ -94,7 +105,7 @@ export const createApiRouter = (clients) => {
         to: result?.key?.remoteJid ?? null,
         timestamp: result?.messageTimestamp ?? null,
       });
-    })
+    }),
   );
 
   router.get(
@@ -102,7 +113,7 @@ export const createApiRouter = (clients) => {
     withClient,
     asyncRoute(async (req, res) => {
       res.json(await req.client.checkNumber(req.params.phone));
-    })
+    }),
   );
 
   router.post(
@@ -112,7 +123,7 @@ export const createApiRouter = (clients) => {
     asyncRoute(async (req, res) => {
       await req.client.updateProfileStatus(req.validated.status);
       res.json({ ok: true });
-    })
+    }),
   );
 
   router.post(
@@ -124,7 +135,7 @@ export const createApiRouter = (clients) => {
       if (infinity) req.client.setSendPresenceUpdateInterval(type, to);
       else await req.client.sendPresenceUpdate(type, to);
       res.json({ ok: true });
-    })
+    }),
   );
 
   router.post(
@@ -134,7 +145,7 @@ export const createApiRouter = (clients) => {
     asyncRoute(async (req, res) => {
       await req.client.presenceSubscribe(req.validated.userId);
       res.json({ ok: true });
-    })
+    }),
   );
 
   router.post(
@@ -143,7 +154,7 @@ export const createApiRouter = (clients) => {
     asyncRoute(async (req, res) => {
       await req.client.restart();
       res.json({ ok: true });
-    })
+    }),
   );
 
   router.post(
@@ -152,7 +163,7 @@ export const createApiRouter = (clients) => {
     asyncRoute(async (req, res) => {
       req.client.emit("logout");
       res.json({ ok: true });
-    })
+    }),
   );
 
   return router;
