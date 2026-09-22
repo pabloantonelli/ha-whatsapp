@@ -1,0 +1,7 @@
+# Style rules that do not suit this project's prose and are disabled:
+#   MD013 line length      - documentation wraps at 80 but tables and URLs cannot
+#   MD029 ordered lists    - sequential numbering (1. 2. 3.) is intentional
+#   MD036 emphasis         - used for callouts, not as headers
+#   MD026 header puncts    - questions in headers end with "?"
+#   MD024 duplicate header - repeated section names across checklists
+rules "~MD013,~MD029,~MD036,~MD026,~MD024"

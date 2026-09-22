@@ -1,3 +1,5 @@
+# Changelog
+
 ## 3.0.0
 
 Released as a new add-on (`ha_whatsapp`) with its own identity, based on the
@@ -24,7 +26,7 @@ five services keep the same names and fields.
 - **Sends return the message id**, so delivery can be tracked.
 - New `whatsapp_message_ack` event for delivery and read receipts.
 - Endpoints to check a number, restart a client, log out, and fetch the QR.
-- Supervisor watchdog on `/health`, so a dead add-on is restarted.
+- Docker `HEALTHCHECK` on `/health`, so a dead add-on is restarted.
 - New options: `api_token`, `log_level`, `mark_online`, `refresh_hours`.
 
 ### 🐛 Fixed

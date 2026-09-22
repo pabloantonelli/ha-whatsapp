@@ -1,0 +1,10 @@
+---
+ignored:
+  # The base image is injected by the Home Assistant build system through the
+  # BUILD_FROM argument, so it cannot carry an explicit tag here. The actual
+  # pinned images live in whatsapp_addon/build.yaml.
+  - DL3006
+  # Alpine does not keep older package revisions available, so pinning an exact
+  # apk version makes the build fail as soon as the repository moves on. The
+  # Dockerfile asserts the Node major version instead.
+  - DL3018

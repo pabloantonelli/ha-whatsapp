@@ -28,9 +28,11 @@ This fork was created to:
 
 1. **Fork this repository** (not the original)
 2. **Create a feature branch:**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
+
 3. **Make your changes:**
    - Follow existing code style
    - Add comments for complex logic
@@ -39,14 +41,19 @@ This fork was created to:
    - Test on a local Home Assistant instance
    - Verify all existing functionality still works
 5. **Commit your changes:**
+
    ```bash
    git commit -m "feat: add your feature description"
    ```
+
    Use conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, etc.
+
 6. **Push to your fork:**
+
    ```bash
    git push origin feature/your-feature-name
    ```
+
 7. **Open a Pull Request** with a clear description
 
 ## 📝 Code Guidelines
