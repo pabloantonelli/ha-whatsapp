@@ -3,6 +3,24 @@
 Service and event reference. For installation and upgrading, see the
 [project README](https://github.com/pabloantonelli/ha-whatsapp#readme).
 
+## New in v3
+
+Coming from v2.x? These capabilities did not exist before:
+
+| Capability                                                | Where                                  |
+| --------------------------------------------------------- | -------------------------------------- |
+| Pair with an 8-digit code instead of a QR                 | Sidebar panel                          |
+| See each client's live connection state                   | Sidebar panel, `GET /health`           |
+| Restart or log out a client without restarting the add-on | Sidebar panel                          |
+| Know when a message is delivered or read                  | `whatsapp_message_ack` event           |
+| Get the id of the message you sent                        | `POST /api/v1/clients/:id/messages`    |
+| Check whether a number is on WhatsApp                     | `GET /api/v1/clients/:id/check/:phone` |
+| Call the API from outside Home Assistant, authenticated   | `/api/v1` + bearer token               |
+| See failed service calls as errors in the UI              | Any `whatsapp.*` service               |
+
+The five `whatsapp.*` services below are unchanged from v2.x, so existing
+automations keep working as they are.
+
 ## How to use
 
 ### **How to pair an account**

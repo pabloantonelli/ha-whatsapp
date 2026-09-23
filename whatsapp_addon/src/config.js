@@ -1,7 +1,3 @@
-/**
- * Copyright © 2026 Pablo Antonelli
- * Licensed under the Apache License, Version 2.0. See the LICENSE file.
- */
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";

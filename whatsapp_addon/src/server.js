@@ -1,11 +1,3 @@
-/**
- * Copyright © 2026 Pablo Antonelli
- *
- * Derived from the WhatsApp Home Assistant add-on by Giuseppe Castaldo
- * (https://github.com/giuseppecastaldo/ha-addons), licensed under Apache-2.0.
- *
- * Licensed under the Apache License, Version 2.0. See the LICENSE file.
- */
 import fs from "node:fs/promises";
 import path from "node:path";
 import pino from "pino";

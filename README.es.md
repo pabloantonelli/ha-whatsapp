@@ -6,13 +6,6 @@ Envía y recibe mensajes de WhatsApp desde Home Assistant. Vinculá tu teléfono
 desde un panel en la barra lateral y usá `whatsapp.send_message` en cualquier
 automatización.
 
-> **Basado en el trabajo de [Giuseppe Castaldo](https://github.com/giuseppecastaldo/ha-addons).**
-> Este proyecto nació como un fork de su add-on de WhatsApp y no existiría sin
-> él. Hoy se mantiene de forma independiente, bajo la misma licencia
-> Apache-2.0. La atribución completa está en [NOTICE](NOTICE).
-
----
-
 ## Qué hace
 
 - Envía texto, imágenes, audio, video, documentos, ubicaciones y reacciones a
@@ -23,6 +16,86 @@ automatización.
   separado.
 - Se vincula desde un panel en la barra lateral, con código QR o con un código
   de 8 dígitos.
+
+## Novedades de la v3
+
+Si venís de la v2.x, esto es lo que antes no podías hacer.
+
+### Vinculación y visibilidad
+
+- **Vincular con un código de 8 dígitos.** Escribí tu número en el panel de la
+  barra lateral e ingresá el código en **WhatsApp → Dispositivos vinculados →
+  Vincular con número de teléfono**, sin depender de escanear un QR.
+- **Ver qué está pasando.** El panel lista cada cliente con su estado en vivo,
+  el número vinculado y desde cuándo está conectado. Antes la única señal era
+  una imagen de QR dentro de una notificación.
+- **Reiniciar o cerrar la sesión** de un cliente desde el panel, sin reiniciar
+  el add-on.
+
+### Automatizaciones que ahora podés armar
+
+- **Reaccionar a acuses de entrega y lectura.** El evento nuevo
+  `whatsapp_message_ack` trae el id del mensaje y su estado:
+
+  ```yaml
+  automation:
+    - alias: Avisarme si la alerta nunca se entregó
+      triggers:
+        - trigger: event
+          event_type: whatsapp_message_ack
+      conditions:
+        - condition: template
+          value_template: "{{ trigger.event.data.status == 'ERROR' }}"
+      actions:
+        - action: persistent_notification.create
+          data:
+            message: "Falló el mensaje {{ trigger.event.data.messageId }}"
+  ```
+
+- **Avisar cuando WhatsApp se desconecta.** `/health` ahora informa el estado
+  real de la conexión, así que podés vigilarlo con un sensor REST y enterarte
+  de que se cayó la sesión, en vez de descubrirlo porque un mensaje nunca
+  llegó:
+
+  ```yaml
+  binary_sensor:
+    - platform: rest
+      name: WhatsApp conectado
+      resource: http://<hostname-del-addon>:3000/health
+      value_template: "{{ value_json.clients.default.connected }}"
+      device_class: connectivity
+  ```
+
+- **Comprobar un número antes de escribirle**, para que la automatización use
+  otro canal si el contacto no está en WhatsApp:
+
+  ```bash
+  curl -H "Authorization: Bearer <token>" \
+    http://<addon>:3000/api/v1/clients/default/check/34600000000
+  # {"jid":"34600000000@s.whatsapp.net","exists":true}
+  ```
+
+- **Seguir un mensaje puntual.** Enviar por `/api/v1` devuelve el id del
+  mensaje, que combinado con el evento de acuse te deja rastrearlo de punta a
+  punta.
+
+### Fiabilidad y seguridad
+
+- **Los fallos se ven.** Un servicio que falla ahora lanza un error en la
+  interfaz de Home Assistant. En la v2.x la respuesta se descartaba, así que un
+  mensaje que nunca se envió se veía igual que uno entregado.
+- **No se pierden mensajes entrantes.** Antes sólo el primer mensaje de cada
+  lote disparaba un evento; ahora lo hacen todos.
+- **La API exige token.** Antes cualquiera en tu red podía enviar mensajes
+  desde tu cuenta haciendo un POST al puerto 3000.
+- **Las reconexiones usan backoff** en vez de reintentar cada segundo para
+  siempre, y el add-on se reinicia solo si queda en mal estado.
+
+### Opciones nuevas
+
+`log_level` para subir el detalle mientras diagnosticás, `mark_online` para
+decidir si la cuenta aparece en línea, `refresh_hours` para una reconexión
+periódica y `api_token` para fijar vos mismo el token de la API.
 
 ## Requisitos
 

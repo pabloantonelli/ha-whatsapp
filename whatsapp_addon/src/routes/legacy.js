@@ -1,12 +1,7 @@
 /**
- * Copyright © 2026 Pablo Antonelli
- *
- * Compatibility layer for the v1/v2 endpoints of the original add-on by
- * Giuseppe Castaldo. These routes keep the exact request shape, status codes
- * and response bodies of v2.1.0 so existing Home Assistant automations and any
- * direct HTTP callers keep working unchanged.
- *
- * Licensed under the Apache License, Version 2.0. See the LICENSE file.
+ * Compatibility layer for the pre-3.0 endpoints. These routes keep the exact
+ * request shape, status codes and response bodies of v2.1.0, so existing Home
+ * Assistant automations and any direct HTTP callers keep working unchanged.
  */
 import { Router } from "express";
 

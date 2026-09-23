@@ -5,13 +5,6 @@
 Send and receive WhatsApp messages from Home Assistant. Pair your phone from a
 panel in the sidebar, then call `whatsapp.send_message` from any automation.
 
-> **Based on the work of [Giuseppe Castaldo](https://github.com/giuseppecastaldo/ha-addons).**
-> This project started as a fork of his WhatsApp add-on and would not exist
-> without it. It is now maintained independently, under the same Apache-2.0
-> license. See [NOTICE](NOTICE) for the full attribution.
-
----
-
 ## What it does
 
 - Sends text, images, audio, video, documents, locations and reactions to
@@ -20,6 +13,83 @@ panel in the sidebar, then call `whatsapp.send_message` from any automation.
   delivery receipt, so automations can react to them.
 - Runs several WhatsApp accounts side by side, each paired separately.
 - Pairs from a panel in the sidebar, with a QR code or an 8-digit code.
+
+## What's new in v3
+
+If you are coming from v2.x, these are the things you could not do before.
+
+### Pairing and visibility
+
+- **Pair with an 8-digit code.** Type your number in the sidebar panel and enter
+  the code in **WhatsApp → Linked devices → Link with phone number** — useful
+  when scanning a QR from a screen is awkward.
+- **See what is going on.** The panel lists every client with its live state,
+  the paired number and the time it connected. Previously the only signal was
+  a QR image inside a notification.
+- **Restart or log a client out** from the panel, without restarting the add-on.
+
+### Automations you can now build
+
+- **React to delivery and read receipts.** The new `whatsapp_message_ack` event
+  fires with the message id and its status:
+
+  ```yaml
+  automation:
+    - alias: Warn me if the alert was never delivered
+      triggers:
+        - trigger: event
+          event_type: whatsapp_message_ack
+      conditions:
+        - condition: template
+          value_template: "{{ trigger.event.data.status == 'ERROR' }}"
+      actions:
+        - action: persistent_notification.create
+          data:
+            message: "WhatsApp message {{ trigger.event.data.messageId }} failed"
+  ```
+
+- **Alert when WhatsApp disconnects.** `/health` now reports the real connection
+  state, so you can watch it with a REST sensor and get told when the session
+  drops instead of finding out because a message never arrived:
+
+  ```yaml
+  binary_sensor:
+    - platform: rest
+      name: WhatsApp connected
+      resource: http://<addon-hostname>:3000/health
+      value_template: "{{ value_json.clients.default.connected }}"
+      device_class: connectivity
+  ```
+
+- **Check a number before messaging it**, so an automation can fall back to
+  another channel when the contact is not on WhatsApp:
+
+  ```bash
+  curl -H "Authorization: Bearer <token>" \
+    http://<addon>:3000/api/v1/clients/default/check/34600000000
+  # {"jid":"34600000000@s.whatsapp.net","exists":true}
+  ```
+
+- **Track a specific message.** Sending through `/api/v1` returns the message
+  id, which pairs with the ack event to follow one message end to end.
+
+### Reliability and safety
+
+- **Failures are visible.** A failed service call now raises an error in the
+  Home Assistant UI. In v2.x the response was discarded, so a message that was
+  never sent looked identical to one that was.
+- **No more silently dropped messages.** Only the first message of an incoming
+  batch used to raise an event; now every one does.
+- **The API requires a token.** Anyone on your network could previously send
+  messages from your account by POSTing to port 3000.
+- **Reconnections back off** instead of retrying every second forever, and the
+  add-on restarts itself if it becomes unhealthy.
+
+### New options
+
+`log_level` to raise detail while debugging, `mark_online` to control whether
+the account shows as online, `refresh_hours` for a periodic reconnect, and
+`api_token` to set the API token yourself.
 
 ## Requirements
 

@@ -17,9 +17,6 @@
     "url": "git+https://github.com/pabloantonelli/ha-whatsapp.git"
   },
   "author": "Pablo Antonelli",
-  "contributors": [
-    "Giuseppe Castaldo (original add-on this project is based on)"
-  ],
   "license": "Apache-2.0",
   "dependencies": {
     "baileys": "7.0.0-rc14",

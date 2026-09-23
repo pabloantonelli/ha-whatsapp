@@ -4,7 +4,6 @@ version: "3.0.0"
 slug: ha_whatsapp
 description: Send and receive WhatsApp messages from Home Assistant, powered by Baileys
 url: "https://github.com/pabloantonelli/ha-whatsapp"
-# Based on https://github.com/giuseppecastaldo/ha-addons by Giuseppe Castaldo
 homeassistant_api: true
 hassio_api: true
 arch:

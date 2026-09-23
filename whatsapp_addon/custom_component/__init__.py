@@ -1,10 +1,4 @@
-"""WhatsApp integration for Home Assistant, backed by the WhatsApp add-on.
-
-Copyright © 2026 Pablo Antonelli
-
-Derived from the WhatsApp Home Assistant add-on by Giuseppe Castaldo
-(https://github.com/giuseppecastaldo/ha-addons), licensed under Apache-2.0.
-"""
+"""WhatsApp integration for Home Assistant, backed by the WhatsApp add-on."""
 from __future__ import annotations
 
 import logging

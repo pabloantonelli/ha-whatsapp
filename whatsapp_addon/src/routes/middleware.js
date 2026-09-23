@@ -1,9 +1,4 @@
 /**
- * Copyright © 2026 Pablo Antonelli
- * Licensed under the Apache License, Version 2.0. See the LICENSE file.
- */
-
-/**
  * Bearer-token auth. Ingress requests are already authenticated by the
  * Supervisor, which injects X-Ingress-Path, so they are allowed through.
  */
