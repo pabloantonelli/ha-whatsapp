@@ -7,19 +7,22 @@ Service and event reference. For installation and upgrading, see the
 
 Coming from v2.x? These capabilities did not exist before:
 
-| Capability                                                | Where                                  |
-| --------------------------------------------------------- | -------------------------------------- |
-| Pair with an 8-digit code instead of a QR                 | Sidebar panel                          |
-| See each client's live connection state                   | Sidebar panel, `GET /health`           |
-| Restart or log out a client without restarting the add-on | Sidebar panel                          |
-| Know when a message is delivered or read                  | `whatsapp_message_ack` event           |
-| Get the id of the message you sent                        | `POST /api/v1/clients/:id/messages`    |
-| Check whether a number is on WhatsApp                     | `GET /api/v1/clients/:id/check/:phone` |
-| Call the API from outside Home Assistant, authenticated   | `/api/v1` + bearer token               |
-| See failed service calls as errors in the UI              | Any `whatsapp.*` service               |
+| Capability                                                | Where                                              |
+| --------------------------------------------------------- | -------------------------------------------------- |
+| Pair with an 8-digit code instead of a QR                 | Sidebar panel                                      |
+| See each client's live connection state                   | Sidebar panel, `GET /health`                       |
+| Restart or log out a client without restarting the add-on | Sidebar panel                                      |
+| Know when a message is delivered or read                  | `whatsapp_message_ack` event                       |
+| Get the id of the message you sent                        | `POST /api/v1/clients/:id/messages`                |
+| Check whether a number is on WhatsApp                     | `GET /api/v1/clients/:id/check/:phone`             |
+| Call the API from outside Home Assistant, authenticated   | `/api/v1` + bearer token                           |
+| See failed service calls as errors in the UI              | Any `whatsapp.*` service                           |
+| Send a camera snapshot without saving a file              | `whatsapp.send_media`                              |
+| Record a clip, including the seconds before the trigger   | `whatsapp.send_media` with `duration` + `lookback` |
+| Look up the JID of a group you are in                     | Sidebar panel, `GET /api/v1/clients/:id/chats`     |
 
-The five `whatsapp.*` services below are unchanged from v2.x, so existing
-automations keep working as they are.
+The five services inherited from v2.x are unchanged, so existing automations
+keep working as they are; `send_media` is the only new one.
 
 ## How to use
 
@@ -69,6 +72,36 @@ data:
       url: "https://dummyimage.com/600x400/000/fff.png"
     caption: Simple text
 ```
+
+### **How to send a camera snapshot or clip**
+
+Captures directly from a `camera.*` or `image.*` entity — no file to save, no
+URL to expose.
+
+```yaml
+action: whatsapp.send_media
+data:
+  clientId: default
+  to: 391234567890@s.whatsapp.net
+  entity_id: camera.front_door
+  caption: Someone is at the door
+```
+
+Add `duration` to record a clip instead, and `lookback` to include the seconds
+recorded before the call:
+
+```yaml
+action: whatsapp.send_media
+data:
+  clientId: default
+  to: 391234567890@s.whatsapp.net
+  entity_id: camera.front_door
+  duration: 10
+  lookback: 5
+```
+
+Clips need a camera with the `stream` component; still-image cameras can send
+snapshots only.
 
 ### **How to send audio message**
 

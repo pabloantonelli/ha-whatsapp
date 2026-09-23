@@ -2,6 +2,11 @@ import { Router } from "express";
 import QRCode from "qrcode";
 import { z } from "zod";
 import { asyncRoute, resolveClient, validate } from "./middleware.js";
+import {
+  captureRecording,
+  captureSnapshot,
+  toMessageContent,
+} from "../media.js";
 
 const messageSchema = z.object({
   to: z.union([z.string().min(1), z.number()]),
@@ -31,6 +36,15 @@ const statusSchema = z.object({
 
 const pairingSchema = z.object({
   phone: z.union([z.string().min(1), z.number()]),
+});
+
+const mediaSchema = z.object({
+  to: z.union([z.string().min(1), z.number()]),
+  entityId: z.string().min(1),
+  caption: z.string().optional(),
+  // With a duration a clip is recorded; without one a still frame is sent.
+  duration: z.number().int().min(1).max(120).optional(),
+  lookback: z.number().int().min(0).max(60).optional(),
 });
 
 const describe = (id, client) => ({
@@ -100,6 +114,42 @@ export const createApiRouter = (clients) => {
         messageId: result?.key?.id ?? null,
         to: result?.key?.remoteJid ?? null,
         timestamp: result?.messageTimestamp ?? null,
+      });
+    }),
+  );
+
+  router.post(
+    "/clients/:clientId/media",
+    withClient,
+    validate(mediaSchema),
+    asyncRoute(async (req, res) => {
+      const { to, entityId, caption, duration, lookback } = req.validated;
+
+      const captured = duration
+        ? await captureRecording(entityId, { duration, lookback })
+        : await captureSnapshot(entityId);
+
+      const result = await req.client.sendMessage(
+        to,
+        toMessageContent(captured, caption),
+      );
+
+      res.json({
+        messageId: result?.key?.id ?? null,
+        to: result?.key?.remoteJid ?? null,
+        mimetype: captured.mimetype,
+        bytes: captured.buffer.length,
+      });
+    }),
+  );
+
+  router.get(
+    "/clients/:clientId/chats",
+    withClient,
+    asyncRoute(async (req, res) => {
+      res.json({
+        groups: await req.client.fetchGroups(),
+        contacts: req.client.contacts,
       });
     }),
   );

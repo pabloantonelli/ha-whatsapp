@@ -1,5 +1,35 @@
 # Changelog
 
+## 3.1.0
+
+### ✨ New
+
+- **`whatsapp.send_media`** sends a snapshot straight from any `camera.*` or
+  `image.*` entity — no more saving files or exposing URLs first:
+
+  ```yaml
+  action: whatsapp.send_media
+  data:
+    clientId: default
+    to: "34600000000"
+    entity_id: camera.front_door
+    caption: Someone is at the door
+  ```
+
+- **Video clips.** Add `duration` to record instead of snapping, and `lookback`
+  to include footage from _before_ the automation fired, which is usually the
+  part worth seeing. Requires a camera that supports streaming.
+- **Group and contact browser** in the sidebar panel, with search and a copy
+  button. Group JIDs cannot be derived from a phone number, so this is the only
+  practical way to address a group.
+- New `GET /api/v1/clients/:id/chats` and `POST /api/v1/clients/:id/media`.
+
+### 🧹 Internals
+
+- The add-on now maps `/media`, which `camera.record` needs to write clips.
+- Contacts are accumulated from WhatsApp's sync events, since Baileys 7 no
+  longer ships a store. The list fills in gradually after pairing.
+
 ## 3.0.0
 
 Released as a new add-on (`ha_whatsapp`) with its own identity, based on the

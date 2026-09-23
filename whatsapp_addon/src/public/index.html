@@ -230,7 +230,18 @@
           card.innerHTML = `<div class="row">
       <button data-act="restart">Restart</button>
       <button data-act="logout">Log out</button>
+    </div>
+    <div class="chats">
+      <h3>Groups and contacts</h3>
+      <p class="msg">Copy an ID to use it in the <code>to</code> field of a service call.</p>
+      <div class="row">
+        <input type="search" placeholder="Search by name…" data-field="search">
+        <button data-act="chats">Load</button>
+      </div>
+      <div class="list" data-field="list"></div>
     </div>`;
+          const cached = state[c.clientId]?.chats;
+          if (cached) renderChats(card, cached, "");
         } else {
           let qrHtml = '<p class="msg">Waiting for a QR code…</p>';
           try {
@@ -251,6 +262,63 @@
         }
       }
 
+      function renderChats(card, chats, term) {
+        const list = card.querySelector('[data-field="list"]');
+        if (!list) return;
+
+        const needle = term.trim().toLowerCase();
+        const match = (name) => !needle || name.toLowerCase().includes(needle);
+
+        const groups = chats.groups.filter((g) => match(g.name));
+        const contacts = chats.contacts.filter((c) => match(c.name));
+
+        const row = (item, meta) => `
+      <div class="chat">
+        <div>
+          <div class="chat-name">${escapeHtml(item.name)}</div>
+          <div class="jid">${item.id}</div>
+        </div>
+        <div class="chat-meta">${meta}</div>
+        <button class="copy" data-act="copy" data-jid="${item.id}">Copy</button>
+      </div>`;
+
+        const sections = [];
+        sections.push(
+          `<div class="chat-meta">Groups (${groups.length})</div>`,
+          groups.length
+            ? groups.map((g) => row(g, `${g.participants}`)).join("")
+            : '<p class="empty">No groups found.</p>',
+          `<div class="chat-meta" style="margin-top:10px">Contacts (${contacts.length})</div>`,
+          contacts.length
+            ? contacts.map((c) => row(c, "")).join("")
+            : '<p class="empty">No contacts synced yet. WhatsApp sends them gradually after pairing.</p>',
+        );
+
+        list.innerHTML = sections.join("");
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(
+          /[&<>"']/g,
+          (ch) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[ch],
+        );
+      }
+
+      document.addEventListener("input", (e) => {
+        const field = e.target.closest('[data-field="search"]');
+        if (!field) return;
+        const card = field.closest(".card");
+        const chats = state[card.dataset.id]?.chats;
+        if (chats) renderChats(card, chats, field.value);
+      });
+
       document.addEventListener("click", async (e) => {
         const btn = e.target.closest("button[data-act]");
         if (!btn) return;
@@ -260,7 +328,31 @@
 
         btn.disabled = true;
         try {
-          if (act === "pair") {
+          if (act === "chats") {
+            const chats = await api(`/clients/${id}/chats`);
+            state[id] = { ...state[id], chats };
+            renderChats(
+              card,
+              chats,
+              card.querySelector('[data-field="search"]').value,
+            );
+          } else if (act === "copy") {
+            const jid = btn.dataset.jid;
+            try {
+              await navigator.clipboard.writeText(jid);
+              btn.textContent = "Copied";
+            } catch {
+              // Clipboard access can be blocked; select the text instead.
+              const range = document.createRange();
+              range.selectNodeContents(
+                btn.closest(".chat").querySelector(".jid"),
+              );
+              window.getSelection().removeAllRanges();
+              window.getSelection().addRange(range);
+              btn.textContent = "Select";
+            }
+            setTimeout(() => (btn.textContent = "Copy"), 1500);
+          } else if (act === "pair") {
             const phone = card
               .querySelector('[data-field="phone"]')
               .value.trim();

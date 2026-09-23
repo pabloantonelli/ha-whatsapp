@@ -19,6 +19,69 @@ send_message:
       required: true
       advanced: true
 
+send_media:
+  name: Send media
+  description: >-
+    Send a snapshot or a recorded clip from a camera or image entity.
+  fields:
+    clientId:
+      name: Client ID
+      description: Which instance of whatsapp should the media come from
+      required: true
+      example: default
+      selector:
+        text:
+    to:
+      name: Target User ID
+      description: >-
+        Phone number, or the JID of a group. Use the WhatsApp panel in the
+        sidebar to look up the ID of a group.
+      required: true
+      example: 391234567890@s.whatsapp.net
+      selector:
+        text:
+    entity_id:
+      name: Camera or image entity
+      description: The entity to capture from
+      required: true
+      example: camera.front_door
+      selector:
+        entity:
+          domain:
+            - camera
+            - image
+    caption:
+      name: Caption
+      description: Text sent along with the media
+      required: false
+      example: Someone is at the door
+      selector:
+        text:
+    duration:
+      name: Video duration (seconds)
+      description: >-
+        Record a clip of this many seconds instead of sending a still image.
+        Requires a camera that supports streaming.
+      required: false
+      example: 10
+      selector:
+        number:
+          min: 1
+          max: 120
+          unit_of_measurement: seconds
+    lookback:
+      name: Lookback (seconds)
+      description: >-
+        Include this many seconds recorded before the call, taken from the
+        stream buffer. Useful when the interesting part already happened.
+      required: false
+      example: 5
+      selector:
+        number:
+          min: 0
+          max: 60
+          unit_of_measurement: seconds
+
 set_status:
   name: Set status
   description: Sets the current user's status message

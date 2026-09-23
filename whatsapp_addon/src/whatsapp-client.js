@@ -50,7 +50,7 @@ export class WhatsappNumberNotFoundError extends Error {
 
 export class WhatsappDisconnectedError extends Error {
   constructor() {
-    super("Send message failed. Whatsapp disconnected error.");
+    super("WhatsApp is not connected. Pair the client from the sidebar panel.");
     this.name = "WhatsappDisconnectedError";
     this.code = 401;
   }
@@ -91,6 +91,7 @@ export class WhatsappClient extends EventEmitter2 {
   #version;
   #queue = new PQueue({ concurrency: 1 });
   #existsCache = new Map();
+  #contacts = new Map();
   #existsTtlMs = 10 * 60 * 1000;
   #stopped = false;
   #lastQr = null;
@@ -200,6 +201,11 @@ export class WhatsappClient extends EventEmitter2 {
     this.#conn.ev.on("connection.update", this.#onConnectionUpdate);
     this.#conn.ev.on("messages.upsert", this.#onMessagesUpsert);
     this.#conn.ev.on("messages.update", this.#onMessagesUpdate);
+    this.#conn.ev.on("contacts.upsert", this.#onContacts);
+    this.#conn.ev.on("contacts.update", this.#onContacts);
+    this.#conn.ev.on("messaging-history.set", ({ contacts }) =>
+      this.#onContacts(contacts ?? []),
+    );
     this.#conn.ev.on("presence.update", (presence) =>
       this.emit("presence_update", presence),
     );
@@ -354,6 +360,49 @@ export class WhatsappClient extends EventEmitter2 {
       expiresAt: Date.now() + this.#existsTtlMs,
     });
     return exists;
+  }
+
+  /**
+   * Baileys 7 dropped its in-memory store, so contacts are accumulated from
+   * the events WhatsApp sends after pairing and kept here.
+   */
+  #onContacts = (contacts) => {
+    for (const contact of contacts) {
+      if (!contact?.id) continue;
+      const previous = this.#contacts.get(contact.id) ?? {};
+      const merged = { ...previous, ...contact };
+      const name = merged.name || merged.notify || merged.verifiedName;
+      if (!name) continue;
+      this.#contacts.set(contact.id, { id: contact.id, name });
+    }
+  };
+
+  /** Contacts known so far, alphabetically. Fills in as WhatsApp syncs. */
+  get contacts() {
+    return [...this.#contacts.values()].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  }
+
+  /**
+   * Groups this account participates in. Group JIDs cannot be derived from a
+   * phone number, so this is the only way to address a group.
+   */
+  async fetchGroups() {
+    this.#assertConnected();
+    try {
+      const groups = await this.#conn.groupFetchAllParticipating();
+      return Object.values(groups)
+        .map((group) => ({
+          id: group.id,
+          name: group.subject,
+          participants: group.participants?.length ?? 0,
+          announce: Boolean(group.announce),
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    } catch (err) {
+      throw wrapError(err);
+    }
   }
 
   async checkNumber(phone) {

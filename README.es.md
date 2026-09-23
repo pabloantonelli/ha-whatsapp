@@ -151,6 +151,58 @@ periódica y `api_token` para fijar vos mismo el token de la API.
 La referencia completa de servicios y eventos está en
 [whatsapp_addon/DOCS.md](whatsapp_addon/DOCS.md).
 
+## Enviar capturas y videos de las cámaras
+
+`whatsapp.send_media` captura directamente de una entidad `camera.*` o
+`image.*`, sin tener que guardar un archivo ni exponer una URL antes.
+
+```yaml
+action: whatsapp.send_media
+data:
+  clientId: default
+  to: "34600000000"
+  entity_id: camera.puerta
+  caption: Hay alguien en la puerta
+```
+
+Para mandar un video, agregá `duration`. Con `lookback` el clip incluye además
+los segundos grabados _antes_ de que se disparara la automatización — que suele
+ser lo que realmente querés ver, porque cuando suena el timbre lo interesante
+ya pasó:
+
+```yaml
+automation:
+  - alias: Clip del timbre
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.timbre
+        to: "on"
+    actions:
+      - action: whatsapp.send_media
+        data:
+          clientId: default
+          to: "34600000000"
+          entity_id: camera.puerta
+          duration: 10
+          lookback: 5
+          caption: Timbre
+```
+
+Grabar requiere una cámara con el componente `stream` (RTSP y similares); las
+que sólo entregan imagen fija pueden mandar capturas pero no clips, y
+`lookback` sólo funciona si el stream está precargado.
+
+## Encontrar el ID de un grupo o contacto
+
+Los grupos se direccionan con un JID del tipo `120363000000000000@g.us`, que no
+se puede deducir de un número de teléfono. Abrí el panel **WhatsApp** en la
+barra lateral: cada cliente conectado lista sus grupos y contactos con un
+buscador y un botón para copiar, y ese ID va directo al campo `to` del
+servicio.
+
+Los contactos aparecen de a poco después de vincular, a medida que WhatsApp los
+sincroniza. Los grupos se consultan en vivo y están completos enseguida.
+
 ## Configuración
 
 ```yaml

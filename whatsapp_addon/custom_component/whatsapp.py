@@ -94,6 +94,19 @@ class Whatsapp:
             {"to": data["to"], "body": data["body"], "options": data.get("options")},
         )
 
+    def send_media(self, data: dict) -> dict:
+        client_id = self._client_id(data)
+        return self._post(
+            f"/clients/{client_id}/media",
+            {
+                "to": data["to"],
+                "entityId": data["entity_id"],
+                "caption": data.get("caption"),
+                "duration": data.get("duration"),
+                "lookback": data.get("lookback"),
+            },
+        )
+
     def set_status(self, data: dict) -> dict:
         client_id = self._client_id(data)
         return self._post(f"/clients/{client_id}/status", {"status": data["status"]})

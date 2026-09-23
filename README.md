@@ -140,6 +140,56 @@ the account shows as online, `refresh_hours` for a periodic reconnect, and
 
 Full service and event reference: [whatsapp_addon/DOCS.md](whatsapp_addon/DOCS.md).
 
+## Sending camera snapshots and clips
+
+`whatsapp.send_media` captures straight from a `camera.*` or `image.*` entity,
+so there is no need to save a file or expose a URL first.
+
+```yaml
+action: whatsapp.send_media
+data:
+  clientId: default
+  to: "34600000000"
+  entity_id: camera.front_door
+  caption: Someone is at the door
+```
+
+To send a video instead, add `duration`. With `lookback` the clip also includes
+footage recorded _before_ the automation fired — usually the part worth seeing,
+since by the time a doorbell triggers, the interesting moment has passed:
+
+```yaml
+automation:
+  - alias: Doorbell clip
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.doorbell
+        to: "on"
+    actions:
+      - action: whatsapp.send_media
+        data:
+          clientId: default
+          to: "34600000000"
+          entity_id: camera.front_door
+          duration: 10
+          lookback: 5
+          caption: Doorbell
+```
+
+Recording requires a camera with the `stream` component (RTSP and similar);
+cameras that only expose a still image can send snapshots but not clips, and
+`lookback` only works when the stream is preloaded.
+
+## Finding a group or contact ID
+
+Groups are addressed by a JID like `120363000000000000@g.us`, which cannot be
+derived from a phone number. Open the **WhatsApp** panel in the sidebar: each
+connected client lists its groups and contacts with a search box and a copy
+button, and the copied ID goes straight into the `to` field of a service call.
+
+Contacts appear gradually after pairing, as WhatsApp syncs them. Groups are
+fetched live and are complete right away.
+
 ## Configuration
 
 ```yaml

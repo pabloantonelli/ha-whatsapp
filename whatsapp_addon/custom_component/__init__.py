@@ -16,6 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 # v2.x so existing automations keep working.
 SERVICES = (
     "send_message",
+    "send_media",
     "set_status",
     "presence_subscribe",
     "send_presence_update",

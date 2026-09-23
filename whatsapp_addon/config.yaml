@@ -1,6 +1,6 @@
 ---
 name: WhatsApp
-version: "3.0.0"
+version: "3.1.0"
 slug: ha_whatsapp
 description: Send and receive WhatsApp messages from Home Assistant, powered by Baileys
 url: "https://github.com/pabloantonelli/ha-whatsapp"
@@ -19,6 +19,7 @@ panel_icon: mdi:whatsapp
 panel_title: WhatsApp
 map:
   - config:rw
+  - media:rw
 options:
   clients:
     - default

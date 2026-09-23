@@ -3,6 +3,25 @@ import request from "supertest";
 import pino from "pino";
 import { createApp } from "../src/app.js";
 
+vi.mock("../src/media.js", () => ({
+  captureSnapshot: vi.fn(async () => ({
+    buffer: Buffer.from("fake-jpeg"),
+    mimetype: "image/jpeg",
+    name: "Front door",
+  })),
+  captureRecording: vi.fn(async () => ({
+    buffer: Buffer.from("fake-mp4"),
+    mimetype: "video/mp4",
+  })),
+  toMessageContent: vi.fn(({ buffer, mimetype }, caption) => ({
+    [mimetype.startsWith("video/") ? "video" : "image"]: buffer,
+    mimetype,
+    ...(caption ? { caption } : {}),
+  })),
+}));
+
+import { captureRecording, captureSnapshot } from "../src/media.js";
+
 const TOKEN = "test-token";
 
 const makeClient = (overrides = {}) => ({
@@ -22,6 +41,10 @@ const makeClient = (overrides = {}) => ({
   sendPresenceUpdate: vi.fn(async () => {}),
   setSendPresenceUpdateInterval: vi.fn(),
   checkNumber: vi.fn(async () => ({ jid: "x@s.whatsapp.net", exists: true })),
+  fetchGroups: vi.fn(async () => [
+    { id: "120363000@g.us", name: "Familia", participants: 5, announce: false },
+  ]),
+  contacts: [{ id: "5491111111111@s.whatsapp.net", name: "Ana" }],
   requestPairingCode: vi.fn(async () => "ABCD1234"),
   restart: vi.fn(async () => {}),
   emit: vi.fn(),
@@ -202,6 +225,82 @@ describe("/health", () => {
     expect(res.status).toBe(200);
     // El bug de v2.x: siempre informaba connected:false.
     expect(res.body.clients.default.connected).toBe(true);
-    expect(res.body.version).toBe("3.0.0");
+    // La versión sale del package.json, no se fija aquí.
+    expect(res.body.version).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+});
+
+describe("media", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("envía un snapshot de una cámara", async () => {
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/media"),
+    ).send({
+      to: "5491111111111",
+      entityId: "camera.front_door",
+      caption: "Mirá",
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({
+      messageId: "3EB0ABC",
+      mimetype: "image/jpeg",
+    });
+    expect(captureSnapshot).toHaveBeenCalledWith("camera.front_door");
+    expect(client.sendMessage).toHaveBeenCalledWith(
+      "5491111111111",
+      expect.objectContaining({ mimetype: "image/jpeg", caption: "Mirá" }),
+    );
+  });
+
+  it("graba un video cuando se indica duración", async () => {
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/media"),
+    ).send({
+      to: "5491111111111",
+      entityId: "camera.front_door",
+      duration: 10,
+      lookback: 5,
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.mimetype).toBe("video/mp4");
+    expect(captureRecording).toHaveBeenCalledWith("camera.front_door", {
+      duration: 10,
+      lookback: 5,
+    });
+  });
+
+  it("rechaza duraciones fuera de rango", async () => {
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/media"),
+    ).send({ to: "549111", entityId: "camera.x", duration: 500 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Invalid request body");
+  });
+});
+
+describe("chats", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("lista grupos con su JID y contactos", async () => {
+    const res = await auth(request(app).get("/api/v1/clients/default/chats"));
+
+    expect(res.status).toBe(200);
+    // El JID de un grupo no se puede deducir de un teléfono: es el único modo.
+    expect(res.body.groups[0]).toEqual({
+      id: "120363000@g.us",
+      name: "Familia",
+      participants: 5,
+      announce: false,
+    });
+    expect(res.body.contacts[0].name).toBe("Ana");
+  });
+
+  it("exige token", async () => {
+    const res = await request(app).get("/api/v1/clients/default/chats");
+    expect(res.status).toBe(401);
   });
 });
