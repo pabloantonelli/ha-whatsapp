@@ -878,8 +878,13 @@
         toYaml(automation),
       ) +
       block(
-        "Node-RED",
-        "Copy, then press <code>Ctrl+I</code> in Node-RED and paste. The event data arrives in <code>msg.payload</code>.",
+        "Node-RED — fill in by hand",
+        "On an <code>events: all</code> node. The event data arrives in <code>msg.payload</code>.",
+        `Event type:  ${event}`,
+      ) +
+      block(
+        "Node-RED — import",
+        "Copy, then press <code>Ctrl+I</code> in Node-RED and paste to import the node.",
         JSON.stringify(flow, null, 2),
       );
   }
@@ -941,8 +946,13 @@
         toYaml(call),
       ) +
       block(
-        "Node-RED",
-        "Copy, then in Node-RED press <code>Ctrl+I</code> and paste to import the node. Open it once to pick your Home Assistant server.",
+        "Node-RED — fill in by hand",
+        "On a <code>call service</code> node: set the action, then paste the data into the <code>Data</code> field.",
+        `Action: ${call.action}\n\nData:\n${JSON.stringify(call.data, null, 2)}`,
+      ) +
+      block(
+        "Node-RED — import",
+        "Or copy this, press <code>Ctrl+I</code> in Node-RED and paste to import the node already configured. Open it once to pick your Home Assistant server.",
         JSON.stringify(nodered, null, 2),
       ) +
       block(
@@ -970,12 +980,11 @@
     const act = btn.dataset.act;
 
     if (act === "copy-text") {
-      const text =
-        btn.closest(".out-head").nextElementSibling.tagName === "PRE"
-          ? btn.closest(".out-head").nextElementSibling.textContent
-          : btn.closest(".out-head").parentElement.querySelector("pre")
-              .textContent;
-      await copy(btn, text);
+      // Walk forward to this block's own <pre>; a hint paragraph may sit in
+      // between, and querying the parent would always return the first one.
+      let el = btn.closest(".out-head").nextElementSibling;
+      while (el && el.tagName !== "PRE") el = el.nextElementSibling;
+      if (el) await copy(btn, el.textContent);
       return;
     }
     if (act === "copy") {

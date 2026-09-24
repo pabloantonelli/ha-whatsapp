@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.2.2
+
+### ✨ New
+
+- The snippet builder now shows the Node-RED call **both ways**: the plain
+  action and data to type into a `call service` node (or the event type for an
+  `events: all` node), and the importable node JSON. The fields always apply,
+  whatever version of the Node-RED companion is installed.
+
+### 🐛 Fixed
+
+- With several snippets on screen, a block's Copy button could copy the first
+  block instead of its own.
+
 ## 3.2.1
 
 ### 🐛 Fixed
