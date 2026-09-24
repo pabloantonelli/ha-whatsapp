@@ -364,6 +364,11 @@
             <option value="location">Send a location</option>
             <option value="presence">Send a presence update</option>
             <option value="status">Set the profile status</option>
+            <option value="listen-message">React to an incoming message</option>
+            <option value="listen-ack">
+              React to a delivery or read receipt
+            </option>
+            <option value="listen-presence">React to a presence update</option>
           </select>
         </div>
       </div>
@@ -637,6 +642,15 @@
       ["infinity", "Keep sending it (true/false)", "text", "false"],
     ],
     status: [["status", "New profile status", "text", "Available"]],
+    "listen-message": [],
+    "listen-ack": [],
+    "listen-presence": [],
+  };
+
+  const EVENTS = {
+    "listen-message": "new_whatsapp_message",
+    "listen-ack": "whatsapp_message_ack",
+    "listen-presence": "whatsapp_presence_update",
   };
 
   function builderValues() {
@@ -776,6 +790,17 @@
     }
   }
 
+  /** Quotes only the strings that would otherwise change meaning in YAML. */
+  function yamlScalar(value) {
+    if (typeof value !== "string") return value;
+    const plain = /^[A-Za-z0-9_][A-Za-z0-9_.@/-]*$/.test(value);
+    const reserved = /^(y|n|yes|no|true|false|on|off|null)$/i.test(value);
+    // All-digit values must stay quoted: YAML would read a phone number as an
+    // integer and drop any leading zero.
+    const numeric = /^[\d.]+$/.test(value);
+    return plain && !reserved && !numeric ? value : JSON.stringify(value);
+  }
+
   /** Minimal YAML writer — enough for the shapes these snippets produce. */
   function toYaml(value, indent = 0) {
     const pad = "  ".repeat(indent);
@@ -790,17 +815,81 @@
           if (val && typeof val === "object") {
             return `${pad}${k}:\n${toYaml(val, indent + 1)}`;
           }
-          return `${pad}${k}: ${typeof val === "string" ? JSON.stringify(val) : val}`;
+          return `${pad}${k}: ${yamlScalar(val)}`;
         })
         .join("\n");
     }
     return `${pad}${value}`;
   }
 
+  const nodeId = () => Math.random().toString(16).slice(2, 18);
+
+  const block = (title, hint, text) => `
+      <div class="out-head">
+        <span class="section-label">${title}</span>
+        <button class="tiny" data-act="copy-text">Copy</button>
+      </div>
+      ${hint ? `<p class="msg" style="margin-top:0">${hint}</p>` : ""}
+      <pre>${esc(text)}</pre>`;
+
+  /** Listening happens through Home Assistant events, no HTTP involved. */
+  function renderListener(action) {
+    const event = EVENTS[action];
+
+    const automation = {
+      alias: `React to ${event}`,
+      triggers: [{ trigger: "event", event_type: event }],
+      actions: [
+        {
+          action: "persistent_notification.create",
+          data: { message: "{{ trigger.event.data | to_json }}" },
+        },
+      ],
+    };
+
+    const flow = [
+      {
+        id: nodeId(),
+        type: "server-events",
+        name: event,
+        server: "",
+        version: 3,
+        eventType: event,
+        exposeAsEntityConfig: "",
+        waitForRunning: true,
+        outputProperties: [
+          {
+            property: "payload",
+            propertyType: "msg",
+            value: "",
+            valueType: "eventData",
+          },
+        ],
+        x: 300,
+        y: 200,
+        wires: [[]],
+      },
+    ];
+
+    document.getElementById("b-output").innerHTML =
+      block(
+        "Home Assistant",
+        "An automation triggered by the event. The payload is in <code>trigger.event.data</code>.",
+        toYaml(automation),
+      ) +
+      block(
+        "Node-RED",
+        "Copy, then press <code>Ctrl+I</code> in Node-RED and paste. The event data arrives in <code>msg.payload</code>.",
+        JSON.stringify(flow, null, 2),
+      );
+  }
+
   function renderBuilderOutput() {
     const action = document.getElementById("b-action").value;
     const clientId = document.getElementById("b-client").value || "default";
     const v = builderValues();
+
+    if (EVENTS[action]) return renderListener(action);
 
     const call = buildServiceCall(action, v, clientId);
     const http = buildHttpCall(action, v, clientId);
@@ -810,15 +899,33 @@
     const token = conn.token || "<api-token>";
     const url = `${baseUrl}${http.path}`;
 
-    const nodered = {
-      method: "POST",
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    // A Node-RED flow you can paste straight into Import (Ctrl+I). The
+    // call-service node talks to Home Assistant over websocket, so no token
+    // and no HTTP request node are involved.
+    const [domain, service] = call.action.split(".");
+    const nodered = [
+      {
+        id: nodeId(),
+        type: "api-call-service",
+        name: call.action,
+        server: "",
+        version: 5,
+        domain,
+        service,
+        areaId: [],
+        deviceId: [],
+        entityId: [],
+        data: JSON.stringify(call.data),
+        dataType: "json",
+        mergeContext: "",
+        mustacheAltTags: false,
+        outputProperties: [],
+        queue: "none",
+        x: 400,
+        y: 200,
+        wires: [[]],
       },
-      payload: http.body,
-    };
+    ];
 
     const curl = [
       `curl -X POST ${url} \\`,
@@ -826,14 +933,6 @@
       `  -H "Content-Type: application/json" \\`,
       `  -d '${JSON.stringify(http.body)}'`,
     ].join("\n");
-
-    const block = (title, hint, text) => `
-      <div class="out-head">
-        <span class="section-label">${title}</span>
-        <button class="tiny" data-act="copy-text">Copy</button>
-      </div>
-      ${hint ? `<p class="msg" style="margin-top:0">${hint}</p>` : ""}
-      <pre>${esc(text)}</pre>`;
 
     document.getElementById("b-output").innerHTML =
       block(
@@ -843,10 +942,14 @@
       ) +
       block(
         "Node-RED",
-        "Set these on an <code>http request</code> node, or feed them from a <code>function</code> node as <code>msg</code>.",
+        "Copy, then in Node-RED press <code>Ctrl+I</code> and paste to import the node. Open it once to pick your Home Assistant server.",
         JSON.stringify(nodered, null, 2),
       ) +
-      block("curl", "", curl);
+      block(
+        "curl",
+        "Only needed to call the add-on directly, from outside Home Assistant.",
+        curl,
+      );
   }
 
   document
@@ -915,14 +1018,40 @@
     }
   });
 
+  /**
+   * navigator.clipboard only exists in secure contexts, and ingress is served
+   * over plain HTTP, so fall back to a hidden textarea plus execCommand.
+   */
   async function copy(btn, text, restore = "Copy") {
     const original = btn.textContent;
+    let ok = false;
+
     try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = "Copied";
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        ok = true;
+      }
     } catch {
-      btn.textContent = "Press ⌘/Ctrl+C";
+      ok = false;
     }
+
+    if (!ok) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+      document.body.appendChild(area);
+      area.select();
+      area.setSelectionRange(0, text.length);
+      try {
+        ok = document.execCommand("copy");
+      } catch {
+        ok = false;
+      }
+      document.body.removeChild(area);
+    }
+
+    btn.textContent = ok ? "Copied" : "Copy failed";
     setTimeout(() => (btn.textContent = original || restore), 1600);
   }
 

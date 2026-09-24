@@ -164,7 +164,8 @@ already filled in:
 - **curl** — to try it from a terminal before wiring it up.
 
 It covers text messages, camera snapshots and clips, images and audio from a
-URL, locations, presence updates and the profile status.
+URL, locations, presence updates and the profile status, plus listeners for the
+three events the add-on fires.
 
 ## Sending camera snapshots and clips
 
@@ -243,6 +244,26 @@ install with empty storage.
 
 Step-by-step details, the endpoint mapping and how to roll back:
 [MIGRATION.md](MIGRATION.md).
+
+## Node-RED
+
+You do not need the HTTP API or a token: the add-on registers normal Home
+Assistant services and events, so Node-RED talks to it over its websocket
+connection like any other integration.
+
+**To send**, use a **call service** node with `whatsapp` as the domain and
+`send_message` or `send_media` as the service. If `send_media` does not appear
+in the list, restart Home Assistant Core and reload the Node-RED tab — the
+service list is cached.
+
+**To receive**, use an **events: all** node and set the event type to
+`new_whatsapp_message`, `whatsapp_message_ack` or `whatsapp_presence_update`.
+The event data arrives in `msg.payload`.
+
+The **Snippet builder** tab in the WhatsApp panel writes both nodes out as JSON:
+copy it, press `Ctrl+I` in Node-RED and paste to import the configured node.
+
+Use the HTTP API only when calling the add-on from outside Home Assistant.
 
 ## HTTP API
 

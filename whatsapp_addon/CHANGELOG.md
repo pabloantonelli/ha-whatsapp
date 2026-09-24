@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.2.1
+
+### 🐛 Fixed
+
+- **Copy buttons did nothing.** `navigator.clipboard` only exists in secure
+  contexts and ingress is served over plain HTTP, so copying now falls back to a
+  hidden textarea that works without HTTPS.
+
+### ✨ New
+
+- The snippet builder writes **importable Node-RED nodes** instead of an
+  `http request` configuration. Node-RED reaches the add-on through Home
+  Assistant's websocket, so no token and no HTTP call are needed — copy the JSON
+  and paste it with `Ctrl+I`.
+- New builder actions for the three events the add-on fires
+  (`new_whatsapp_message`, `whatsapp_message_ack`, `whatsapp_presence_update`),
+  generating both an automation trigger and an `events: all` node.
+- Generated YAML no longer quotes every value, but keeps phone numbers quoted so
+  YAML cannot read them as integers and drop a leading zero.
+
 ## 3.2.0
 
 ### ✨ New
