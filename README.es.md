@@ -312,6 +312,15 @@ chat de la pestaña **Groups & contacts** tiene además un botón **Allow**. Si
 listás un grupo, aceptás todo lo que se publique ahí; si listás a una persona,
 la aceptás en cualquier lado, grupos incluidos.
 
+Los identificadores son la parte confusa. Para enviar usás un número de
+teléfono. Al recibir, WhatsApp identifica cada vez más al remitente con un
+**LID**: un id tipo `173478124720340@lid` que a propósito no revela su número.
+
+No hace falta que lo averigües: **la pestaña Incoming lista a quienes te
+escribieron recientemente, con un botón Allow**. Permitir un número de teléfono
+cubre también el LID de esa persona, y al revés, porque se comparan las dos
+formas de la misma identidad.
+
 También podés sembrar la lista desde las opciones del add-on, cómodo para una
 instalación nueva:
 

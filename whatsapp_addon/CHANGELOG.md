@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.3.1
+
+### 🐛 Fixed
+
+- **An allowlist of phone numbers never matched incoming messages.** WhatsApp
+  increasingly identifies senders by LID (`…@lid`), which does not reveal the
+  phone number, and only the primary identifier was compared. Baileys supplies
+  the other form of the same identity alongside it, so both are now matched:
+  allowing a number covers that person's LID, and the other way round.
+
+### ✨ New
+
+- **Recent senders** in the Incoming tab: whoever wrote lately, allowed or
+  ignored, each with an Allow button — so there is no need to work out an
+  identifier you never see.
+- New `GET /api/v1/recent-senders`.
+
 ## 3.3.0
 
 ### ✨ New

@@ -25,19 +25,28 @@ export const buildAllowlist = (entries) =>
   new Set((entries ?? []).map(normaliseEntry).filter(Boolean));
 
 /**
+ * Every identifier a message can be matched against.
+ *
  * A group message carries the group in `remoteJid` and the author in
- * `participant`, so either one may be listed: the whole group, or a person.
+ * `participant`, so either may be listed. WhatsApp also addresses people by
+ * LID (`…@lid`), which hides the phone number; Baileys puts the other form of
+ * the same identity in the `Alt` fields, so both are considered — otherwise an
+ * allowlist of phone numbers would never match a LID-addressed sender.
  */
+export const identifiersOf = (msg) =>
+  [
+    msg?.key?.remoteJid,
+    msg?.key?.remoteJidAlt,
+    msg?.key?.participant,
+    msg?.key?.participantAlt,
+  ].filter(Boolean);
+
 export const isAllowed = (msg, allowlist) => {
   if (!allowlist || allowlist.size === 0) return true;
 
-  const candidates = [msg?.key?.remoteJid, msg?.key?.participant].filter(
-    Boolean,
-  );
-
-  return candidates.some((jid) => {
+  return identifiersOf(msg).some((jid) => {
     if (allowlist.has(jid)) return true;
-    // Compare bare numbers too, so a device suffix like :12 still matches.
+    // Compare bare ids too, so a device suffix like :12 still matches.
     const bare = jid.replace(/:\d+(?=@)/, "");
     return allowlist.has(bare);
   });

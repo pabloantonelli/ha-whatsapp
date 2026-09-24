@@ -383,6 +383,17 @@
     <div class="card">
       <h3 style="margin-top: 0">Who may trigger automations</h3>
       <p class="msg" id="allow-state"></p>
+      <div class="list" id="allow-list"></div>
+
+      <p class="section-label">Recent senders</p>
+      <p class="msg" style="margin-top: 0">
+        Whoever wrote to you lately. Use Allow here rather than typing an ID by
+        hand — WhatsApp often identifies people by a code that looks nothing
+        like their phone number.
+      </p>
+      <div class="list" id="recent-list"></div>
+
+      <p class="section-label">Add manually</p>
       <div class="row">
         <input
           type="text"
@@ -391,7 +402,6 @@
         />
         <button class="primary" id="allow-add">Add</button>
       </div>
-      <div class="list" id="allow-list"></div>
       <p class="msg">
         Incoming messages are sent to Home Assistant as
         <code>new_whatsapp_message</code> events, and automations act on them.
@@ -523,6 +533,7 @@
     document.querySelectorAll("[data-panel]").forEach((p) => {
       p.hidden = p.dataset.panel !== btn.dataset.tab;
     });
+    if (btn.dataset.tab === "incoming") refreshRecent();
   });
 
   /* -------------------------------------------------------------- status */
@@ -1222,6 +1233,44 @@
       : "";
   }
 
+  function renderRecent(senders) {
+    const list = document.getElementById("recent-list");
+
+    list.innerHTML = senders.length
+      ? senders
+          .map((sender) => {
+            const when = new Date(sender.at).toLocaleString();
+            const tag = sender.group
+              ? '<span class="group-tag">group</span>'
+              : "";
+            const status = sender.allowed ? "allowed" : "ignored";
+            return `
+      <div class="chat">
+        <div class="chat-main">
+          <div class="chat-name">${esc(sender.name || sender.id)} ${tag}</div>
+          <div class="jid">${esc(sender.id)}</div>
+          <div class="chat-meta">${when} · ${status}</div>
+        </div>
+        ${
+          sender.allowed
+            ? ""
+            : `<button class="tiny" data-act="allow-add-chat" data-jid="${esc(sender.id)}">Allow</button>`
+        }
+      </div>`;
+          })
+          .join("")
+      : '<p class="empty">Nobody has written yet.</p>';
+  }
+
+  async function refreshRecent() {
+    try {
+      const { senders } = await api("/recent-senders");
+      renderRecent(senders);
+    } catch {
+      /* shown empty */
+    }
+  }
+
   async function saveAllowlist(entries) {
     const res = await api("/allowlist", {
       method: "PUT",
@@ -1230,6 +1279,7 @@
     });
     allowEntries = res.entries;
     renderAllowlist();
+    refreshRecent();
   }
 
   document.getElementById("allow-add").addEventListener("click", async (e) => {
@@ -1300,6 +1350,7 @@
     .then((res) => {
       allowEntries = res.entries;
       renderAllowlist();
+      refreshRecent();
     })
     .catch(() => {
       /* shown as empty until it loads */

@@ -71,6 +71,18 @@ beforeEach(() => {
     token: TOKEN,
     logger: pino({ level: "silent" }),
     allowlist,
+    recentSenders: {
+      entries: [
+        {
+          id: "173478124720340@lid",
+          ids: ["173478124720340@lid", "5491111111111@s.whatsapp.net"],
+          name: "Ana",
+          group: false,
+          allowed: false,
+          at: "2026-09-24T00:00:00.000Z",
+        },
+      ],
+    },
   });
 });
 
@@ -414,5 +426,20 @@ describe("allowlist", () => {
     });
 
     expect(res.status).toBe(400);
+  });
+});
+
+describe("remitentes recientes", () => {
+  it("los expone para poder permitirlos desde el panel", async () => {
+    const res = await request(app)
+      .get("/api/v1/recent-senders")
+      .set("Authorization", `Bearer ${TOKEN}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.senders[0]).toMatchObject({
+      id: "173478124720340@lid",
+      name: "Ana",
+      allowed: false,
+    });
   });
 });

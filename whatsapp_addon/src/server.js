@@ -7,6 +7,7 @@ import { loadConfig, VERSION } from "./config.js";
 import { HomeAssistant } from "./homeassistant.js";
 import { WhatsappClient } from "./whatsapp-client.js";
 import { AllowlistStore } from "./allowlist.js";
+import { RecentSenders } from "./recent-senders.js";
 
 const main = async () => {
   const config = await loadConfig();
@@ -16,6 +17,7 @@ const main = async () => {
 
   const allowlist = new AllowlistStore({ dataDir: config.dataDir, logger });
   await allowlist.load(config.allowedSenders);
+  const recentSenders = new RecentSenders();
 
   const createClient = async (key) => {
     const client = new WhatsappClient({
@@ -43,7 +45,10 @@ const main = async () => {
       logger.info({ client: key, ...info }, "paired"),
     );
     client.on("msg", (msg) => {
-      if (!allowlist.allows(msg)) {
+      const allowed = allowlist.allows(msg);
+      recentSenders.record(msg, allowed);
+
+      if (!allowed) {
         logger.debug(
           { client: key, from: msg?.key?.remoteJid },
           "message ignored: sender is not on the allowlist",
@@ -115,6 +120,7 @@ const main = async () => {
     logger,
     baseUrl,
     allowlist,
+    recentSenders,
   });
 
   app.listen(config.port, () =>

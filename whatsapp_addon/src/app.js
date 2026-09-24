@@ -13,7 +13,14 @@ const publicDir = path.join(
 );
 
 /** Builds the Express app. Kept separate from the server so tests can mount it. */
-export const createApp = ({ clients, token, logger, baseUrl, allowlist }) => {
+export const createApp = ({
+  clients,
+  token,
+  logger,
+  baseUrl,
+  allowlist,
+  recentSenders,
+}) => {
   const app = express();
 
   // Only the ingress panel is served from a browser, and it is same-origin.
@@ -35,7 +42,7 @@ export const createApp = ({ clients, token, logger, baseUrl, allowlist }) => {
   app.use(
     "/api/v1",
     authenticate(token),
-    createApiRouter(clients, { token, baseUrl, allowlist }),
+    createApiRouter(clients, { token, baseUrl, allowlist, recentSenders }),
   );
 
   // Legacy endpoints stay unauthenticated: the custom component shipped with

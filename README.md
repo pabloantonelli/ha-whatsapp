@@ -296,6 +296,15 @@ chat in the **Groups & contacts** tab also has an **Allow** button. List a group
 to accept everything posted in it, or a person to accept them anywhere, groups
 included.
 
+Identifiers are the tricky part. When you send, you use a phone number. When a
+message arrives, WhatsApp increasingly identifies the sender by a **LID** — an
+id like `173478124720340@lid` that deliberately does not reveal their number.
+
+You do not have to work that out: **the Incoming tab lists whoever wrote
+recently, with an Allow button**. Allowing a phone number also covers that
+person's LID, and the other way round, because both forms of the same identity
+are matched.
+
 You can also seed the list from the add-on options, which is handy for a fresh
 install:
 

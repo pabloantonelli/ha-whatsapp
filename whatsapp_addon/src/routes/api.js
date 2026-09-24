@@ -63,7 +63,7 @@ const describe = (id, client) => ({
 
 export const createApiRouter = (
   clients,
-  { token, baseUrl, allowlist } = {},
+  { token, baseUrl, allowlist, recentSenders } = {},
 ) => {
   const router = Router();
   const withClient = resolveClient(clients);
@@ -213,6 +213,11 @@ export const createApiRouter = (
       res.json({ entries, open: allowlist.open });
     }),
   );
+
+  /** Who wrote recently, so the panel can offer Allow without guesswork. */
+  router.get("/recent-senders", (req, res) => {
+    res.json({ senders: recentSenders?.entries ?? [] });
+  });
 
   router.get("/connection", (req, res) => {
     if (req.get("X-Ingress-Path") === undefined) {

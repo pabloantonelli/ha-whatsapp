@@ -102,3 +102,46 @@ describe("AllowlistStore", () => {
     expect(store.allows(msg("999@s.whatsapp.net"))).toBe(true);
   });
 });
+
+describe("identificadores LID", () => {
+  // WhatsApp addresses people by LID, which looks nothing like their number.
+  const byPhone = buildAllowlist(["5491111111111"]);
+
+  it("acepta un LID cuyo número alternativo está en la lista", () => {
+    const incoming = {
+      key: {
+        remoteJid: "173478124720340@lid",
+        remoteJidAlt: "5491111111111@s.whatsapp.net",
+      },
+    };
+    expect(isAllowed(incoming, byPhone)).toBe(true);
+  });
+
+  it("acepta al autor de un grupo identificado por LID", () => {
+    const incoming = {
+      key: {
+        remoteJid: "120363000@g.us",
+        participant: "173478124720340@lid",
+        participantAlt: "5491111111111@s.whatsapp.net",
+      },
+    };
+    expect(isAllowed(incoming, byPhone)).toBe(true);
+  });
+
+  it("sigue bloqueando a un desconocido con LID", () => {
+    const incoming = {
+      key: {
+        remoteJid: "999999@lid",
+        remoteJidAlt: "5490000000000@s.whatsapp.net",
+      },
+    };
+    expect(isAllowed(incoming, byPhone)).toBe(false);
+  });
+
+  it("permite listar el LID directamente", () => {
+    const list = buildAllowlist(["173478124720340@lid"]);
+    expect(isAllowed({ key: { remoteJid: "173478124720340@lid" } }, list)).toBe(
+      true,
+    );
+  });
+});
