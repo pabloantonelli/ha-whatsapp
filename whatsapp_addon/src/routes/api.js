@@ -13,6 +13,8 @@ const messageSchema = z.object({
   to: z.union([z.string().min(1), z.number()]),
   body: z.record(z.string(), z.unknown()),
   options: z.record(z.string(), z.unknown()).optional(),
+  // false skips the typing indicator and its pause, for urgent alerts.
+  typing: z.boolean().optional(),
 });
 
 const presenceSchema = z.object({
@@ -46,6 +48,11 @@ const mediaSchema = z.object({
   // With a duration a clip is recorded; without one a still frame is sent.
   duration: z.number().int().min(1).max(120).optional(),
   lookback: z.number().int().min(0).max(60).optional(),
+  typing: z.boolean().optional(),
+});
+
+const allowlistSchema = z.object({
+  entries: z.array(z.union([z.string(), z.number()])),
 });
 
 const describe = (id, client) => ({
@@ -54,7 +61,10 @@ const describe = (id, client) => ({
   hasQr: Boolean(client.qr),
 });
 
-export const createApiRouter = (clients, { token, baseUrl } = {}) => {
+export const createApiRouter = (
+  clients,
+  { token, baseUrl, allowlist } = {},
+) => {
   const router = Router();
   const withClient = resolveClient(clients);
 
@@ -109,8 +119,10 @@ export const createApiRouter = (clients, { token, baseUrl } = {}) => {
     withClient,
     validate(messageSchema),
     asyncRoute(async (req, res) => {
-      const { to, body, options } = req.validated;
-      const result = await req.client.sendMessage(to, body, options);
+      const { to, body, options, typing } = req.validated;
+      const result = await req.client.sendMessage(to, body, options, {
+        typing,
+      });
       res.json({
         messageId: result?.key?.id ?? null,
         to: result?.key?.remoteJid ?? null,
@@ -124,7 +136,8 @@ export const createApiRouter = (clients, { token, baseUrl } = {}) => {
     withClient,
     validate(mediaSchema),
     asyncRoute(async (req, res) => {
-      const { to, entityId, caption, duration, lookback } = req.validated;
+      const { to, entityId, caption, duration, lookback, typing } =
+        req.validated;
 
       const captured = duration
         ? await captureRecording(entityId, { duration, lookback })
@@ -133,6 +146,8 @@ export const createApiRouter = (clients, { token, baseUrl } = {}) => {
       const result = await req.client.sendMessage(
         to,
         toMessageContent(captured, caption),
+        undefined,
+        { typing },
       );
 
       res.json({
@@ -182,6 +197,23 @@ export const createApiRouter = (clients, { token, baseUrl } = {}) => {
    * Node-RED and curl. Only served over ingress, which Home Assistant has
    * already authenticated.
    */
+  /** Which senders may trigger Home Assistant events. Empty allows everyone. */
+  router.get("/allowlist", (req, res) => {
+    res.json({
+      entries: allowlist?.entries ?? [],
+      open: allowlist?.open ?? true,
+    });
+  });
+
+  router.put(
+    "/allowlist",
+    validate(allowlistSchema),
+    asyncRoute(async (req, res) => {
+      const entries = await allowlist.replace(req.validated.entries);
+      res.json({ entries, open: allowlist.open });
+    }),
+  );
+
   router.get("/connection", (req, res) => {
     if (req.get("X-Ingress-Path") === undefined) {
       return res.status(403).json({ error: "Only available through ingress" });

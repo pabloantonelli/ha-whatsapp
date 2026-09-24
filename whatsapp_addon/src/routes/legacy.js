@@ -44,7 +44,9 @@ export const createLegacyRouter = (clients, logger) => {
   router.post(
     "/sendMessage",
     handle("sendMessage", (client, body) =>
-      client.sendMessage(body.to, body.body, body.options),
+      client.sendMessage(body.to, body.body, body.options, {
+        typing: body.typing,
+      }),
     ),
   );
 

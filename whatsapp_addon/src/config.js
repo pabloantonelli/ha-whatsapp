@@ -53,5 +53,10 @@ export const loadConfig = async () => {
     // Opt-in: the periodic socket restart inherited from Baileys 6.
     refreshMs: Number(options.refresh_hours || 0) * 60 * 60 * 1000,
     markOnline: Boolean(options.mark_online),
+    // Typing indicator before sending; also spaces out consecutive messages.
+    typingIndicator: options.typing_indicator !== false,
+    typingMaxMs: Number(options.typing_max_seconds ?? 3) * 1000,
+    // Seeds the editable allowlist on first run; empty allows every sender.
+    allowedSenders: options.allowed_senders ?? [],
   };
 };

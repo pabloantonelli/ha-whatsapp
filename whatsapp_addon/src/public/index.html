@@ -326,6 +326,8 @@
       Groups &amp; contacts
     </button>
     <button data-tab="builder" aria-selected="false">Snippet builder</button>
+    <button data-tab="incoming" aria-selected="false">Incoming</button>
+    <button data-tab="help" aria-selected="false">Help</button>
   </nav>
 
   <section data-panel="status"><div id="clients"></div></section>
@@ -374,6 +376,102 @@
       </div>
       <div class="row" id="b-fields"></div>
       <div id="b-output"></div>
+    </div>
+  </section>
+
+  <section data-panel="incoming" hidden>
+    <div class="card">
+      <h3 style="margin-top: 0">Who may trigger automations</h3>
+      <p class="msg" id="allow-state"></p>
+      <div class="row">
+        <input
+          type="text"
+          id="allow-input"
+          placeholder="Phone number or group ID"
+        />
+        <button class="primary" id="allow-add">Add</button>
+      </div>
+      <div class="list" id="allow-list"></div>
+      <p class="msg">
+        Incoming messages are sent to Home Assistant as
+        <code>new_whatsapp_message</code> events, and automations act on them.
+        While this list is empty, anyone who writes to you can trigger them. Add
+        a group to accept everything posted in it, or a person to accept them
+        anywhere, groups included.
+      </p>
+    </div>
+  </section>
+
+  <section data-panel="help" hidden>
+    <div class="card">
+      <h3 style="margin-top: 0">Services</h3>
+      <dl>
+        <dt><code>whatsapp.send_message</code></dt>
+        <dd>Text, images, audio, locations</dd>
+        <dt><code>whatsapp.send_media</code></dt>
+        <dd>Snapshot or clip from a camera</dd>
+        <dt><code>whatsapp.set_status</code></dt>
+        <dd>Profile status text</dd>
+        <dt><code>whatsapp.presence_subscribe</code></dt>
+        <dd>Follow a contact's presence</dd>
+        <dt><code>whatsapp.send_presence_update</code></dt>
+        <dd>Show typing or online</dd>
+        <dt><code>whatsapp.send_infinity_presence_update</code></dt>
+        <dd>Keep showing it</dd>
+      </dl>
+      <p class="msg">
+        Use the <strong>Snippet builder</strong> tab to fill these in and copy
+        them, rather than writing them from memory.
+      </p>
+
+      <h3>Events</h3>
+      <dl>
+        <dt><code>new_whatsapp_message</code></dt>
+        <dd>A message arrived</dd>
+        <dt><code>whatsapp_message_ack</code></dt>
+        <dd>A sent message was delivered or read</dd>
+        <dt><code>whatsapp_presence_update</code></dt>
+        <dd>A contact came online or is typing</dd>
+      </dl>
+
+      <h3>Addressing</h3>
+      <p class="msg">
+        People are addressed by phone number with country code and no
+        <code>+</code> (for example <code>34600000000</code>). Groups need their
+        ID, which cannot be derived from a number — copy it from the
+        <strong>Groups &amp; contacts</strong> tab.
+      </p>
+
+      <h3>Node-RED</h3>
+      <p class="msg">
+        No token needed: use a <code>call service</code> node for the services
+        above, and an <code>events: all</code> node for the events. The snippet
+        builder writes both out.
+      </p>
+
+      <h3>Full documentation</h3>
+      <p class="msg">
+        <a
+          href="https://github.com/pabloantonelli/ha-whatsapp#readme"
+          target="_blank"
+          rel="noreferrer"
+          >Guide and examples</a
+        >
+        ·
+        <a
+          href="https://github.com/pabloantonelli/ha-whatsapp/blob/main/whatsapp_addon/DOCS.md"
+          target="_blank"
+          rel="noreferrer"
+          >Service reference</a
+        >
+        ·
+        <a
+          href="https://github.com/pabloantonelli/ha-whatsapp/issues"
+          target="_blank"
+          rel="noreferrer"
+          >Report a problem</a
+        >
+      </p>
     </div>
   </section>
 
@@ -509,6 +607,7 @@
           <div class="jid">${esc(item.id)}</div>
         </div>
         <button class="tiny" data-act="copy" data-jid="${esc(item.id)}">Copy ID</button>
+        <button class="tiny" data-act="allow-add-chat" data-jid="${esc(item.id)}">Allow</button>
       </div>`;
   }
 
@@ -1008,6 +1107,23 @@
       return;
     }
 
+    if (act === "allow-remove") {
+      await saveAllowlist(
+        allowEntries.filter((jid) => jid !== btn.dataset.jid),
+      );
+      return;
+    }
+    if (act === "allow-add-chat") {
+      btn.disabled = true;
+      try {
+        await saveAllowlist([...allowEntries, btn.dataset.jid]);
+        btn.textContent = "Allowed";
+      } finally {
+        btn.disabled = false;
+      }
+      return;
+    }
+
     const card = btn.closest(".card");
     const id = card?.dataset.id;
     if (!id) return;
@@ -1080,6 +1196,57 @@
     setTimeout(() => (btn.textContent = original || restore), 1600);
   }
 
+  /* ---------------------------------------------------------- allowlist */
+
+  let allowEntries = [];
+
+  function renderAllowlist() {
+    const list = document.getElementById("allow-list");
+    const stateLine = document.getElementById("allow-state");
+
+    stateLine.textContent = allowEntries.length
+      ? `Only these ${allowEntries.length} sender(s) can trigger automations.`
+      : "Empty: messages from anyone are passed to Home Assistant.";
+    stateLine.className = allowEntries.length ? "msg" : "msg err";
+
+    list.innerHTML = allowEntries.length
+      ? allowEntries
+          .map(
+            (jid) => `
+      <div class="chat">
+        <div class="chat-main"><div class="jid">${esc(jid)}</div></div>
+        <button class="tiny" data-act="allow-remove" data-jid="${esc(jid)}">Remove</button>
+      </div>`,
+          )
+          .join("")
+      : "";
+  }
+
+  async function saveAllowlist(entries) {
+    const res = await api("/allowlist", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entries }),
+    });
+    allowEntries = res.entries;
+    renderAllowlist();
+  }
+
+  document.getElementById("allow-add").addEventListener("click", async (e) => {
+    const input = document.getElementById("allow-input");
+    const value = input.value.trim();
+    if (!value) return;
+    e.target.disabled = true;
+    try {
+      await saveAllowlist([...allowEntries, value]);
+      input.value = "";
+    } catch (err) {
+      document.getElementById("allow-state").textContent = err.message;
+    } finally {
+      e.target.disabled = false;
+    }
+  });
+
   /* --------------------------------------------------------------- poll */
 
   let signature = null;
@@ -1128,6 +1295,15 @@
         `<div class="card"><p class="msg err">Cannot reach the add-on: ${esc(err.message)}</p></div>`;
     }
   }
+
+  api("/allowlist")
+    .then((res) => {
+      allowEntries = res.entries;
+      renderAllowlist();
+    })
+    .catch(() => {
+      /* shown as empty until it loads */
+    });
 
   api("/connection")
     .then((conn) => {

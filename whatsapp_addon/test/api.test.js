@@ -54,13 +54,23 @@ const makeClient = (overrides = {}) => ({
 
 let client;
 let app;
+let allowlist;
 
 beforeEach(() => {
   client = makeClient();
+  allowlist = {
+    entries: ["5491111111111@s.whatsapp.net"],
+    open: false,
+    replace: vi.fn(async (entries) => {
+      allowlist.entries = entries.map((e) => `${e}@s.whatsapp.net`);
+      return allowlist.entries;
+    }),
+  };
   app = createApp({
     clients: { default: client },
     token: TOKEN,
     logger: pino({ level: "silent" }),
+    allowlist,
   });
 });
 
@@ -80,6 +90,7 @@ describe("compatibilidad con la API v2", () => {
       "5491111111111",
       { text: "hola" },
       undefined,
+      { typing: undefined },
     );
   });
 
@@ -252,6 +263,8 @@ describe("media", () => {
     expect(client.sendMessage).toHaveBeenCalledWith(
       "5491111111111",
       expect.objectContaining({ mimetype: "image/jpeg", caption: "Mirá" }),
+      undefined,
+      { typing: undefined },
     );
   });
 
@@ -333,5 +346,73 @@ describe("avatares", () => {
 
     expect(res.status).toBe(404);
     expect(client.fetchAvatarUrl).toHaveBeenCalledWith("123@s.whatsapp.net");
+  });
+});
+
+describe("indicador de escritura", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("se puede desactivar por llamada, para alertas urgentes", async () => {
+    await auth(request(app).post("/api/v1/clients/default/messages")).send({
+      to: "5491111111111",
+      body: { text: "Fuga de agua" },
+      typing: false,
+    });
+
+    expect(client.sendMessage).toHaveBeenCalledWith(
+      "5491111111111",
+      { text: "Fuga de agua" },
+      undefined,
+      { typing: false },
+    );
+  });
+
+  it("los endpoints heredados también lo pueden desactivar", async () => {
+    await request(app)
+      .post("/sendMessage")
+      .send({
+        clientId: "default",
+        to: "5491111111111",
+        body: { text: "urgente" },
+        typing: false,
+      });
+
+    expect(client.sendMessage).toHaveBeenCalledWith(
+      "5491111111111",
+      { text: "urgente" },
+      undefined,
+      { typing: false },
+    );
+  });
+});
+
+describe("allowlist", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("devuelve las entradas actuales", async () => {
+    const res = await auth(request(app).get("/api/v1/allowlist"));
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      entries: ["5491111111111@s.whatsapp.net"],
+      open: false,
+    });
+  });
+
+  it("reemplaza la lista completa", async () => {
+    const res = await auth(request(app).put("/api/v1/allowlist")).send({
+      entries: ["5492222222222"],
+    });
+
+    expect(res.status).toBe(200);
+    expect(allowlist.replace).toHaveBeenCalledWith(["5492222222222"]);
+  });
+
+  it("rechaza un cuerpo que no sea una lista", async () => {
+    const res = await auth(request(app).put("/api/v1/allowlist")).send({
+      entries: "5492222222222",
+    });
+
+    expect(res.status).toBe(400);
   });
 });

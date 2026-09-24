@@ -1,5 +1,31 @@
 # Changelog
 
+## 3.3.0
+
+### ✨ New
+
+- **Allowlist for incoming messages.** Messages arrive in Home Assistant as
+  events that automations act on, so an unfiltered inbox let any stranger
+  trigger them. The new **Incoming** tab controls which senders are accepted,
+  the **Groups & contacts** tab gains an **Allow** button per chat, and the
+  `allowed_senders` option seeds the list on a fresh install. Listing a group
+  accepts everything posted in it; listing a person accepts them anywhere.
+  Leaving it empty keeps the previous behaviour of accepting everyone.
+- **Typing indicator before sending.** Shows "typing…" — "recording…" for voice
+  notes — and pauses for a spell that varies with the message length, so
+  consecutive messages stop landing as an instant, evenly spaced burst. Photos
+  and videos get the indicator without the extra pause, since the upload
+  already takes a variable while. Tune it with `typing_indicator` and
+  `typing_max_seconds`, or pass `typing: false` on a call to skip it for urgent
+  alerts.
+- **Help tab** in the panel with the services, events and addressing rules, plus
+  links to the full documentation.
+
+### 🧹 Internals
+
+- New `GET`/`PUT /api/v1/allowlist`. The list is stored in `/data`, so editing
+  it from the panel needs no add-on restart.
+
 ## 3.2.3
 
 ### 🐛 Fixed

@@ -3,6 +3,7 @@ import {
   WhatsappClient,
   WhatsappError,
   WhatsappDisconnectedError,
+  typingDelayMs,
 } from "../src/whatsapp-client.js";
 
 const client = new WhatsappClient({ path: "/tmp/does-not-matter" });
@@ -77,5 +78,28 @@ describe("guardas de conexión", () => {
     await expect(
       client.requestPairingCode("5491111111111"),
     ).rejects.toBeInstanceOf(WhatsappDisconnectedError);
+  });
+});
+
+describe("retardo de escritura", () => {
+  it("crece con la longitud del texto", () => {
+    const short = typingDelayMs("ok", 3000, () => 1);
+    const long = typingDelayMs("x".repeat(60), 3000, () => 1);
+    expect(long).toBeGreaterThan(short);
+  });
+
+  it("nunca supera el máximo configurado", () => {
+    const delay = typingDelayMs("x".repeat(5000), 3000, () => 1);
+    expect(delay).toBeLessThanOrEqual(3000);
+  });
+
+  it("varía entre envíos, para no mandar siempre con el mismo ritmo", () => {
+    const lowest = typingDelayMs("hola", 3000, () => 0);
+    const highest = typingDelayMs("hola", 3000, () => 1);
+    expect(lowest).toBeLessThan(highest);
+  });
+
+  it("es cero cuando el indicador está apagado", () => {
+    expect(typingDelayMs("hola", 0, () => 1)).toBe(0);
   });
 });

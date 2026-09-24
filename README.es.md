@@ -163,6 +163,8 @@ El panel de la barra lateral tiene tres pestañas:
   deducir de un número, así que esta es la forma práctica de conseguirlo.
 - **Snippet builder** — elegís una acción, completás los campos y copiás la
   llamada en el formato que necesites.
+- **Incoming** — qué remitentes pueden disparar tus automatizaciones.
+- **Help** — los servicios, eventos y reglas de direccionamiento, a mano.
 
 ### Generador de snippets
 
@@ -220,6 +222,42 @@ Grabar requiere una cámara con el componente `stream` (RTSP y similares); las
 que sólo entregan imagen fija pueden mandar capturas pero no clips, y
 `lookback` sólo funciona si el stream está precargado.
 
+## Indicador de escritura
+
+Antes de enviar, el add-on muestra el indicador de "escribiendo…" —o
+"grabando…" para las notas de voz— y espera un momento que varía según el largo
+del mensaje, hasta 3 segundos por omisión.
+
+El indicador visible sirve sobre todo para que la conversación se vea natural
+del lado de quien recibe. Lo que más pesa es la pausa: evita que varios mensajes
+seguidos salgan como una ráfaga instantánea y con intervalos idénticos, que es
+el patrón que hace que una cuenta sea marcada como automatizada. No es una
+garantía contra el bloqueo: el volumen y los mensajes no solicitados pesan
+mucho más.
+
+Las fotos y los videos llevan el indicador pero sin pausa extra, porque la
+subida ya toma un tiempo variable de por sí.
+
+Se ajusta en las opciones del add-on:
+
+```yaml
+typing_indicator: true # false lo desactiva por completo
+typing_max_seconds: 3 # tope de la pausa; 0 envía de inmediato
+```
+
+**Para alertas urgentes, desactivalo en esa llamada** y así un timbre o una
+fuga de agua no se demoran un par de segundos:
+
+```yaml
+action: whatsapp.send_message
+data:
+  clientId: default
+  to: "34600000000"
+  body:
+    text: Fuga de agua detectada
+  typing: false
+```
+
 ## Configuración
 
 ```yaml
@@ -229,6 +267,8 @@ api_token: "" # se genera solo si se deja vacío
 log_level: info # trace | debug | info | warn | error | fatal
 mark_online: false # aparecer en línea mientras está conectado
 refresh_hours: 0 # reconectar cada N horas (0 = desactivado)
+typing_indicator: true # mostrar "escribiendo…" y pausar antes de enviar
+typing_max_seconds: 3 # tope de esa pausa (0 = enviar de inmediato)
 ```
 
 Cada nombre adicional en `clients` es otra cuenta para vincular, y se
@@ -258,6 +298,31 @@ instalación nueva, con el almacenamiento vacío.
 
 El detalle paso a paso, la equivalencia de endpoints y cómo volver atrás están
 en [MIGRATION.md](MIGRATION.md).
+
+## Quién puede disparar tus automatizaciones
+
+Los mensajes entrantes llegan a Home Assistant como eventos
+`new_whatsapp_message`, y las automatizaciones actúan sobre ellos. **Mientras no
+haya ningún remitente en la lista, cualquiera que te escriba puede
+dispararlas** — algo que importa si alguna automatización tuya hace cosas según
+el texto del mensaje.
+
+Abrí la pestaña **Incoming** del panel y agregá los remitentes que aceptás. Cada
+chat de la pestaña **Groups & contacts** tiene además un botón **Allow**. Si
+listás un grupo, aceptás todo lo que se publique ahí; si listás a una persona,
+la aceptás en cualquier lado, grupos incluidos.
+
+También podés sembrar la lista desde las opciones del add-on, cómodo para una
+instalación nueva:
+
+```yaml
+allowed_senders:
+  - "34600000000"
+  - 120363000000000000@g.us
+```
+
+La opción sólo siembra la lista en el primer arranque; después manda el panel,
+así que editarla no requiere reiniciar el add-on.
 
 ## Node-RED
 
@@ -302,6 +367,8 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `GET`  | `/api/v1/clients/:id`                    | Estado de un cliente                                 |
 | `POST` | `/api/v1/clients/:id/messages`           | Enviar un mensaje; devuelve su `messageId`           |
 | `GET`  | `/api/v1/clients/:id/chats`              | Listar grupos y contactos con sus IDs                |
+| `GET`  | `/api/v1/allowlist`                      | Remitentes que pueden disparar eventos               |
+| `PUT`  | `/api/v1/allowlist`                      | Reemplazar esa lista                                 |
 | `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Foto de perfil de un chat                            |
 | `POST` | `/api/v1/clients/:id/media`              | Enviar una captura o clip de cámara                  |
 | `GET`  | `/api/v1/clients/:id/qr`                 | Código QR actual (`?format=png` para la imagen)      |

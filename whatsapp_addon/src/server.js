@@ -6,6 +6,7 @@ import { writeConnectionFile } from "./component.js";
 import { loadConfig, VERSION } from "./config.js";
 import { HomeAssistant } from "./homeassistant.js";
 import { WhatsappClient } from "./whatsapp-client.js";
+import { AllowlistStore } from "./allowlist.js";
 
 const main = async () => {
   const config = await loadConfig();
@@ -13,12 +14,17 @@ const main = async () => {
   const ha = new HomeAssistant(logger);
   const clients = {};
 
+  const allowlist = new AllowlistStore({ dataDir: config.dataDir, logger });
+  await allowlist.load(config.allowedSenders);
+
   const createClient = async (key) => {
     const client = new WhatsappClient({
       path: path.join(config.dataDir, key),
       logger: logger.child({ client: key }),
       offline: !config.markOnline,
       refreshMs: config.refreshMs,
+      typingIndicator: config.typingIndicator,
+      typingMaxMs: config.typingMaxMs,
     });
 
     client.on("restart", () => logger.debug({ client: key }, "restarting"));
@@ -36,9 +42,16 @@ const main = async () => {
     client.on("pair", (info) =>
       logger.info({ client: key, ...info }, "paired"),
     );
-    client.on("msg", (msg) =>
-      ha.fireEvent("new_whatsapp_message", { clientId: key, ...msg }),
-    );
+    client.on("msg", (msg) => {
+      if (!allowlist.allows(msg)) {
+        logger.debug(
+          { client: key, from: msg?.key?.remoteJid },
+          "message ignored: sender is not on the allowlist",
+        );
+        return;
+      }
+      ha.fireEvent("new_whatsapp_message", { clientId: key, ...msg });
+    });
     client.on("presence_update", (presence) =>
       ha.fireEvent("whatsapp_presence_update", { clientId: key, ...presence }),
     );
@@ -96,7 +109,13 @@ const main = async () => {
     logger,
   });
 
-  const app = createApp({ clients, token: config.token, logger, baseUrl });
+  const app = createApp({
+    clients,
+    token: config.token,
+    logger,
+    baseUrl,
+    allowlist,
+  });
 
   app.listen(config.port, () =>
     logger.info(

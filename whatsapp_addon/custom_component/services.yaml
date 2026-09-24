@@ -18,6 +18,15 @@ send_message:
       description: Message's body
       required: true
       advanced: true
+    typing:
+      name: Typing indicator
+      description: >-
+        Set to false to send immediately, without the typing indicator or its
+        pause. Use it for urgent alerts.
+      required: false
+      example: false
+      selector:
+        boolean:
 
 send_media:
   name: Send media
@@ -81,6 +90,15 @@ send_media:
           min: 0
           max: 60
           unit_of_measurement: seconds
+    typing:
+      name: Typing indicator
+      description: >-
+        Set to false to send immediately, without the typing indicator or its
+        pause. Use it for urgent alerts.
+      required: false
+      example: false
+      selector:
+        boolean:
 
 set_status:
   name: Set status

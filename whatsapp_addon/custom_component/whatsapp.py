@@ -91,7 +91,12 @@ class Whatsapp:
         client_id = self._client_id(data)
         return self._post(
             f"/clients/{client_id}/messages",
-            {"to": data["to"], "body": data["body"], "options": data.get("options")},
+            {
+                "to": data["to"],
+                "body": data["body"],
+                "options": data.get("options"),
+                "typing": data.get("typing"),
+            },
         )
 
     def send_media(self, data: dict) -> dict:
@@ -104,6 +109,7 @@ class Whatsapp:
                 "caption": data.get("caption"),
                 "duration": data.get("duration"),
                 "lookback": data.get("lookback"),
+                "typing": data.get("typing"),
             },
         )
 

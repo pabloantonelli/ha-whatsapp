@@ -152,6 +152,8 @@ The sidebar panel has three tabs:
   them.
 - **Snippet builder** — pick an action, fill in the fields, and copy the call
   out in the form you need.
+- **Incoming** — which senders may trigger your automations.
+- **Help** — the services, events and addressing rules, close at hand.
 
 ### Snippet builder
 
@@ -207,6 +209,41 @@ Recording requires a camera with the `stream` component (RTSP and similar);
 cameras that only expose a still image can send snapshots but not clips, and
 `lookback` only works when the stream is preloaded.
 
+## Typing indicator
+
+Before sending, the add-on shows the "typing…" indicator — "recording…" for
+voice notes — and waits a moment that varies with the length of the message, up
+to 3 seconds by default.
+
+The visible indicator mostly makes the conversation look natural to whoever
+receives it. The part that matters more is the pause: it stops consecutive
+messages from landing as an instant, evenly spaced burst, which is the kind of
+pattern that gets accounts flagged as automated. It is not a guarantee against
+being blocked — volume and unsolicited messages weigh far more.
+
+Photos and videos get the indicator but no added pause, since the upload
+already takes a variable while.
+
+Tune it in the add-on options:
+
+```yaml
+typing_indicator: true # false disables it entirely
+typing_max_seconds: 3 # upper bound for the pause; 0 sends immediately
+```
+
+**For urgent alerts, switch it off per call** so a doorbell or a water leak is
+not held back for a couple of seconds:
+
+```yaml
+action: whatsapp.send_message
+data:
+  clientId: default
+  to: "34600000000"
+  body:
+    text: Water leak detected
+  typing: false
+```
+
 ## Configuration
 
 ```yaml
@@ -216,6 +253,8 @@ api_token: "" # generated automatically when empty
 log_level: info # trace | debug | info | warn | error | fatal
 mark_online: false # appear online while connected
 refresh_hours: 0 # force a reconnect every N hours (0 = off)
+typing_indicator: true # show "typing…" and pause before sending
+typing_max_seconds: 3 # upper bound for that pause (0 = send immediately)
 ```
 
 Every extra name in `clients` is a separate account to pair, addressed by that
@@ -244,6 +283,30 @@ install with empty storage.
 
 Step-by-step details, the endpoint mapping and how to roll back:
 [MIGRATION.md](MIGRATION.md).
+
+## Who can trigger your automations
+
+Incoming messages are sent to Home Assistant as `new_whatsapp_message` events,
+and automations act on them. **While no sender is listed, anyone who writes to
+your number can trigger them** — which matters if an automation of yours does
+something based on the message text.
+
+Open the **Incoming** tab of the panel and add the senders you accept. Each
+chat in the **Groups & contacts** tab also has an **Allow** button. List a group
+to accept everything posted in it, or a person to accept them anywhere, groups
+included.
+
+You can also seed the list from the add-on options, which is handy for a fresh
+install:
+
+```yaml
+allowed_senders:
+  - "34600000000"
+  - 120363000000000000@g.us
+```
+
+The option only seeds the list on first start; after that the panel is the
+source of truth, so editing it does not need an add-on restart.
 
 ## Node-RED
 
@@ -287,6 +350,8 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `GET`  | `/api/v1/clients/:id`                    | One client's state                                        |
 | `POST` | `/api/v1/clients/:id/messages`           | Send a message; returns its `messageId`                   |
 | `GET`  | `/api/v1/clients/:id/chats`              | List groups and contacts with their IDs                   |
+| `GET`  | `/api/v1/allowlist`                      | Senders allowed to trigger events                         |
+| `PUT`  | `/api/v1/allowlist`                      | Replace that list                                         |
 | `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Profile picture of a chat                                 |
 | `POST` | `/api/v1/clients/:id/media`              | Send a camera snapshot or clip                            |
 | `GET`  | `/api/v1/clients/:id/qr`                 | Current QR code (`?format=png` for an image)              |

@@ -98,6 +98,26 @@ describe("panel: snippet builder", () => {
     ]);
   });
 
+  it("tiene las cinco pestañas", async () => {
+    const window = await boot();
+    const tabs = [...window.document.querySelectorAll("nav button")].map(
+      (b) => b.dataset.tab,
+    );
+
+    expect(tabs).toEqual(["status", "chats", "builder", "incoming", "help"]);
+  });
+
+  it("cambiar de pestaña muestra sólo ese panel", async () => {
+    const window = await boot();
+    window.document.querySelector('nav button[data-tab="help"]').click();
+
+    const visible = [...window.document.querySelectorAll("[data-panel]")]
+      .filter((p) => !p.hidden)
+      .map((p) => p.dataset.panel);
+
+    expect(visible).toEqual(["help"]);
+  });
+
   it("switches to event listeners without curl", async () => {
     const window = await boot();
     const select = window.document.getElementById("b-action");

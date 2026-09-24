@@ -75,6 +75,16 @@ const wrapError = (err) => {
   return new WhatsappError(statusCode, err);
 };
 
+/**
+ * How long to "type" before sending: longer for longer text, capped, and
+ * deliberately variable so consecutive messages are not evenly spaced.
+ */
+export const typingDelayMs = (text, maxMs, random = Math.random) => {
+  if (maxMs <= 0) return 0;
+  const typed = Math.min(maxMs, 400 + text.length * 35);
+  return Math.round(typed * (0.6 + random() * 0.4));
+};
+
 export class WhatsappClient extends EventEmitter2 {
   #conn;
   #path;
@@ -84,6 +94,8 @@ export class WhatsappClient extends EventEmitter2 {
   #baseDelayMs;
   #maxDelayMs;
   #maxAttempts;
+  #typingIndicator;
+  #typingMaxMs;
 
   #refreshInterval;
   #presenceInterval;
@@ -119,6 +131,8 @@ export class WhatsappClient extends EventEmitter2 {
     baseDelayMs = 1000,
     maxDelayMs = 5 * 60 * 1000,
     maxAttempts = Infinity,
+    typingIndicator = true,
+    typingMaxMs = 3000,
   }) {
     super();
     this.#path = path;
@@ -128,6 +142,8 @@ export class WhatsappClient extends EventEmitter2 {
     this.#baseDelayMs = baseDelayMs;
     this.#maxDelayMs = maxDelayMs;
     this.#maxAttempts = maxAttempts;
+    this.#typingIndicator = typingIndicator;
+    this.#typingMaxMs = typingMaxMs;
   }
 
   /** Public, read-only view of the connection state. */
@@ -455,7 +471,45 @@ export class WhatsappClient extends EventEmitter2 {
   }
 
   /** Sends a message. Returns Baileys' result, which carries the message id. */
-  sendMessage(phone, content, options) {
+  /**
+   * Shows the typing (or recording) indicator before a message goes out, and
+   * pauses for a spell that varies with the text length.
+   *
+   * The visible indicator is mostly cosmetic; the part that matters is that
+   * consecutive sends stop landing as an instant, evenly spaced burst.
+   * Media needs no added pause — the upload already takes a variable while.
+   */
+  async #announceTyping(id, content) {
+    if (!this.#typingIndicator || this.#typingMaxMs <= 0) return;
+
+    const text =
+      typeof content?.text === "string"
+        ? content.text
+        : typeof content?.caption === "string"
+          ? content.caption
+          : "";
+    const isAudio = Boolean(content?.audio);
+    const isMedia = Boolean(
+      content?.image || content?.video || content?.document,
+    );
+
+    try {
+      await this.#conn.sendPresenceUpdate(
+        isAudio ? "recording" : "composing",
+        id,
+      );
+    } catch {
+      // A failed indicator must never stop the message itself.
+      return;
+    }
+
+    if (isMedia) return;
+
+    const delay = typingDelayMs(text, this.#typingMaxMs);
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+
+  sendMessage(phone, content, options, { typing } = {}) {
     return this.#queue.add(async () => {
       this.#assertConnected();
       const id = this.toJid(phone);
@@ -464,10 +518,15 @@ export class WhatsappClient extends EventEmitter2 {
         throw new WhatsappNumberNotFoundError(phone);
       }
 
+      if (typing !== false) await this.#announceTyping(id, content);
+
       try {
         return await this.#conn.sendMessage(id, content, options);
       } catch (err) {
         throw wrapError(err);
+      } finally {
+        // Clear the indicator so it does not linger on the other side.
+        this.#conn.sendPresenceUpdate("paused", id).catch(() => {});
       }
     });
   }
