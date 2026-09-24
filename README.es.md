@@ -151,6 +151,33 @@ periódica y `api_token` para fijar vos mismo el token de la API.
 La referencia completa de servicios y eventos está en
 [whatsapp_addon/DOCS.md](whatsapp_addon/DOCS.md).
 
+## El panel de WhatsApp
+
+El panel de la barra lateral tiene tres pestañas:
+
+- **Status** — cada cliente con su estado de conexión en vivo, el número
+  vinculado, y la vinculación por QR o por código de 8 dígitos. Desde acá
+  también podés reiniciar o cerrar la sesión.
+- **Groups & contacts** — tus chats con foto de perfil y buscador. Copiás el ID
+  de un grupo directo al campo `to` del servicio; el JID de un grupo no se puede
+  deducir de un número, así que esta es la forma práctica de conseguirlo.
+- **Snippet builder** — elegís una acción, completás los campos y copiás la
+  llamada en el formato que necesites.
+
+### Generador de snippets
+
+Escribe la misma llamada de tres formas, ya con la URL y el token reales de tu
+instalación:
+
+- **Home Assistant** — YAML para pegar en una automatización o script en modo
+  YAML.
+- **Node-RED** — el método, la URL, las cabeceras y el payload para un nodo
+  `http request`.
+- **curl** — para probarlo en una terminal antes de armar la automatización.
+
+Cubre mensajes de texto, capturas y clips de cámara, imágenes y audio desde una
+URL, ubicaciones, actualizaciones de presencia y el estado del perfil.
+
 ## Enviar capturas y videos de las cámaras
 
 `whatsapp.send_media` captura directamente de una entidad `camera.*` o
@@ -191,17 +218,6 @@ automation:
 Grabar requiere una cámara con el componente `stream` (RTSP y similares); las
 que sólo entregan imagen fija pueden mandar capturas pero no clips, y
 `lookback` sólo funciona si el stream está precargado.
-
-## Encontrar el ID de un grupo o contacto
-
-Los grupos se direccionan con un JID del tipo `120363000000000000@g.us`, que no
-se puede deducir de un número de teléfono. Abrí el panel **WhatsApp** en la
-barra lateral: cada cliente conectado lista sus grupos y contactos con un
-buscador y un botón para copiar, y ese ID va directo al campo `to` del
-servicio.
-
-Los contactos aparecen de a poco después de vincular, a medida que WhatsApp los
-sincroniza. Los grupos se consultan en vivo y están completos enseguida.
 
 ## Configuración
 
@@ -264,6 +280,9 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `GET`  | `/api/v1/clients`                        | Lista de clientes y su estado                        |
 | `GET`  | `/api/v1/clients/:id`                    | Estado de un cliente                                 |
 | `POST` | `/api/v1/clients/:id/messages`           | Enviar un mensaje; devuelve su `messageId`           |
+| `GET`  | `/api/v1/clients/:id/chats`              | Listar grupos y contactos con sus IDs                |
+| `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Foto de perfil de un chat                            |
+| `POST` | `/api/v1/clients/:id/media`              | Enviar una captura o clip de cámara                  |
 | `GET`  | `/api/v1/clients/:id/qr`                 | Código QR actual (`?format=png` para la imagen)      |
 | `POST` | `/api/v1/clients/:id/pairing-code`       | Pedir un código de 8 dígitos                         |
 | `GET`  | `/api/v1/clients/:id/check/:phone`       | Comprobar si un número está en WhatsApp              |

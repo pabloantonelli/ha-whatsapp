@@ -1,421 +1,990 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WhatsApp</title>
-    <style>
-      :root {
-        color-scheme: light dark;
-        --bg: #f5f6f8;
-        --card: #ffffff;
-        --fg: #1c1f24;
-        --muted: #6b7280;
-        --border: #e2e5ea;
-        --accent: #25d366;
-        --danger: #d93025;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #14161a;
-          --card: #1e2126;
-          --fg: #e8eaed;
-          --muted: #9aa0a6;
-          --border: #32363c;
-        }
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        padding: 24px 16px;
-        background: var(--bg);
-        color: var(--fg);
-        font:
-          15px/1.5 system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-      }
-      .wrap {
-        max-width: 760px;
-        margin: 0 auto;
-      }
-      h1 {
-        font-size: 1.4rem;
-        margin: 0 0 4px;
-      }
-      .sub {
-        color: var(--muted);
-        margin: 0 0 24px;
-        font-size: 0.9rem;
-      }
-      .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
-      }
-      .head {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .name {
-        font-weight: 600;
-        font-size: 1.05rem;
-      }
-      .pill {
-        font-size: 0.75rem;
-        padding: 3px 10px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        color: var(--muted);
-      }
-      .pill.on {
-        background: rgba(37, 211, 102, 0.14);
-        color: var(--accent);
-        border-color: transparent;
-      }
-      .pill.off {
-        background: rgba(217, 48, 37, 0.12);
-        color: var(--danger);
-        border-color: transparent;
-      }
-      dl {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 6px 16px;
-        margin: 16px 0 0;
-        font-size: 0.9rem;
-      }
-      dt {
-        color: var(--muted);
-      }
-      dd {
-        margin: 0;
-      }
-      .qr {
-        margin-top: 18px;
-        text-align: center;
-      }
-      .qr img {
-        width: 260px;
-        max-width: 100%;
-        border-radius: 8px;
-        background: #fff;
-        padding: 10px;
-      }
-      .row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 16px;
-      }
-      input,
-      button {
-        font: inherit;
-        padding: 9px 14px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: var(--card);
-        color: var(--fg);
-      }
-      input {
-        flex: 1 1 200px;
-      }
-      button {
-        cursor: pointer;
-      }
-      button.primary {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: #05240f;
-        font-weight: 600;
-      }
-      button:disabled {
-        opacity: 0.5;
-        cursor: default;
-      }
-      .code {
-        margin-top: 14px;
-        text-align: center;
-        font-size: 1.8rem;
-        letter-spacing: 0.28em;
-        font-weight: 600;
-        font-family: ui-monospace, monospace;
-      }
-      .msg {
-        margin-top: 12px;
-        font-size: 0.88rem;
-        color: var(--muted);
-      }
-      .msg.err {
-        color: var(--danger);
-      }
-      footer {
-        color: var(--muted);
-        font-size: 0.8rem;
-        text-align: center;
-        margin-top: 28px;
-      }
-      footer a {
-        color: inherit;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>WhatsApp</h1>
-      <p class="sub">
-        Pair your phone and check the status of each configured client.
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WhatsApp</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f2f4f7;
+    --card: #fff;
+    --fg: #16191d;
+    --muted: #6b7280;
+    --border: #e3e6eb;
+    --accent: #25d366;
+    --accent-fg: #05240f;
+    --danger: #d93025;
+    --warn: #e8a33d;
+    --code-bg: #f7f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121417;
+      --card: #1c1f24;
+      --fg: #e8eaed;
+      --muted: #9aa0a6;
+      --border: #2e3238;
+      --code-bg: #15181c;
+    }
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 20px 16px 40px;
+    background: var(--bg);
+    color: var(--fg);
+    font:
+      15px/1.5 system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+  }
+  .wrap {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+  .ver {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  nav button {
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 10px 14px;
+    font: inherit;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  nav button[aria-selected="true"] {
+    color: var(--fg);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .name {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex: 0 0 auto;
+  }
+  .dot.on {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.18);
+  }
+  .dot.off {
+    background: var(--danger);
+  }
+  .dot.wait {
+    background: var(--warn);
+  }
+  .pill {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    margin: 14px 0 0;
+    font-size: 0.88rem;
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+  }
+
+  .row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    align-items: center;
+  }
+  input,
+  select,
+  button,
+  textarea {
+    font: inherit;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+  }
+  input,
+  select {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+  button {
+    cursor: pointer;
+  }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-fg);
+    font-weight: 600;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .field {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .qr {
+    margin-top: 16px;
+    text-align: center;
+  }
+  .qr img {
+    width: 250px;
+    max-width: 100%;
+    border-radius: 10px;
+    background: #fff;
+    padding: 10px;
+  }
+  .code {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 1.7rem;
+    letter-spacing: 0.26em;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
+  }
+  .msg {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .msg.err {
+    color: var(--danger);
+  }
+
+  .list {
+    max-height: 420px;
+    overflow-y: auto;
+    margin-top: 12px;
+  }
+  .chat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+  .chat:hover {
+    background: var(--bg);
+  }
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    object-fit: cover;
+    overflow: hidden;
+  }
+  .chat-main {
+    min-width: 0;
+    flex: 1;
+  }
+  .chat-name {
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jid {
+    font-family: ui-monospace, monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .group-tag {
+    font-size: 0.68rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  .empty {
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 10px 2px;
+  }
+  .section-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 14px 0 4px;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .out-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 8px;
+  }
+  .out-head .section-label {
+    margin: 0;
+    flex: 1;
+  }
+  .tiny {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+  }
+
+  footer {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: 30px;
+  }
+  footer a {
+    color: inherit;
+  }
+  [hidden] {
+    display: none !important;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>WhatsApp</h1>
+    <span class="ver" id="version"></span>
+  </header>
+
+  <nav>
+    <button data-tab="status" aria-selected="true">Status</button>
+    <button data-tab="chats" aria-selected="false">
+      Groups &amp; contacts
+    </button>
+    <button data-tab="builder" aria-selected="false">Snippet builder</button>
+  </nav>
+
+  <section data-panel="status"><div id="clients"></div></section>
+
+  <section data-panel="chats" hidden>
+    <div class="card">
+      <div class="row">
+        <input type="search" placeholder="Search by name…" id="chat-search" />
+        <select id="chat-client"></select>
+        <button class="primary" id="chat-load">Load</button>
+      </div>
+      <p class="msg">
+        Copy an ID and paste it into the <code>to</code> field of a service
+        call.
       </p>
-      <div id="clients"></div>
-      <footer><span id="version"></span></footer>
+      <div class="list" id="chat-list">
+        <p class="empty">Press Load to fetch your groups and contacts.</p>
+      </div>
     </div>
-    <script>
-      const api = (p, opts) =>
-        fetch("api/v1" + p, opts).then(async (r) => {
-          const data = await r.json().catch(() => ({}));
-          if (!r.ok) throw new Error(data.error || r.statusText);
-          return data;
-        });
+  </section>
 
-      const state = {};
+  <section data-panel="builder" hidden>
+    <div class="card">
+      <div class="row">
+        <div class="field">
+          <label for="b-client">Client</label>
+          <select id="b-client"></select>
+        </div>
+        <div class="field">
+          <label for="b-action">What do you want to do?</label>
+          <select id="b-action">
+            <option value="text">Send a text message</option>
+            <option value="camera">Send a camera snapshot or clip</option>
+            <option value="image">Send an image from a URL</option>
+            <option value="audio">Send an audio message from a URL</option>
+            <option value="location">Send a location</option>
+            <option value="presence">Send a presence update</option>
+            <option value="status">Set the profile status</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" id="b-fields"></div>
+      <div id="b-output"></div>
+    </div>
+  </section>
 
-      function render(clients, version) {
-        document.getElementById("version").textContent = "v" + version;
-        const root = document.getElementById("clients");
+  <footer>
+    <a
+      href="https://github.com/pabloantonelli/ha-whatsapp"
+      target="_blank"
+      rel="noreferrer"
+      >ha-whatsapp</a
+    >
+    by
+    <a href="https://github.com/pabloantonelli" target="_blank" rel="noreferrer"
+      >Pablo Antonelli</a
+    >
+  </footer>
+</div>
 
-        root.innerHTML = clients
-          .map((c) => {
-            const connected = c.connected;
-            const label = connected
-              ? "Connected"
-              : c.reconnecting
-                ? "Reconnecting"
-                : "Disconnected";
-            const cls = connected ? "on" : "off";
-            return `
-      <div class="card" data-id="${c.clientId}">
+<script>
+  const api = (p, opts) =>
+    fetch("api/v1" + p, opts).then(async (r) => {
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || r.statusText);
+      return data;
+    });
+
+  const esc = (v) =>
+    String(v).replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
+    );
+
+  const state = { clients: [], chats: {}, connection: null, pairing: {} };
+
+  /* ---------------------------------------------------------------- tabs */
+
+  document.querySelector("nav").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-tab]");
+    if (!btn) return;
+    document
+      .querySelectorAll("nav button")
+      .forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+    document.querySelectorAll("[data-panel]").forEach((p) => {
+      p.hidden = p.dataset.panel !== btn.dataset.tab;
+    });
+  });
+
+  /* -------------------------------------------------------------- status */
+
+  function renderClients(clients) {
+    document.getElementById("clients").innerHTML = clients
+      .map((c) => {
+        const cls = c.connected ? "on" : c.reconnecting ? "wait" : "off";
+        const label = c.connected
+          ? "Connected"
+          : c.reconnecting
+            ? "Reconnecting…"
+            : "Not paired";
+        return `
+      <div class="card" data-id="${esc(c.clientId)}">
         <div class="head">
-          <span class="name">${c.clientId}</span>
-          <span class="pill ${cls}">${label}</span>
+          <span class="dot ${cls}"></span>
+          <span class="name">${esc(c.clientId)}</span>
+          <span class="pill">${label}</span>
         </div>
         <dl>
-          <dt>Number</dt><dd>${c.phone || "—"}</dd>
-          <dt>Name</dt><dd>${c.name || "—"}</dd>
+          <dt>Number</dt><dd>${esc(c.phone || "—")}</dd>
+          <dt>Name</dt><dd>${esc(c.name || "—")}</dd>
           <dt>Connected since</dt>
           <dd>${c.lastConnectedAt ? new Date(c.lastConnectedAt).toLocaleString() : "—"}</dd>
         </dl>
         <div class="body"></div>
       </div>`;
-          })
-          .join("");
+      })
+      .join("");
 
-        clients.forEach((c) => renderBody(c));
-      }
+    clients.forEach(renderClientBody);
+  }
 
-      async function renderBody(c) {
-        const card = document.querySelector(
-          `.card[data-id="${c.clientId}"] .body`,
-        );
-        if (!card) return;
+  async function renderClientBody(c) {
+    const body = document.querySelector(`.card[data-id="${c.clientId}"] .body`);
+    if (!body) return;
 
-        if (c.connected) {
-          card.innerHTML = `<div class="row">
-      <button data-act="restart">Restart</button>
-      <button data-act="logout">Log out</button>
-    </div>
-    <div class="chats">
-      <h3>Groups and contacts</h3>
-      <p class="msg">Copy an ID to use it in the <code>to</code> field of a service call.</p>
-      <div class="row">
-        <input type="search" placeholder="Search by name…" data-field="search">
-        <button data-act="chats">Load</button>
-      </div>
-      <div class="list" data-field="list"></div>
-    </div>`;
-          const cached = state[c.clientId]?.chats;
-          if (cached) renderChats(card, cached, "");
-        } else {
-          let qrHtml = '<p class="msg">Waiting for a QR code…</p>';
-          try {
-            const { dataUrl } = await api(`/clients/${c.clientId}/qr`);
-            qrHtml = `<div class="qr"><img src="${dataUrl}" alt="QR code"></div>`;
-          } catch {
-            /* no QR yet */
-          }
+    if (c.connected) {
+      body.innerHTML = `<div class="row">
+        <button data-act="restart">Restart</button>
+        <button data-act="logout">Log out</button>
+      </div>`;
+      return;
+    }
 
-          card.innerHTML = `${qrHtml}
+    let qr = '<p class="msg">Waiting for a QR code…</p>';
+    try {
+      const { dataUrl } = await api(`/clients/${c.clientId}/qr`);
+      qr = `<div class="qr"><img src="${dataUrl}" alt="QR code"></div>`;
+    } catch {
+      /* no QR yet */
+    }
+
+    const saved = state.pairing[c.clientId] || {};
+    body.innerHTML = `${qr}
       <p class="msg">Or pair with an 8-digit code — enter your number with country code:</p>
       <div class="row">
         <input type="tel" placeholder="5491111111111" data-field="phone">
         <button class="primary" data-act="pair">Get code</button>
       </div>
-      <div class="code" data-field="code">${state[c.clientId]?.code || ""}</div>
-      <p class="msg ${state[c.clientId]?.error ? "err" : ""}" data-field="msg">${state[c.clientId]?.error || ""}</p>`;
-        }
-      }
+      <div class="code" data-field="code">${esc(saved.code || "")}</div>
+      <p class="msg ${saved.error ? "err" : ""}" data-field="msg">${esc(saved.error || "")}</p>`;
+  }
 
-      function renderChats(card, chats, term) {
-        const list = card.querySelector('[data-field="list"]');
-        if (!list) return;
+  /* --------------------------------------------------------------- chats */
 
-        const needle = term.trim().toLowerCase();
-        const match = (name) => !needle || name.toLowerCase().includes(needle);
-
-        const groups = chats.groups.filter((g) => match(g.name));
-        const contacts = chats.contacts.filter((c) => match(c.name));
-
-        const row = (item, meta) => `
+  function chatRow(item, clientId, isGroup) {
+    const initial = (item.name || "?").trim().charAt(0).toUpperCase();
+    const hue = [...item.id].reduce((a, ch) => a + ch.charCodeAt(0), 0) % 360;
+    return `
       <div class="chat">
-        <div>
-          <div class="chat-name">${escapeHtml(item.name)}</div>
-          <div class="jid">${item.id}</div>
+        <div class="avatar"
+             style="background: hsl(${hue} 55% 45%)"
+             data-avatar="${esc(item.id)}"
+             data-client="${esc(clientId)}">${esc(initial)}</div>
+        <div class="chat-main">
+          <div class="chat-name">
+            ${esc(item.name)}
+            ${isGroup ? `<span class="group-tag">${item.participants} members</span>` : ""}
+          </div>
+          <div class="jid">${esc(item.id)}</div>
         </div>
-        <div class="chat-meta">${meta}</div>
-        <button class="copy" data-act="copy" data-jid="${item.id}">Copy</button>
+        <button class="tiny" data-act="copy" data-jid="${esc(item.id)}">Copy ID</button>
       </div>`;
+  }
 
-        const sections = [];
-        sections.push(
-          `<div class="chat-meta">Groups (${groups.length})</div>`,
-          groups.length
-            ? groups.map((g) => row(g, `${g.participants}`)).join("")
-            : '<p class="empty">No groups found.</p>',
-          `<div class="chat-meta" style="margin-top:10px">Contacts (${contacts.length})</div>`,
-          contacts.length
-            ? contacts.map((c) => row(c, "")).join("")
-            : '<p class="empty">No contacts synced yet. WhatsApp sends them gradually after pairing.</p>',
-        );
+  function renderChats() {
+    const clientId = document.getElementById("chat-client").value;
+    const chats = state.chats[clientId];
+    const list = document.getElementById("chat-list");
+    if (!chats) {
+      list.innerHTML =
+        '<p class="empty">Press Load to fetch your groups and contacts.</p>';
+      return;
+    }
 
-        list.innerHTML = sections.join("");
+    const needle = document
+      .getElementById("chat-search")
+      .value.trim()
+      .toLowerCase();
+    const hit = (n) => !needle || n.toLowerCase().includes(needle);
+    const groups = chats.groups.filter((g) => hit(g.name));
+    const contacts = chats.contacts.filter((c) => hit(c.name));
+
+    list.innerHTML = `
+      <p class="section-label">Groups (${groups.length})</p>
+      ${
+        groups.length
+          ? groups.map((g) => chatRow(g, clientId, true)).join("")
+          : '<p class="empty">No groups found.</p>'
       }
+      <p class="section-label">Contacts (${contacts.length})</p>
+      ${
+        contacts.length
+          ? contacts.map((c) => chatRow(c, clientId, false)).join("")
+          : '<p class="empty">No contacts synced yet — WhatsApp sends them gradually after pairing.</p>'
+      }`;
 
-      function escapeHtml(value) {
-        return String(value).replace(
-          /[&<>"']/g,
-          (ch) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;",
-            })[ch],
-        );
+    loadAvatars();
+  }
+
+  /**
+   * Avatars are one request per chat, so only fetch the ones actually on
+   * screen. Failures are expected: most chats have no picture set.
+   */
+  const avatarSeen = new WeakSet();
+  const avatarObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const el = entry.target;
+        avatarObserver.unobserve(el);
+        if (avatarSeen.has(el)) continue;
+        avatarSeen.add(el);
+
+        const url = `api/v1/clients/${el.dataset.client}/avatar/${encodeURIComponent(el.dataset.avatar)}`;
+        fetch(url)
+          .then((r) => (r.ok ? r.blob() : Promise.reject()))
+          .then((blob) => {
+            el.style.backgroundImage = `url(${URL.createObjectURL(blob)})`;
+            el.style.backgroundSize = "cover";
+            el.textContent = "";
+          })
+          .catch(() => {
+            /* keep the initial */
+          });
       }
+    },
+    { rootMargin: "80px" },
+  );
 
-      document.addEventListener("input", (e) => {
-        const field = e.target.closest('[data-field="search"]');
-        if (!field) return;
-        const card = field.closest(".card");
-        const chats = state[card.dataset.id]?.chats;
-        if (chats) renderChats(card, chats, field.value);
-      });
+  function loadAvatars() {
+    document
+      .querySelectorAll("[data-avatar]")
+      .forEach((el) => avatarObserver.observe(el));
+  }
 
-      document.addEventListener("click", async (e) => {
-        const btn = e.target.closest("button[data-act]");
-        if (!btn) return;
-        const card = btn.closest(".card");
-        const id = card.dataset.id;
-        const act = btn.dataset.act;
+  document.getElementById("chat-search").addEventListener("input", renderChats);
+  document
+    .getElementById("chat-client")
+    .addEventListener("change", renderChats);
+  document.getElementById("chat-load").addEventListener("click", async (e) => {
+    const clientId = document.getElementById("chat-client").value;
+    const list = document.getElementById("chat-list");
+    e.target.disabled = true;
+    list.innerHTML = '<p class="empty">Loading…</p>';
+    try {
+      state.chats[clientId] = await api(`/clients/${clientId}/chats`);
+      renderChats();
+    } catch (err) {
+      list.innerHTML = `<p class="empty err msg">${esc(err.message)}</p>`;
+    } finally {
+      e.target.disabled = false;
+    }
+  });
 
-        btn.disabled = true;
-        try {
-          if (act === "chats") {
-            const chats = await api(`/clients/${id}/chats`);
-            state[id] = { ...state[id], chats };
-            renderChats(
-              card,
-              chats,
-              card.querySelector('[data-field="search"]').value,
-            );
-          } else if (act === "copy") {
-            const jid = btn.dataset.jid;
-            try {
-              await navigator.clipboard.writeText(jid);
-              btn.textContent = "Copied";
-            } catch {
-              // Clipboard access can be blocked; select the text instead.
-              const range = document.createRange();
-              range.selectNodeContents(
-                btn.closest(".chat").querySelector(".jid"),
-              );
-              window.getSelection().removeAllRanges();
-              window.getSelection().addRange(range);
-              btn.textContent = "Select";
-            }
-            setTimeout(() => (btn.textContent = "Copy"), 1500);
-          } else if (act === "pair") {
-            const phone = card
-              .querySelector('[data-field="phone"]')
-              .value.trim();
-            if (!phone) throw new Error("Enter a phone number first.");
-            const { code } = await api(`/clients/${id}/pairing-code`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ phone }),
-            });
-            state[id] = { code };
-            card.querySelector('[data-field="code"]').textContent = code;
-            card.querySelector('[data-field="msg"]').textContent =
-              "In WhatsApp: Linked devices › Link with phone number, then enter this code.";
-            card.querySelector('[data-field="msg"]').classList.remove("err");
-          } else {
-            await api(`/clients/${id}/${act}`, { method: "POST" });
+  /* ------------------------------------------------------------- builder */
+
+  const FIELDS = {
+    text: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["text", "Message", "text", "Hello from Home Assistant"],
+    ],
+    camera: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["entity", "Camera or image entity", "text", "camera.front_door"],
+      ["caption", "Caption (optional)", "text", "Someone is at the door"],
+      ["duration", "Clip seconds (empty = snapshot)", "number", ""],
+      ["lookback", "Lookback seconds (optional)", "number", ""],
+    ],
+    image: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["url", "Image URL", "text", "https://example.com/photo.jpg"],
+      ["caption", "Caption (optional)", "text", ""],
+    ],
+    audio: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["url", "Audio URL", "text", "https://example.com/clip.mp3"],
+      ["ptt", "Send as voice note (true/false)", "text", "true"],
+    ],
+    location: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["lat", "Latitude", "text", "-34.6037"],
+      ["lng", "Longitude", "text", "-58.3816"],
+    ],
+    presence: [
+      ["to", "Recipient (optional)", "text", "5491111111111"],
+      [
+        "type",
+        "available | unavailable | composing | recording | paused",
+        "text",
+        "composing",
+      ],
+      ["infinity", "Keep sending it (true/false)", "text", "false"],
+    ],
+    status: [["status", "New profile status", "text", "Available"]],
+  };
+
+  function builderValues() {
+    const values = {};
+    document
+      .querySelectorAll("#b-fields [data-key]")
+      .forEach((el) => (values[el.dataset.key] = el.value.trim()));
+    return values;
+  }
+
+  function renderBuilderFields() {
+    const action = document.getElementById("b-action").value;
+    document.getElementById("b-fields").innerHTML = FIELDS[action]
+      .map(
+        ([key, label, type, placeholder]) => `
+        <div class="field">
+          <label for="f-${key}">${esc(label)}</label>
+          <input id="f-${key}" data-key="${key}" type="${type}" placeholder="${esc(placeholder)}">
+        </div>`,
+      )
+      .join("");
+    renderBuilderOutput();
+  }
+
+  /** Builds the Home Assistant service call for the chosen action. */
+  function buildServiceCall(action, v, clientId) {
+    const to = v.to || "5491111111111";
+
+    switch (action) {
+      case "text":
+        return {
+          action: "whatsapp.send_message",
+          data: { clientId, to, body: { text: v.text || "Hello" } },
+        };
+      case "camera": {
+        const data = {
+          clientId,
+          to,
+          entity_id: v.entity || "camera.front_door",
+        };
+        if (v.caption) data.caption = v.caption;
+        if (v.duration) data.duration = Number(v.duration);
+        if (v.lookback) data.lookback = Number(v.lookback);
+        return { action: "whatsapp.send_media", data };
+      }
+      case "image": {
+        const image = { url: v.url || "https://example.com/photo.jpg" };
+        const body = { image };
+        if (v.caption) body.caption = v.caption;
+        return {
+          action: "whatsapp.send_message",
+          data: { clientId, to, body },
+        };
+      }
+      case "audio":
+        return {
+          action: "whatsapp.send_message",
+          data: {
+            clientId,
+            to,
+            body: {
+              audio: { url: v.url || "https://example.com/clip.mp3" },
+              mimetype: "audio/mp4",
+              ptt: v.ptt !== "false",
+            },
+          },
+        };
+      case "location":
+        return {
+          action: "whatsapp.send_message",
+          data: {
+            clientId,
+            to,
+            body: {
+              location: {
+                degreesLatitude: Number(v.lat || 0),
+                degreesLongitude: Number(v.lng || 0),
+              },
+            },
+          },
+        };
+      case "presence":
+        return {
+          action:
+            v.infinity === "true"
+              ? "whatsapp.send_infinity_presence_update"
+              : "whatsapp.send_presence_update",
+          data: {
+            clientId,
+            type: v.type || "composing",
+            ...(v.to ? { to: v.to } : {}),
+          },
+        };
+      case "status":
+        return {
+          action: "whatsapp.set_status",
+          data: { clientId, status: v.status || "Available" },
+        };
+    }
+  }
+
+  /** The same call expressed as a direct HTTP request against /api/v1. */
+  function buildHttpCall(action, v, clientId) {
+    const call = buildServiceCall(action, v, clientId);
+    const { data } = call;
+    const base = `/api/v1/clients/${clientId}`;
+
+    switch (call.action) {
+      case "whatsapp.send_media": {
+        const body = { to: data.to, entityId: data.entity_id };
+        if (data.caption) body.caption = data.caption;
+        if (data.duration) body.duration = data.duration;
+        if (data.lookback) body.lookback = data.lookback;
+        return { path: `${base}/media`, body };
+      }
+      case "whatsapp.set_status":
+        return { path: `${base}/status`, body: { status: data.status } };
+      case "whatsapp.send_presence_update":
+        return {
+          path: `${base}/presence`,
+          body: { type: data.type, ...(data.to ? { to: data.to } : {}) },
+        };
+      case "whatsapp.send_infinity_presence_update":
+        return {
+          path: `${base}/presence`,
+          body: {
+            type: data.type,
+            ...(data.to ? { to: data.to } : {}),
+            infinity: true,
+          },
+        };
+      default:
+        return {
+          path: `${base}/messages`,
+          body: { to: data.to, body: data.body },
+        };
+    }
+  }
+
+  /** Minimal YAML writer — enough for the shapes these snippets produce. */
+  function toYaml(value, indent = 0) {
+    const pad = "  ".repeat(indent);
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => `${pad}- ${toYaml(item, indent + 1).trimStart()}`)
+        .join("\n");
+    }
+    if (value && typeof value === "object") {
+      return Object.entries(value)
+        .map(([k, val]) => {
+          if (val && typeof val === "object") {
+            return `${pad}${k}:\n${toYaml(val, indent + 1)}`;
           }
-        } catch (err) {
-          state[id] = { error: err.message };
-          const msg = card.querySelector('[data-field="msg"]');
-          if (msg) {
-            msg.textContent = err.message;
-            msg.classList.add("err");
-          }
-        } finally {
-          btn.disabled = false;
-        }
-      });
+          return `${pad}${k}: ${typeof val === "string" ? JSON.stringify(val) : val}`;
+        })
+        .join("\n");
+    }
+    return `${pad}${value}`;
+  }
 
-      let lastSignature = null;
+  function renderBuilderOutput() {
+    const action = document.getElementById("b-action").value;
+    const clientId = document.getElementById("b-client").value || "default";
+    const v = builderValues();
 
-      async function tick() {
-        try {
-          const [{ clients }, health] = await Promise.all([
-            api("/clients"),
-            fetch("health").then((r) => r.json()),
-          ]);
+    const call = buildServiceCall(action, v, clientId);
+    const http = buildHttpCall(action, v, clientId);
+    // Either field can be missing if the Supervisor could not be reached.
+    const conn = state.connection || {};
+    const baseUrl = conn.baseUrl || "http://<add-on-hostname>:3000";
+    const token = conn.token || "<api-token>";
+    const url = `${baseUrl}${http.path}`;
 
-          // Re-render only on real changes, otherwise polling would wipe whatever
-          // the user is typing into the phone field every few seconds.
-          const signature = JSON.stringify(
-            clients.map((c) => [
-              c.clientId,
-              c.connected,
-              c.reconnecting,
-              c.phone,
-              c.lastConnectedAt,
-              c.hasQr,
-            ]),
-          );
-          if (signature === lastSignature) return;
-          lastSignature = signature;
+    const nodered = {
+      method: "POST",
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      payload: http.body,
+    };
 
-          render(clients, health.version);
-        } catch (err) {
-          lastSignature = null;
-          document.getElementById("clients").innerHTML =
-            `<div class="card"><p class="msg err">Cannot reach the add-on: ${err.message}</p></div>`;
-        }
+    const curl = [
+      `curl -X POST ${url} \\`,
+      `  -H "Authorization: Bearer ${token}" \\`,
+      `  -H "Content-Type: application/json" \\`,
+      `  -d '${JSON.stringify(http.body)}'`,
+    ].join("\n");
+
+    const block = (title, hint, text) => `
+      <div class="out-head">
+        <span class="section-label">${title}</span>
+        <button class="tiny" data-act="copy-text">Copy</button>
+      </div>
+      ${hint ? `<p class="msg" style="margin-top:0">${hint}</p>` : ""}
+      <pre>${esc(text)}</pre>`;
+
+    document.getElementById("b-output").innerHTML =
+      block(
+        "Home Assistant",
+        "Paste into an automation or script in YAML mode.",
+        toYaml(call),
+      ) +
+      block(
+        "Node-RED",
+        "Set these on an <code>http request</code> node, or feed them from a <code>function</code> node as <code>msg</code>.",
+        JSON.stringify(nodered, null, 2),
+      ) +
+      block("curl", "", curl);
+  }
+
+  document
+    .getElementById("b-action")
+    .addEventListener("change", renderBuilderFields);
+  document
+    .getElementById("b-client")
+    .addEventListener("change", renderBuilderOutput);
+  document
+    .getElementById("b-fields")
+    .addEventListener("input", renderBuilderOutput);
+
+  /* ------------------------------------------------------------- actions */
+
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+    const act = btn.dataset.act;
+
+    if (act === "copy-text") {
+      const text =
+        btn.closest(".out-head").nextElementSibling.tagName === "PRE"
+          ? btn.closest(".out-head").nextElementSibling.textContent
+          : btn.closest(".out-head").parentElement.querySelector("pre")
+              .textContent;
+      await copy(btn, text);
+      return;
+    }
+    if (act === "copy") {
+      await copy(btn, btn.dataset.jid, "Copy ID");
+      return;
+    }
+
+    const card = btn.closest(".card");
+    const id = card?.dataset.id;
+    if (!id) return;
+
+    btn.disabled = true;
+    try {
+      if (act === "pair") {
+        const phone = card.querySelector('[data-field="phone"]').value.trim();
+        if (!phone) throw new Error("Enter a phone number first.");
+        const { code } = await api(`/clients/${id}/pairing-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone }),
+        });
+        state.pairing[id] = { code };
+        card.querySelector('[data-field="code"]').textContent = code;
+        const msg = card.querySelector('[data-field="msg"]');
+        msg.textContent =
+          "In WhatsApp: Linked devices › Link with phone number, then enter this code.";
+        msg.classList.remove("err");
+      } else {
+        await api(`/clients/${id}/${act}`, { method: "POST" });
       }
+    } catch (err) {
+      state.pairing[id] = { error: err.message };
+      const msg = card.querySelector('[data-field="msg"]');
+      if (msg) {
+        msg.textContent = err.message;
+        msg.classList.add("err");
+      }
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
-      tick();
-      setInterval(tick, 5000);
-    </script>
-  </body>
-</html>
+  async function copy(btn, text, restore = "Copy") {
+    const original = btn.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = "Copied";
+    } catch {
+      btn.textContent = "Press ⌘/Ctrl+C";
+    }
+    setTimeout(() => (btn.textContent = original || restore), 1600);
+  }
+
+  /* --------------------------------------------------------------- poll */
+
+  let signature = null;
+
+  function fillClientSelects(clients) {
+    const ids = clients.map((c) => c.clientId);
+    for (const sel of [
+      document.getElementById("chat-client"),
+      document.getElementById("b-client"),
+    ]) {
+      const current = sel.value;
+      sel.innerHTML = ids.map((id) => `<option>${esc(id)}</option>`).join("");
+      if (ids.includes(current)) sel.value = current;
+    }
+  }
+
+  async function tick() {
+    try {
+      const [{ clients }, health] = await Promise.all([
+        api("/clients"),
+        fetch("health").then((r) => r.json()),
+      ]);
+
+      document.getElementById("version").textContent = "v" + health.version;
+
+      // Re-render only on real changes; polling must not wipe what is being typed.
+      const next = JSON.stringify(
+        clients.map((c) => [
+          c.clientId,
+          c.connected,
+          c.reconnecting,
+          c.phone,
+          c.lastConnectedAt,
+          c.hasQr,
+        ]),
+      );
+      if (next === signature) return;
+      signature = next;
+
+      state.clients = clients;
+      fillClientSelects(clients);
+      renderClients(clients);
+    } catch (err) {
+      signature = null;
+      document.getElementById("clients").innerHTML =
+        `<div class="card"><p class="msg err">Cannot reach the add-on: ${esc(err.message)}</p></div>`;
+    }
+  }
+
+  api("/connection")
+    .then((conn) => {
+      state.connection = conn;
+      renderBuilderOutput();
+    })
+    .catch(() => {
+      /* snippets fall back to placeholders */
+    });
+
+  renderBuilderFields();
+  tick();
+  setInterval(tick, 5000);
+</script>

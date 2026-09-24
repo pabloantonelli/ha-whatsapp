@@ -92,6 +92,8 @@ export class WhatsappClient extends EventEmitter2 {
   #queue = new PQueue({ concurrency: 1 });
   #existsCache = new Map();
   #contacts = new Map();
+  #avatarCache = new Map();
+  #avatarTtlMs = 60 * 60 * 1000;
   #existsTtlMs = 10 * 60 * 1000;
   #stopped = false;
   #lastQr = null;
@@ -403,6 +405,31 @@ export class WhatsappClient extends EventEmitter2 {
     } catch (err) {
       throw wrapError(err);
     }
+  }
+
+  /**
+   * Profile picture for a chat. WhatsApp rate-limits these, so results are
+   * cached — including the "no picture" answer, which is the common case.
+   */
+  async fetchAvatarUrl(jid) {
+    this.#assertConnected();
+
+    const cached = this.#avatarCache.get(jid);
+    if (cached && cached.expiresAt > Date.now()) return cached.url;
+
+    let url = null;
+    try {
+      url = (await this.#conn.profilePictureUrl(jid, "preview")) ?? null;
+    } catch {
+      // 404 from WhatsApp simply means there is no picture set.
+      url = null;
+    }
+
+    this.#avatarCache.set(jid, {
+      url,
+      expiresAt: Date.now() + this.#avatarTtlMs,
+    });
+    return url;
   }
 
   async checkNumber(phone) {

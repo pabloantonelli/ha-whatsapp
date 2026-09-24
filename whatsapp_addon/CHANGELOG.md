@@ -1,5 +1,31 @@
 # Changelog
 
+## 3.2.0
+
+### ✨ New
+
+- **Snippet builder** in the sidebar panel. Pick a client, an action and fill in
+  the fields, and it writes the call out three ways, ready to copy:
+  - **Home Assistant** YAML, to paste into an automation or script
+  - **Node-RED**, as the method, URL, headers and payload for an
+    `http request` node
+  - **curl**, to try it from a terminal
+
+  It covers text, camera snapshots and clips, images and audio by URL,
+  locations, presence and profile status. The URL and token are filled in with
+  this install's real values.
+
+- **Redesigned panel**, now split into _Status_, _Groups & contacts_ and
+  _Snippet builder_ tabs, with status dots and a cleaner layout.
+- **Real profile pictures** in the chat list, loaded only for the rows actually
+  on screen and cached for an hour, since WhatsApp rate-limits them.
+
+### 🧹 Internals
+
+- New `GET /api/v1/clients/:id/avatar/:jid`, which proxies the picture because
+  the ingress content policy blocks WhatsApp's CDN from the browser.
+- New `GET /api/v1/connection`, served only over ingress.
+
 ## 3.1.0
 
 ### ✨ New

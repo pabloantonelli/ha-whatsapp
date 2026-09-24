@@ -90,9 +90,13 @@ const main = async () => {
 
   // Publish the endpoint before serving, so the custom component can reach us
   // as soon as Home Assistant loads it.
-  await writeConnectionFile({ port: config.port, token: config.token, logger });
+  const baseUrl = await writeConnectionFile({
+    port: config.port,
+    token: config.token,
+    logger,
+  });
 
-  const app = createApp({ clients, token: config.token, logger });
+  const app = createApp({ clients, token: config.token, logger, baseUrl });
 
   app.listen(config.port, () =>
     logger.info(

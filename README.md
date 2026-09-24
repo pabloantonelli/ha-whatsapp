@@ -140,6 +140,32 @@ the account shows as online, `refresh_hours` for a periodic reconnect, and
 
 Full service and event reference: [whatsapp_addon/DOCS.md](whatsapp_addon/DOCS.md).
 
+## The WhatsApp panel
+
+The sidebar panel has three tabs:
+
+- **Status** — every client with its live connection state, the paired number,
+  and pairing by QR code or 8-digit code. Restart or log a client out from here.
+- **Groups & contacts** — your chats with profile pictures and a search box.
+  Copy a group's ID straight into the `to` field of a service call; group JIDs
+  cannot be derived from a phone number, so this is the practical way to get
+  them.
+- **Snippet builder** — pick an action, fill in the fields, and copy the call
+  out in the form you need.
+
+### Snippet builder
+
+It writes the same call three ways, with this install's real URL and token
+already filled in:
+
+- **Home Assistant** — YAML to paste into an automation or script in YAML mode.
+- **Node-RED** — the method, URL, headers and payload for an `http request`
+  node.
+- **curl** — to try it from a terminal before wiring it up.
+
+It covers text messages, camera snapshots and clips, images and audio from a
+URL, locations, presence updates and the profile status.
+
 ## Sending camera snapshots and clips
 
 `whatsapp.send_media` captures straight from a `camera.*` or `image.*` entity,
@@ -179,16 +205,6 @@ automation:
 Recording requires a camera with the `stream` component (RTSP and similar);
 cameras that only expose a still image can send snapshots but not clips, and
 `lookback` only works when the stream is preloaded.
-
-## Finding a group or contact ID
-
-Groups are addressed by a JID like `120363000000000000@g.us`, which cannot be
-derived from a phone number. Open the **WhatsApp** panel in the sidebar: each
-connected client lists its groups and contacts with a search box and a copy
-button, and the copied ID goes straight into the `to` field of a service call.
-
-Contacts appear gradually after pairing, as WhatsApp syncs them. Groups are
-fetched live and are complete right away.
 
 ## Configuration
 
@@ -249,6 +265,9 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `GET`  | `/api/v1/clients`                        | List clients and their state                              |
 | `GET`  | `/api/v1/clients/:id`                    | One client's state                                        |
 | `POST` | `/api/v1/clients/:id/messages`           | Send a message; returns its `messageId`                   |
+| `GET`  | `/api/v1/clients/:id/chats`              | List groups and contacts with their IDs                   |
+| `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Profile picture of a chat                                 |
+| `POST` | `/api/v1/clients/:id/media`              | Send a camera snapshot or clip                            |
 | `GET`  | `/api/v1/clients/:id/qr`                 | Current QR code (`?format=png` for an image)              |
 | `POST` | `/api/v1/clients/:id/pairing-code`       | Request an 8-digit pairing code                           |
 | `GET`  | `/api/v1/clients/:id/check/:phone`       | Check whether a number is on WhatsApp                     |

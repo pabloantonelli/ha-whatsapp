@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Router } from "express";
 import QRCode from "qrcode";
 import { z } from "zod";
@@ -53,7 +54,7 @@ const describe = (id, client) => ({
   hasQr: Boolean(client.qr),
 });
 
-export const createApiRouter = (clients) => {
+export const createApiRouter = (clients, { token, baseUrl } = {}) => {
   const router = Router();
   const withClient = resolveClient(clients);
 
@@ -153,6 +154,40 @@ export const createApiRouter = (clients) => {
       });
     }),
   );
+
+  /**
+   * Proxies the chat avatar. Fetching it in the browser would hit WhatsApp's
+   * CDN directly, which the ingress content policy blocks.
+   */
+  router.get(
+    "/clients/:clientId/avatar/:jid",
+    withClient,
+    asyncRoute(async (req, res) => {
+      const url = await req.client.fetchAvatarUrl(req.params.jid);
+      if (!url) return res.status(404).json({ error: "No profile picture" });
+
+      const { data, headers } = await axios.get(url, {
+        responseType: "arraybuffer",
+        timeout: 15000,
+      });
+
+      res.set("Content-Type", headers["content-type"] || "image/jpeg");
+      res.set("Cache-Control", "private, max-age=3600");
+      return res.send(Buffer.from(data));
+    }),
+  );
+
+  /**
+   * Base URL and token, so the panel can build ready-to-paste snippets for
+   * Node-RED and curl. Only served over ingress, which Home Assistant has
+   * already authenticated.
+   */
+  router.get("/connection", (req, res) => {
+    if (req.get("X-Ingress-Path") === undefined) {
+      return res.status(403).json({ error: "Only available through ingress" });
+    }
+    return res.json({ baseUrl, token });
+  });
 
   router.get(
     "/clients/:clientId/check/:phone",

@@ -45,6 +45,7 @@ const makeClient = (overrides = {}) => ({
     { id: "120363000@g.us", name: "Familia", participants: 5, announce: false },
   ]),
   contacts: [{ id: "5491111111111@s.whatsapp.net", name: "Ana" }],
+  fetchAvatarUrl: vi.fn(async () => null),
   requestPairingCode: vi.fn(async () => "ABCD1234"),
   restart: vi.fn(async () => {}),
   emit: vi.fn(),
@@ -302,5 +303,35 @@ describe("chats", () => {
   it("exige token", async () => {
     const res = await request(app).get("/api/v1/clients/default/chats");
     expect(res.status).toBe(401);
+  });
+});
+
+describe("datos de conexión para los snippets", () => {
+  it("se sirven por ingress", async () => {
+    const res = await request(app)
+      .get("/api/v1/connection")
+      .set("X-Ingress-Path", "/api/hassio_ingress/x");
+
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBe(TOKEN);
+  });
+
+  it("no se sirven con token, sólo por ingress", async () => {
+    const res = await request(app)
+      .get("/api/v1/connection")
+      .set("Authorization", `Bearer ${TOKEN}`);
+
+    expect(res.status).toBe(403);
+  });
+});
+
+describe("avatares", () => {
+  it("devuelve 404 cuando el chat no tiene foto", async () => {
+    const res = await request(app)
+      .get("/api/v1/clients/default/avatar/123@s.whatsapp.net")
+      .set("Authorization", `Bearer ${TOKEN}`);
+
+    expect(res.status).toBe(404);
+    expect(client.fetchAvatarUrl).toHaveBeenCalledWith("123@s.whatsapp.net");
   });
 });
