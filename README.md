@@ -252,6 +252,7 @@ clients:
 api_token: "" # generated automatically when empty
 log_level: info # trace | debug | info | warn | error | fatal
 mark_online: false # appear online while connected
+mark_read: false # mark incoming messages as read (blue ticks)
 refresh_hours: 0 # force a reconnect every N hours (0 = off)
 typing_indicator: true # show "typing…" and pause before sending
 typing_max_seconds: 3 # upper bound for that pause (0 = send immediately)
@@ -317,6 +318,35 @@ allowed_senders:
 The option only seeds the list on first start; after that the panel is the
 source of truth, so editing it does not need an add-on restart.
 
+## Marking messages as read
+
+Turn on `mark_read` and every accepted incoming message is marked as read, so
+chats stop piling up as unread on your phone:
+
+```yaml
+mark_read: true
+```
+
+Be aware that this shows the **blue ticks** to whoever wrote, so they see the
+message as read even though you have not looked at it. If you would rather
+decide case by case, leave the option off and mark them from an automation:
+
+```yaml
+automation:
+  - alias: Acknowledge commands
+    triggers:
+      - trigger: event
+        event_type: new_whatsapp_message
+    actions:
+      - action: whatsapp.mark_read
+        data:
+          clientId: default
+          messageId: "{{ trigger.event.data.key.id }}"
+          to: "{{ trigger.event.data.key.remoteJid }}"
+```
+
+Either way, nothing is marked read unless the sender passes the allowlist.
+
 ## Node-RED
 
 You do not need the HTTP API or a token: the add-on registers normal Home
@@ -363,6 +393,7 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `PUT`  | `/api/v1/allowlist`                      | Replace that list                                         |
 | `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Profile picture of a chat                                 |
 | `POST` | `/api/v1/clients/:id/media`              | Send a camera snapshot or clip                            |
+| `POST` | `/api/v1/clients/:id/read`               | Mark messages as read                                     |
 | `GET`  | `/api/v1/clients/:id/qr`                 | Current QR code (`?format=png` for an image)              |
 | `POST` | `/api/v1/clients/:id/pairing-code`       | Request an 8-digit pairing code                           |
 | `GET`  | `/api/v1/clients/:id/check/:phone`       | Check whether a number is on WhatsApp                     |

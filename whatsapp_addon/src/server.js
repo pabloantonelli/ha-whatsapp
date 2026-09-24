@@ -55,6 +55,17 @@ const main = async () => {
         );
         return;
       }
+      if (config.markRead) {
+        client
+          .markRead(msg.key)
+          .catch((err) =>
+            logger.debug(
+              { client: key, err: err.message },
+              "could not mark the message as read",
+            ),
+          );
+      }
+
       ha.fireEvent("new_whatsapp_message", { clientId: key, ...msg });
     });
     client.on("presence_update", (presence) =>

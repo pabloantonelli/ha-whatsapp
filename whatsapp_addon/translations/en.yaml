@@ -42,3 +42,9 @@ configuration:
       Only these senders may trigger Home Assistant events. Leave empty to
       accept everyone. This seeds the list on first start; afterwards edit it
       from the Incoming tab of the WhatsApp panel.
+  mark_read:
+    name: Mark incoming messages as read
+    description: >-
+      Mark every accepted incoming message as read. Shows the blue ticks to the
+      sender and keeps the chat from piling up as unread on your phone. Leave
+      off if you would rather read them yourself.

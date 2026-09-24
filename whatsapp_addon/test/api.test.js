@@ -47,6 +47,8 @@ const makeClient = (overrides = {}) => ({
   contacts: [{ id: "5491111111111@s.whatsapp.net", name: "Ana" }],
   fetchAvatarUrl: vi.fn(async () => null),
   requestPairingCode: vi.fn(async () => "ABCD1234"),
+  markRead: vi.fn(async (keys) => keys.length),
+  toJid: (phone) => `${String(phone).replace(/\D/g, "")}@s.whatsapp.net`,
   restart: vi.fn(async () => {}),
   emit: vi.fn(),
   ...overrides,
@@ -441,5 +443,40 @@ describe("remitentes recientes", () => {
       name: "Ana",
       allowed: false,
     });
+  });
+});
+
+describe("marcar como leído", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("acepta la key completa del evento", async () => {
+    const key = { id: "3EB0ABC", remoteJid: "5491111111111@s.whatsapp.net" };
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/read"),
+    ).send({ keys: [key] });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ marked: 1 });
+    expect(client.markRead).toHaveBeenCalledWith([key]);
+  });
+
+  it("acepta messageId y destinatario sueltos", async () => {
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/read"),
+    ).send({ messageId: "3EB0ABC", to: "5491111111111" });
+
+    expect(res.status).toBe(200);
+    expect(client.markRead).toHaveBeenCalledWith([
+      { id: "3EB0ABC", remoteJid: "5491111111111@s.whatsapp.net" },
+    ]);
+  });
+
+  it("explica qué falta si no se identifica el mensaje", async () => {
+    const res = await auth(
+      request(app).post("/api/v1/clients/default/read"),
+    ).send({ messageId: "3EB0ABC" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain("messageId and to");
   });
 });

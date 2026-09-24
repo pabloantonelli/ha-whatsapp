@@ -100,6 +100,44 @@ send_media:
       selector:
         boolean:
 
+mark_read:
+  name: Mark as read
+  description: >-
+    Mark a received message as read, showing the blue ticks and clearing the
+    unread badge on your phone.
+  fields:
+    clientId:
+      name: Client ID
+      description: Which instance of whatsapp received the message
+      required: true
+      example: default
+      selector:
+        text:
+    messageId:
+      name: Message ID
+      description: >-
+        The id from a new_whatsapp_message event, at trigger.event.data.key.id
+      required: false
+      example: 3EB0ABC123
+      selector:
+        text:
+    to:
+      name: Chat
+      description: The chat the message came from, from key.remoteJid
+      required: false
+      example: 391234567890@s.whatsapp.net
+      selector:
+        text:
+    keys:
+      name: Message keys
+      description: >-
+        Alternatively, pass the whole key object from the event
+        (trigger.event.data.key) as a one-item list.
+      required: false
+      advanced: true
+      selector:
+        object:
+
 set_status:
   name: Set status
   description: Sets the current user's status message

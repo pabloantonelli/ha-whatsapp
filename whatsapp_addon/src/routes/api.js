@@ -51,6 +51,22 @@ const mediaSchema = z.object({
   typing: z.boolean().optional(),
 });
 
+const readSchema = z.object({
+  // Either the whole key from a new_whatsapp_message event, or its parts.
+  keys: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        remoteJid: z.string().min(1),
+        participant: z.string().optional(),
+        fromMe: z.boolean().optional(),
+      }),
+    )
+    .optional(),
+  messageId: z.string().min(1).optional(),
+  to: z.union([z.string().min(1), z.number()]).optional(),
+});
+
 const allowlistSchema = z.object({
   entries: z.array(z.union([z.string(), z.number()])),
 });
@@ -225,6 +241,29 @@ export const createApiRouter = (
     }
     return res.json({ baseUrl, token });
   });
+
+  router.post(
+    "/clients/:clientId/read",
+    withClient,
+    validate(readSchema),
+    asyncRoute(async (req, res) => {
+      const { keys, messageId, to } = req.validated;
+
+      const list =
+        keys ??
+        (messageId && to
+          ? [{ id: messageId, remoteJid: req.client.toJid(to) }]
+          : []);
+
+      if (list.length === 0) {
+        return res.status(400).json({
+          error: "Provide keys, or both messageId and to.",
+        });
+      }
+
+      return res.json({ marked: await req.client.markRead(list) });
+    }),
+  );
 
   router.get(
     "/clients/:clientId/check/:phone",

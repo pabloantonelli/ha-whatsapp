@@ -448,6 +448,25 @@ export class WhatsappClient extends EventEmitter2 {
     return url;
   }
 
+  /**
+   * Marks messages as read — the blue ticks, and the chat stops showing as
+   * unread on the phone. Takes the `key` objects carried by incoming events.
+   */
+  async markRead(keys) {
+    this.#assertConnected();
+    const list = (Array.isArray(keys) ? keys : [keys]).filter(
+      (key) => key?.id && key?.remoteJid,
+    );
+    if (list.length === 0) return 0;
+
+    try {
+      await this.#conn.readMessages(list);
+      return list.length;
+    } catch (err) {
+      throw wrapError(err);
+    }
+  }
+
   async checkNumber(phone) {
     this.#assertConnected();
     const id = this.toJid(phone);

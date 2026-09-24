@@ -1,6 +1,6 @@
 {
   "name": "ha-whatsapp-addon",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "WhatsApp integration for Home Assistant, powered by Baileys",
   "type": "module",
   "main": "src/server.js",

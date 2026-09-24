@@ -17,6 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 SERVICES = (
     "send_message",
     "send_media",
+    "mark_read",
     "set_status",
     "presence_subscribe",
     "send_presence_update",

@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.4.0
+
+### ✨ New
+
+- **Mark incoming messages as read.** The `mark_read` option does it for every
+  accepted message, so chats stop piling up as unread on your phone. It shows
+  the blue ticks to the sender, so it is off by default; the new
+  `whatsapp.mark_read` service marks them case by case instead, taking the id
+  straight from a `new_whatsapp_message` event.
+- New `POST /api/v1/clients/:id/read`.
+
 ## 3.3.1
 
 ### 🐛 Fixed

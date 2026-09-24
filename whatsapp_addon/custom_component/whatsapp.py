@@ -113,6 +113,13 @@ class Whatsapp:
             },
         )
 
+    def mark_read(self, data: dict) -> dict:
+        client_id = self._client_id(data)
+        payload = {"messageId": data.get("messageId"), "to": data.get("to")}
+        if keys := data.get("keys"):
+            payload = {"keys": keys}
+        return self._post(f"/clients/{client_id}/read", payload)
+
     def set_status(self, data: dict) -> dict:
         client_id = self._client_id(data)
         return self._post(f"/clients/{client_id}/status", {"status": data["status"]})

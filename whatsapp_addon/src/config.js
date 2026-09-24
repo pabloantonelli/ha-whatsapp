@@ -56,6 +56,8 @@ export const loadConfig = async () => {
     // Typing indicator before sending; also spaces out consecutive messages.
     typingIndicator: options.typing_indicator !== false,
     typingMaxMs: Number(options.typing_max_seconds ?? 3) * 1000,
+    // Mark incoming messages as read automatically (shows blue ticks).
+    markRead: Boolean(options.mark_read),
     // Seeds the editable allowlist on first run; empty allows every sender.
     allowedSenders: options.allowed_senders ?? [],
   };
