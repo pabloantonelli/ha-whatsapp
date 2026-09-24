@@ -5,15 +5,12 @@
 ### ✨ New
 
 - **Snippet builder** in the sidebar panel. Pick a client, an action and fill in
-  the fields, and it writes the call out three ways, ready to copy:
-  - **Home Assistant** YAML, to paste into an automation or script
-  - **Node-RED**, as the method, URL, headers and payload for an
-    `http request` node
-  - **curl**, to try it from a terminal
-
-  It covers text, camera snapshots and clips, images and audio by URL,
-  locations, presence and profile status. The URL and token are filled in with
-  this install's real values.
+  the fields, and it writes the call out three ways, ready to copy: **Home
+  Assistant** YAML to paste into an automation, **Node-RED** as the method, URL,
+  headers and payload for an `http request` node, and **curl** to try from a
+  terminal. It covers text, camera snapshots and clips, images and audio by URL,
+  locations, presence and profile status, with this install's real URL and token
+  filled in.
 
 - **Redesigned panel**, now split into _Status_, _Groups & contacts_ and
   _Snippet builder_ tabs, with status dots and a cleaner layout.
