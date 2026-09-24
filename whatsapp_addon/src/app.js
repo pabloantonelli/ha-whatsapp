@@ -42,7 +42,13 @@ export const createApp = ({ clients, token, logger, baseUrl }) => {
   // v2.x does not send a token, and breaking those installs is not acceptable.
   app.use("/", createLegacyRouter(clients, logger));
 
-  app.use(express.static(publicDir));
+  // Always revalidate: the panel is served through ingress, where a cached
+  // copy would keep running an old version after an add-on update.
+  app.use(
+    express.static(publicDir, {
+      setHeaders: (res) => res.setHeader("Cache-Control", "no-cache"),
+    }),
+  );
 
   app.use(errorHandler(logger));
 

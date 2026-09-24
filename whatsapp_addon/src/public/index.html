@@ -552,35 +552,51 @@
    * screen. Failures are expected: most chats have no picture set.
    */
   const avatarSeen = new WeakSet();
-  const avatarObserver = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const el = entry.target;
-        avatarObserver.unobserve(el);
-        if (avatarSeen.has(el)) continue;
-        avatarSeen.add(el);
+  let avatarObserver = null;
 
-        const url = `api/v1/clients/${el.dataset.client}/avatar/${encodeURIComponent(el.dataset.avatar)}`;
-        fetch(url)
-          .then((r) => (r.ok ? r.blob() : Promise.reject()))
-          .then((blob) => {
-            el.style.backgroundImage = `url(${URL.createObjectURL(blob)})`;
-            el.style.backgroundSize = "cover";
-            el.textContent = "";
-          })
-          .catch(() => {
-            /* keep the initial */
-          });
-      }
-    },
-    { rootMargin: "80px" },
-  );
+  /**
+   * Created lazily and guarded: if IntersectionObserver were missing, doing
+   * this at load time would kill the whole script, panel and all.
+   */
+  function getAvatarObserver() {
+    if (avatarObserver || typeof IntersectionObserver === "undefined") {
+      return avatarObserver;
+    }
+
+    avatarObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target;
+          avatarObserver.unobserve(el);
+          if (avatarSeen.has(el)) continue;
+          avatarSeen.add(el);
+
+          const url = `api/v1/clients/${el.dataset.client}/avatar/${encodeURIComponent(el.dataset.avatar)}`;
+          fetch(url)
+            .then((r) => (r.ok ? r.blob() : Promise.reject()))
+            .then((blob) => {
+              el.style.backgroundImage = `url(${URL.createObjectURL(blob)})`;
+              el.style.backgroundSize = "cover";
+              el.textContent = "";
+            })
+            .catch(() => {
+              /* keep the initial */
+            });
+        }
+      },
+      { rootMargin: "80px" },
+    );
+
+    return avatarObserver;
+  }
 
   function loadAvatars() {
+    const observer = getAvatarObserver();
+    if (!observer) return;
     document
       .querySelectorAll("[data-avatar]")
-      .forEach((el) => avatarObserver.observe(el));
+      .forEach((el) => observer.observe(el));
   }
 
   document.getElementById("chat-search").addEventListener("input", renderChats);

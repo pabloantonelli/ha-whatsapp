@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.2.3
+
+### 🐛 Fixed
+
+- **The panel kept running an old version after an update.** It was served
+  without `Cache-Control`, so browsers held on to a cached copy — which is why
+  earlier fixes appeared not to work. It now always revalidates.
+- The avatar observer was created while the script loaded, so on a browser
+  without `IntersectionObserver` the whole panel would have died, copy buttons
+  included. It is now created on demand and skipped if unsupported.
+
+### 🧹 Internals
+
+- The panel is now covered by tests: it boots in jsdom, and the suite asserts
+  that each Copy button copies its own snippet and that copying falls back to
+  `execCommand` when `navigator.clipboard` is unavailable, as it is over plain
+  HTTP.
+
 ## 3.2.2
 
 ### ✨ New

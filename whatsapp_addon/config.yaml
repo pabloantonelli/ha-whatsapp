@@ -1,6 +1,6 @@
 ---
 name: WhatsApp
-version: "3.2.2"
+version: "3.2.3"
 slug: ha_whatsapp
 description: Send and receive WhatsApp messages from Home Assistant, powered by Baileys
 url: "https://github.com/pabloantonelli/ha-whatsapp"
