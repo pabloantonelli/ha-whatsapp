@@ -164,6 +164,7 @@ El panel de la barra lateral tiene tres pestañas:
 - **Snippet builder** — elegís una acción, completás los campos y copiás la
   llamada en el formato que necesites.
 - **Incoming** — qué remitentes pueden disparar tus automatizaciones.
+- **Settings** — comportamiento que podés cambiar sin reiniciar.
 - **Help** — los servicios, eventos y reglas de direccionamiento, a mano.
 
 ### Generador de snippets
@@ -257,6 +258,26 @@ data:
     text: Fuga de agua detectada
   typing: false
 ```
+
+## Ajustes
+
+La pestaña **Settings** del panel reúne el comportamiento que más vas a querer
+retocar, para no tener que editar las opciones del add-on y reiniciar:
+
+| Ajuste                            | Efecto                                                 |
+| --------------------------------- | ------------------------------------------------------ |
+| Marcar los entrantes como leídos  | Tildes azules, y sin globo de no leídos en el teléfono |
+| Mostrar el indicador de escritura | "escribiendo…" antes del mensaje, con una pausa        |
+| Pausa máxima de escritura         | Tope en segundos; la espera varía según el largo       |
+| Aparecer en línea                 | ⚠️ Corta las notificaciones a tu teléfono              |
+| Reconexión periódica              | Horas entre reconexiones forzadas; 0 la desactiva      |
+| Nivel de log                      | Subilo mientras diagnosticás un problema               |
+
+Los cambios se aplican al instante, salvo _Aparecer en línea_ y _Reconexión
+periódica_, que toman efecto al reiniciar el add-on — el panel los marca.
+
+Estos valores viven en `/data`, no en las opciones del add-on. Las opciones son
+sólo el punto de partida de una instalación nueva; después manda el panel.
 
 ## Configuración
 
@@ -409,6 +430,8 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `GET`  | `/api/v1/clients/:id/chats`              | Listar grupos y contactos con sus IDs                |
 | `GET`  | `/api/v1/allowlist`                      | Remitentes que pueden disparar eventos               |
 | `PUT`  | `/api/v1/allowlist`                      | Reemplazar esa lista                                 |
+| `GET`  | `/api/v1/settings`                       | Ajustes actuales                                     |
+| `PUT`  | `/api/v1/settings`                       | Cambiarlos                                           |
 | `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Foto de perfil de un chat                            |
 | `POST` | `/api/v1/clients/:id/media`              | Enviar una captura o clip de cámara                  |
 | `POST` | `/api/v1/clients/:id/read`               | Marcar mensajes como leídos                          |

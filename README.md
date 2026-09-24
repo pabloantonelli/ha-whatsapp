@@ -153,6 +153,7 @@ The sidebar panel has three tabs:
 - **Snippet builder** — pick an action, fill in the fields, and copy the call
   out in the form you need.
 - **Incoming** — which senders may trigger your automations.
+- **Settings** — behaviour you can change without restarting.
 - **Help** — the services, events and addressing rules, close at hand.
 
 ### Snippet builder
@@ -243,6 +244,27 @@ data:
     text: Water leak detected
   typing: false
 ```
+
+## Settings
+
+The **Settings** tab of the panel holds the behaviour you are most likely to
+adjust, so you do not have to edit the add-on options and restart:
+
+| Setting                        | Effect                                              |
+| ------------------------------ | --------------------------------------------------- |
+| Mark incoming messages as read | Blue ticks, and no unread badge on your phone       |
+| Show the typing indicator      | "typing…" before a message, with a pause            |
+| Longest typing pause           | Upper bound in seconds; the wait varies with length |
+| Appear online while connected  | ⚠️ Stops notifications reaching your phone          |
+| Periodic reconnect             | Hours between forced reconnects; 0 disables it      |
+| Log level                      | Raise it while diagnosing a problem                 |
+
+Changes apply immediately, except _Appear online_ and _Periodic reconnect_,
+which take effect on the next add-on restart — the panel marks those.
+
+These values live in `/data`, not in the add-on options. The options are only
+the starting point for a fresh install; after that the panel is the source of
+truth.
 
 ## Configuration
 
@@ -391,6 +413,8 @@ curl -X POST http://<addon>:3000/api/v1/clients/default/messages \
 | `GET`  | `/api/v1/clients/:id/chats`              | List groups and contacts with their IDs                   |
 | `GET`  | `/api/v1/allowlist`                      | Senders allowed to trigger events                         |
 | `PUT`  | `/api/v1/allowlist`                      | Replace that list                                         |
+| `GET`  | `/api/v1/settings`                       | Current settings                                          |
+| `PUT`  | `/api/v1/settings`                       | Change them                                               |
 | `GET`  | `/api/v1/clients/:id/avatar/:jid`        | Profile picture of a chat                                 |
 | `POST` | `/api/v1/clients/:id/media`              | Send a camera snapshot or clip                            |
 | `POST` | `/api/v1/clients/:id/read`               | Mark messages as read                                     |

@@ -98,13 +98,20 @@ describe("panel: snippet builder", () => {
     ]);
   });
 
-  it("tiene las cinco pestañas", async () => {
+  it("tiene las seis pestañas", async () => {
     const window = await boot();
     const tabs = [...window.document.querySelectorAll("nav button")].map(
       (b) => b.dataset.tab,
     );
 
-    expect(tabs).toEqual(["status", "chats", "builder", "incoming", "help"]);
+    expect(tabs).toEqual([
+      "status",
+      "chats",
+      "builder",
+      "incoming",
+      "settings",
+      "help",
+    ]);
   });
 
   it("cambiar de pestaña muestra sólo ese panel", async () => {

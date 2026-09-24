@@ -49,16 +49,16 @@ export const loadConfig = async () => {
     dataDir: DATA_DIR,
     port: Number(process.env.PORT) || 3000,
     token: await resolveToken(options.api_token),
-    logLevel: options.log_level || "info",
-    // Opt-in: the periodic socket restart inherited from Baileys 6.
-    refreshMs: Number(options.refresh_hours || 0) * 60 * 60 * 1000,
-    markOnline: Boolean(options.mark_online),
-    // Typing indicator before sending; also spaces out consecutive messages.
-    typingIndicator: options.typing_indicator !== false,
-    typingMaxMs: Number(options.typing_max_seconds ?? 3) * 1000,
-    // Mark incoming messages as read automatically (shows blue ticks).
-    markRead: Boolean(options.mark_read),
     // Seeds the editable allowlist on first run; empty allows every sender.
     allowedSenders: options.allowed_senders ?? [],
+    // Seeds the editable settings on first run; the panel owns them after that.
+    settingsSeed: {
+      logLevel: options.log_level,
+      refreshHours: options.refresh_hours,
+      markOnline: options.mark_online,
+      markRead: options.mark_read,
+      typingIndicator: options.typing_indicator,
+      typingMaxSeconds: options.typing_max_seconds,
+    },
   };
 };

@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.5.0
+
+### ✨ New
+
+- **Settings tab in the panel.** Marking messages as read, the typing indicator
+  and its pause, appearing online, the periodic reconnect and the log level can
+  all be changed there instead of editing the add-on options and restarting.
+  Everything applies immediately except appearing online and the periodic
+  reconnect, which the panel marks as needing a restart.
+- New `GET`/`PUT /api/v1/settings`.
+
+### 🧹 Internals
+
+- Settings live in `/data`, with the add-on options seeding them on first run,
+  the same arrangement the allowlist already used. The client reads them live
+  rather than copying them at startup, which is what lets a change take effect
+  on the next message.
+
 ## 3.4.0
 
 ### ✨ New

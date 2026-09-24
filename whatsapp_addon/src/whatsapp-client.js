@@ -94,8 +94,7 @@ export class WhatsappClient extends EventEmitter2 {
   #baseDelayMs;
   #maxDelayMs;
   #maxAttempts;
-  #typingIndicator;
-  #typingMaxMs;
+  #settings;
 
   #refreshInterval;
   #presenceInterval;
@@ -131,8 +130,7 @@ export class WhatsappClient extends EventEmitter2 {
     baseDelayMs = 1000,
     maxDelayMs = 5 * 60 * 1000,
     maxAttempts = Infinity,
-    typingIndicator = true,
-    typingMaxMs = 3000,
+    settings,
   }) {
     super();
     this.#path = path;
@@ -142,8 +140,7 @@ export class WhatsappClient extends EventEmitter2 {
     this.#baseDelayMs = baseDelayMs;
     this.#maxDelayMs = maxDelayMs;
     this.#maxAttempts = maxAttempts;
-    this.#typingIndicator = typingIndicator;
-    this.#typingMaxMs = typingMaxMs;
+    this.#settings = settings;
   }
 
   /** Public, read-only view of the connection state. */
@@ -499,7 +496,8 @@ export class WhatsappClient extends EventEmitter2 {
    * Media needs no added pause — the upload already takes a variable while.
    */
   async #announceTyping(id, content) {
-    if (!this.#typingIndicator || this.#typingMaxMs <= 0) return;
+    const maxMs = this.#settings?.typingMaxMs ?? 0;
+    if (!this.#settings?.get("typingIndicator") || maxMs <= 0) return;
 
     const text =
       typeof content?.text === "string"
@@ -524,7 +522,7 @@ export class WhatsappClient extends EventEmitter2 {
 
     if (isMedia) return;
 
-    const delay = typingDelayMs(text, this.#typingMaxMs);
+    const delay = typingDelayMs(text, maxMs);
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
 

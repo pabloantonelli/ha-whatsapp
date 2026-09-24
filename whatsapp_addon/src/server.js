@@ -8,10 +8,21 @@ import { HomeAssistant } from "./homeassistant.js";
 import { WhatsappClient } from "./whatsapp-client.js";
 import { AllowlistStore } from "./allowlist.js";
 import { RecentSenders } from "./recent-senders.js";
+import { SettingsStore } from "./settings.js";
 
 const main = async () => {
   const config = await loadConfig();
-  const logger = pino({ level: config.logLevel });
+  const logger = pino({ level: "info" });
+
+  // The log level can change from the panel, so apply it on every change.
+  const settings = new SettingsStore({
+    dataDir: config.dataDir,
+    logger,
+    onChange: (values) => {
+      logger.level = values.logLevel;
+    },
+  });
+  await settings.load(config.settingsSeed);
   const ha = new HomeAssistant(logger);
   const clients = {};
 
@@ -23,10 +34,9 @@ const main = async () => {
     const client = new WhatsappClient({
       path: path.join(config.dataDir, key),
       logger: logger.child({ client: key }),
-      offline: !config.markOnline,
-      refreshMs: config.refreshMs,
-      typingIndicator: config.typingIndicator,
-      typingMaxMs: config.typingMaxMs,
+      offline: !settings.get("markOnline"),
+      refreshMs: settings.get("refreshHours") * 60 * 60 * 1000,
+      settings,
     });
 
     client.on("restart", () => logger.debug({ client: key }, "restarting"));
@@ -55,7 +65,7 @@ const main = async () => {
         );
         return;
       }
-      if (config.markRead) {
+      if (settings.get("markRead")) {
         client
           .markRead(msg.key)
           .catch((err) =>
@@ -132,6 +142,7 @@ const main = async () => {
     baseUrl,
     allowlist,
     recentSenders,
+    settings,
   });
 
   app.listen(config.port, () =>

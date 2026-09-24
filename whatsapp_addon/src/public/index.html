@@ -327,6 +327,7 @@
     </button>
     <button data-tab="builder" aria-selected="false">Snippet builder</button>
     <button data-tab="incoming" aria-selected="false">Incoming</button>
+    <button data-tab="settings" aria-selected="false">Settings</button>
     <button data-tab="help" aria-selected="false">Help</button>
   </nav>
 
@@ -408,6 +409,18 @@
         While this list is empty, anyone who writes to you can trigger them. Add
         a group to accept everything posted in it, or a person to accept them
         anywhere, groups included.
+      </p>
+    </div>
+  </section>
+
+  <section data-panel="settings" hidden>
+    <div class="card">
+      <h3 style="margin-top: 0">Behaviour</h3>
+      <div id="settings-form"></div>
+      <p class="msg" id="settings-msg"></p>
+      <p class="msg">
+        Saved here, not in the add-on options: changes apply immediately unless
+        noted. The add-on options only provide the initial values.
       </p>
     </div>
   </section>
@@ -534,6 +547,7 @@
       p.hidden = p.dataset.panel !== btn.dataset.tab;
     });
     if (btn.dataset.tab === "incoming") refreshRecent();
+    if (btn.dataset.tab === "settings") loadSettings();
   });
 
   /* -------------------------------------------------------------- status */
@@ -1297,6 +1311,132 @@
     }
   });
 
+  /* ---------------------------------------------------------- settings */
+
+  const SETTINGS_FIELDS = [
+    [
+      "markRead",
+      "boolean",
+      "Mark incoming messages as read",
+      "Shows the blue ticks to whoever wrote, and clears the unread badge on your phone.",
+    ],
+    [
+      "typingIndicator",
+      "boolean",
+      "Show the typing indicator",
+      "Sends “typing…” (or “recording…” for voice notes) before a message, and pauses first.",
+    ],
+    [
+      "typingMaxSeconds",
+      "number",
+      "Longest typing pause (seconds)",
+      "The actual wait varies with the message length. 0 sends immediately.",
+      0,
+      10,
+    ],
+    [
+      "markOnline",
+      "boolean",
+      "Appear online while connected",
+      "Careful: while WhatsApp considers you online here, your phone stops getting notifications.",
+    ],
+    [
+      "refreshHours",
+      "number",
+      "Periodic reconnect (hours)",
+      "0 disables it. Not needed on Baileys 7; only for working around a stability problem.",
+      0,
+      48,
+    ],
+    [
+      "logLevel",
+      "select",
+      "Log level",
+      "Raise it to debug or trace when diagnosing a problem.",
+      ["trace", "debug", "info", "warn", "error", "fatal"],
+    ],
+  ];
+
+  let settingsValues = {};
+  let restartRequired = [];
+
+  function renderSettings() {
+    document.getElementById("settings-form").innerHTML = SETTINGS_FIELDS.map(
+      ([key, type, label, hint, a, b]) => {
+        const value = settingsValues[key];
+        const note = restartRequired.includes(key)
+          ? ' <span class="group-tag">restart needed</span>'
+          : "";
+
+        let control;
+        if (type === "boolean") {
+          control = `<input type="checkbox" data-setting="${key}" ${value ? "checked" : ""}>`;
+        } else if (type === "number") {
+          control = `<input type="number" data-setting="${key}" value="${value}" min="${a}" max="${b}">`;
+        } else {
+          control = `<select data-setting="${key}">${a
+            .map(
+              (o) => `<option ${o === value ? "selected" : ""}>${o}</option>`,
+            )
+            .join("")}</select>`;
+        }
+
+        return `
+      <div class="row" style="align-items: flex-start">
+        <div class="field">
+          <label>${label}${note}</label>
+          <p class="msg" style="margin: 0">${hint}</p>
+        </div>
+        <div style="flex: 0 0 auto; padding-top: 4px">${control}</div>
+      </div>`;
+      },
+    ).join("");
+  }
+
+  async function loadSettings() {
+    try {
+      const res = await api("/settings");
+      settingsValues = res.settings;
+      restartRequired = res.restartRequired || [];
+      renderSettings();
+    } catch (err) {
+      document.getElementById("settings-msg").textContent = err.message;
+    }
+  }
+
+  document
+    .getElementById("settings-form")
+    .addEventListener("change", async (e) => {
+      const el = e.target.closest("[data-setting]");
+      if (!el) return;
+
+      const key = el.dataset.setting;
+      const value =
+        el.type === "checkbox"
+          ? el.checked
+          : el.type === "number"
+            ? Number(el.value)
+            : el.value;
+
+      const note = document.getElementById("settings-msg");
+      try {
+        const res = await api("/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ [key]: value }),
+        });
+        settingsValues = res.settings;
+        note.classList.remove("err");
+        note.textContent = restartRequired.includes(key)
+          ? "Saved — restart the add-on for this one to take effect."
+          : "Saved.";
+        renderSettings();
+      } catch (err) {
+        note.classList.add("err");
+        note.textContent = err.message;
+      }
+    });
+
   /* --------------------------------------------------------------- poll */
 
   let signature = null;
@@ -1366,6 +1506,7 @@
     });
 
   renderBuilderFields();
+  loadSettings();
   tick();
   setInterval(tick, 5000);
 </script>

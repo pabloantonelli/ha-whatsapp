@@ -73,6 +73,15 @@ beforeEach(() => {
     token: TOKEN,
     logger: pino({ level: "silent" }),
     allowlist,
+    settings: {
+      values: { markRead: false, typingIndicator: true, typingMaxSeconds: 3 },
+      update: vi.fn(async (patch) => ({
+        markRead: false,
+        typingIndicator: true,
+        typingMaxSeconds: 3,
+        ...patch,
+      })),
+    },
     recentSenders: {
       entries: [
         {
@@ -478,5 +487,34 @@ describe("marcar como leído", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.error).toContain("messageId and to");
+  });
+});
+
+describe("ajustes desde el panel", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("devuelve los valores y cuáles requieren reinicio", async () => {
+    const res = await auth(request(app).get("/api/v1/settings"));
+
+    expect(res.status).toBe(200);
+    expect(res.body.settings.typingMaxSeconds).toBe(3);
+    expect(res.body.restartRequired).toContain("markOnline");
+  });
+
+  it("actualiza una sola clave", async () => {
+    const res = await auth(request(app).put("/api/v1/settings")).send({
+      markRead: true,
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.settings.markRead).toBe(true);
+  });
+
+  it("rechaza valores fuera de rango", async () => {
+    const res = await auth(request(app).put("/api/v1/settings")).send({
+      typingMaxSeconds: 99,
+    });
+
+    expect(res.status).toBe(400);
   });
 });

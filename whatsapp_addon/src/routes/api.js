@@ -3,6 +3,7 @@ import { Router } from "express";
 import QRCode from "qrcode";
 import { z } from "zod";
 import { asyncRoute, resolveClient, validate } from "./middleware.js";
+import { RESTART_REQUIRED } from "../settings.js";
 import {
   captureRecording,
   captureSnapshot,
@@ -67,6 +68,17 @@ const readSchema = z.object({
   to: z.union([z.string().min(1), z.number()]).optional(),
 });
 
+const settingsSchema = z
+  .object({
+    markRead: z.boolean(),
+    typingIndicator: z.boolean(),
+    typingMaxSeconds: z.number().int().min(0).max(10),
+    markOnline: z.boolean(),
+    refreshHours: z.number().int().min(0).max(48),
+    logLevel: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]),
+  })
+  .partial();
+
 const allowlistSchema = z.object({
   entries: z.array(z.union([z.string(), z.number()])),
 });
@@ -79,7 +91,7 @@ const describe = (id, client) => ({
 
 export const createApiRouter = (
   clients,
-  { token, baseUrl, allowlist, recentSenders } = {},
+  { token, baseUrl, allowlist, recentSenders, settings } = {},
 ) => {
   const router = Router();
   const withClient = resolveClient(clients);
@@ -234,6 +246,25 @@ export const createApiRouter = (
   router.get("/recent-senders", (req, res) => {
     res.json({ senders: recentSenders?.entries ?? [] });
   });
+
+  /** Settings the panel can change without touching the add-on options. */
+  router.get("/settings", (req, res) => {
+    res.json({
+      settings: settings?.values ?? {},
+      restartRequired: RESTART_REQUIRED,
+    });
+  });
+
+  router.put(
+    "/settings",
+    validate(settingsSchema),
+    asyncRoute(async (req, res) => {
+      res.json({
+        settings: await settings.update(req.validated),
+        restartRequired: RESTART_REQUIRED,
+      });
+    }),
+  );
 
   router.get("/connection", (req, res) => {
     if (req.get("X-Ingress-Path") === undefined) {

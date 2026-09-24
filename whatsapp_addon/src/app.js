@@ -20,6 +20,7 @@ export const createApp = ({
   baseUrl,
   allowlist,
   recentSenders,
+  settings,
 }) => {
   const app = express();
 
@@ -42,7 +43,13 @@ export const createApp = ({
   app.use(
     "/api/v1",
     authenticate(token),
-    createApiRouter(clients, { token, baseUrl, allowlist, recentSenders }),
+    createApiRouter(clients, {
+      token,
+      baseUrl,
+      allowlist,
+      recentSenders,
+      settings,
+    }),
   );
 
   // Legacy endpoints stay unauthenticated: the custom component shipped with
