@@ -9,7 +9,10 @@ WORKDIR /app
 
 # Dependencies first, so the layer is cached while only sources change.
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+# --ignore-scripts avoids running package install hooks, which crash under the
+# QEMU emulation used to build the non-amd64 images.
+RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund \
+    && npm cache clean --force
 
 COPY src/ ./src/
 COPY custom_component/ /custom_component/
