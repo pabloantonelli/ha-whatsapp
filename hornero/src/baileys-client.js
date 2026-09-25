@@ -104,6 +104,7 @@ export class BaileysClient extends EventEmitter2 {
   #existsCache = new Map();
   #contacts = new Map();
   #avatarCache = new Map();
+  #groupNames = new Map();
   #avatarTtlMs = 60 * 60 * 1000;
   #existsTtlMs = 10 * 60 * 1000;
   #stopped = false;
@@ -407,6 +408,9 @@ export class BaileysClient extends EventEmitter2 {
     this.#assertConnected();
     try {
       const groups = await this.#conn.groupFetchAllParticipating();
+      for (const group of Object.values(groups)) {
+        this.#groupNames.set(group.id, group.subject);
+      }
       return Object.values(groups)
         .map((group) => ({
           id: group.id,
@@ -462,6 +466,14 @@ export class BaileysClient extends EventEmitter2 {
     } catch (err) {
       throw wrapError(err);
     }
+  }
+
+  /**
+   * A readable name for a chat, from what has already been synced. Returns
+   * null rather than guessing, so callers can fall back to the raw id.
+   */
+  resolveName(jid) {
+    return this.#groupNames.get(jid) ?? this.#contacts.get(jid)?.name ?? null;
   }
 
   async checkNumber(phone) {
@@ -538,9 +550,13 @@ export class BaileysClient extends EventEmitter2 {
       if (typing !== false) await this.#announceTyping(id, content);
 
       try {
-        return await this.#conn.sendMessage(id, content, options);
+        const result = await this.#conn.sendMessage(id, content, options);
+        this.emit("sent", { to: id, content, result });
+        return result;
       } catch (err) {
-        throw wrapError(err);
+        const failure = wrapError(err);
+        this.emit("send_failed", { to: id, content, error: failure.message });
+        throw failure;
       } finally {
         // Clear the indicator so it does not linger on the other side.
         this.#conn.sendPresenceUpdate("paused", id).catch(() => {});

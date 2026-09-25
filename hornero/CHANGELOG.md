@@ -22,7 +22,7 @@ Assistant integration rather than a handful of services.
 
 - **Entities.** Each client is a device: a connectivity `binary_sensor`, a
   status `sensor`, the pairing QR as an `image` for dashboards, restart and
-  logout `button`s, and a `notify` entity. The add-on settings appear as
+  logout `button`s, and a `notify` entity per allowed sender. The settings appear as
   switches, a number and a select.
 - **Setup from the interface.** The add-on announces itself to the Supervisor,
   so Home Assistant offers to configure it; the manual dialog fills itself in.
@@ -35,6 +35,9 @@ Assistant integration rather than a handful of services.
 - **Prebuilt images** published to GHCR for all five architectures. Installing
   downloads instead of compiling, which on a Raspberry Pi is the difference
   between seconds and minutes.
+- **Messages tab** showing recent traffic, with the delivery state of each
+  message you sent — sent, delivered, read, or failed with the reason. Held in
+  memory only, so it clears when the add-on restarts.
 - Own icon and logo, and a terracotta palette in the panel.
 
 ### 🧹 Internals

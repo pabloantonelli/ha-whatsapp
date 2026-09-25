@@ -20,6 +20,7 @@ export const createApp = ({
   allowlist,
   recentSenders,
   settings,
+  messageLog,
 }) => {
   const app = express();
 
@@ -48,6 +49,7 @@ export const createApp = ({
       allowlist,
       recentSenders,
       settings,
+      messageLog,
     }),
   );
 

@@ -46,6 +46,9 @@ const makeClient = (overrides = {}) => ({
   ]),
   contacts: [{ id: "5491111111111@s.whatsapp.net", name: "Ana" }],
   fetchAvatarUrl: vi.fn(async () => null),
+  resolveName: vi.fn((jid) =>
+    jid === "5491111111111@s.whatsapp.net" ? "Ana" : null,
+  ),
   requestPairingCode: vi.fn(async () => "ABCD1234"),
   markRead: vi.fn(async (keys) => keys.length),
   toJid: (phone) => `${String(phone).replace(/\D/g, "")}@s.whatsapp.net`,
@@ -81,6 +84,19 @@ beforeEach(() => {
         typingMaxSeconds: 3,
         ...patch,
       })),
+    },
+    messageLog: {
+      entries: [
+        {
+          direction: "out",
+          clientId: "default",
+          jid: "5491111111111@s.whatsapp.net",
+          messageId: "ABC",
+          preview: "hola",
+          status: "delivered",
+          at: "2026-09-25T00:00:00.000Z",
+        },
+      ],
     },
     recentSenders: {
       entries: [
@@ -304,7 +320,7 @@ describe("allowlist", () => {
     const res = await auth(request(app).get("/api/v1/allowlist"));
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({
+    expect(res.body).toMatchObject({
       entries: ["5491111111111@s.whatsapp.net"],
       open: false,
     });
@@ -404,5 +420,51 @@ describe("ajustes desde el panel", () => {
     });
 
     expect(res.status).toBe(400);
+  });
+});
+
+describe("registro de mensajes", () => {
+  it("expone lo enviado con su estado de entrega", async () => {
+    const res = await request(app)
+      .get("/api/v1/messages")
+      .set("Authorization", `Bearer ${TOKEN}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.messages[0]).toMatchObject({
+      direction: "out",
+      preview: "hola",
+      status: "delivered",
+    });
+  });
+
+  it("exige token", async () => {
+    const res = await request(app).get("/api/v1/messages");
+    expect(res.status).toBe(401);
+  });
+});
+
+describe("nombres de la lista de permitidos", () => {
+  const auth = (req) => req.set("Authorization", `Bearer ${TOKEN}`);
+
+  it("resuelve el nombre del contacto, para nombrar las entidades notify", async () => {
+    const res = await auth(request(app).get("/api/v1/allowlist"));
+
+    expect(res.body.details).toEqual([
+      { id: "5491111111111@s.whatsapp.net", name: "Ana" },
+    ]);
+  });
+
+  it("cae al nombre que reportó WhatsApp en un mensaje reciente", async () => {
+    allowlist.entries = ["173478124720340@lid"];
+
+    const res = await auth(request(app).get("/api/v1/allowlist"));
+    expect(res.body.details[0].name).toBe("Ana");
+  });
+
+  it("devuelve null cuando no hay nombre conocido", async () => {
+    allowlist.entries = ["120363999@g.us"];
+
+    const res = await auth(request(app).get("/api/v1/allowlist"));
+    expect(res.body.details[0].name).toBeNull();
   });
 });

@@ -94,17 +94,29 @@ Ready-made automations. Click to import:
 
 Each paired client appears as a device:
 
-| Entity                                | Use it for                                    |
-| ------------------------------------- | --------------------------------------------- |
-| `binary_sensor.<client>_connected`    | Conditions, and alerting on a dropped session |
-| `sensor.<client>_status`              | Connected, reconnecting or disconnected       |
-| `image.<client>_qr`                   | The pairing code, on a dashboard              |
-| `button.<client>_restart` / `_logout` | Reconnect or unpair                           |
-| `notify.<client>`                     | Any blueprint that expects a notifier         |
+| Entity                                | Use it for                                                    |
+| ------------------------------------- | ------------------------------------------------------------- |
+| `binary_sensor.<client>_connected`    | Conditions, and alerting on a dropped session                 |
+| `sensor.<client>_status`              | Connected, reconnecting or disconnected                       |
+| `image.<client>_qr`                   | The pairing code, on a dashboard                              |
+| `button.<client>_restart` / `_logout` | Reconnect or unpair                                           |
+| `notify.<client>`                     | Sends to the default recipient set in the integration options |
+| `notify.<name>`                       | One per allowed sender, named after the contact or group      |
 
 The add-on's behaviour is exposed too: `switch.hornero_typing_indicator`,
 `switch.hornero_mark_read`, `switch.hornero_mark_online`,
 `number.hornero_typing_max_seconds` and `select.hornero_log_level`.
+
+### Notify entities
+
+A notify entity is a single destination — Home Assistant gives it no recipient
+field — so Hornero creates **one per allowed sender**, named after the contact
+or group. They appear and disappear as you edit the Incoming list, and are
+ready for any blueprint that expects a notifier.
+
+There is also a `notify.<client>` entity that sends to a fixed recipient, set
+in **Settings → Devices & services → Hornero → Configure**. For a recipient
+that varies, or one not on the allowlist, use `hornero.send_message`.
 
 ## The Hornero panel
 
@@ -114,6 +126,8 @@ Six tabs in the sidebar:
 - **Groups & contacts** — your chats with profile pictures and search. Copy a
   group's ID straight into a service call; group IDs cannot be derived from a
   phone number, so this is how you get them.
+- **Messages** — what was sent and received lately, with the delivery state of
+  each outgoing message.
 - **Snippet builder** — pick an action, fill in the fields, and copy the call
   as Home Assistant YAML, as an importable Node-RED node, or as `curl`.
 - **Incoming** — who may trigger your automations.
@@ -181,6 +195,10 @@ refresh_hours: 0
 These seed the settings on a fresh install. After that the **Settings** tab and
 the switch entities are the source of truth, so changing behaviour needs no
 restart.
+
+Both edit the same stored settings, so a change in one shows up in the other:
+the panel refreshes while its tab is open, and the entities on their next poll,
+within about fifteen seconds.
 
 ## Events
 

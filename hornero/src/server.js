@@ -9,6 +9,7 @@ import { BaileysClient } from "./baileys-client.js";
 import { AllowlistStore } from "./allowlist.js";
 import { RecentSenders } from "./recent-senders.js";
 import { SettingsStore } from "./settings.js";
+import { MessageLog } from "./message-log.js";
 
 const main = async () => {
   const config = await loadConfig();
@@ -29,6 +30,7 @@ const main = async () => {
   const allowlist = new AllowlistStore({ dataDir: config.dataDir, logger });
   await allowlist.load(config.allowedSenders);
   const recentSenders = new RecentSenders();
+  const messageLog = new MessageLog();
 
   const createClient = async (key) => {
     const client = new BaileysClient({
@@ -76,13 +78,21 @@ const main = async () => {
           );
       }
 
+      messageLog.recordReceived({ clientId: key, msg });
       ha.fireEvent("hornero_message", { clientId: key, ...msg });
     });
     client.on("presence_update", (presence) =>
       ha.fireEvent("hornero_presence", { clientId: key, ...presence }),
     );
-    client.on("ack", (ack) =>
-      ha.fireEvent("hornero_message_ack", { clientId: key, ...ack }),
+    client.on("ack", (ack) => {
+      messageLog.markStatus(ack.messageId, ack.status);
+      ha.fireEvent("hornero_message_ack", { clientId: key, ...ack });
+    });
+    client.on("sent", (event) =>
+      messageLog.recordSent({ clientId: key, ...event }),
+    );
+    client.on("send_failed", (event) =>
+      messageLog.recordFailure({ clientId: key, ...event }),
     );
     client.on("disconnected", (code) =>
       logger.warn({ client: key, code }, "disconnected, reconnecting"),
@@ -145,6 +155,7 @@ const main = async () => {
     allowlist,
     recentSenders,
     settings,
+    messageLog,
   });
 
   app.listen(config.port, () =>

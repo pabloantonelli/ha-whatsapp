@@ -91,7 +91,7 @@ const describe = (id, client) => ({
 
 export const createApiRouter = (
   clients,
-  { token, baseUrl, allowlist, recentSenders, settings } = {},
+  { token, baseUrl, allowlist, recentSenders, settings, messageLog } = {},
 ) => {
   const router = Router();
   const withClient = resolveClient(clients);
@@ -221,14 +221,32 @@ export const createApiRouter = (
   );
 
   /**
-   * Base URL and token, so the panel can build ready-to-paste snippets for
-   * Node-RED and curl. Only served over ingress, which Home Assistant has
-   * already authenticated.
+   * Resolves a readable name for an allowlist entry from whatever has been
+   * synced already: group subjects, contacts, or the name WhatsApp reported
+   * on a recent message.
    */
+  const describeEntry = (id) => {
+    for (const client of Object.values(clients)) {
+      const name = client.resolveName?.(id);
+      if (name) return name;
+    }
+
+    const recent = recentSenders?.entries.find(
+      (sender) => sender.id === id || sender.ids?.includes(id),
+    );
+    return recent?.name ?? null;
+  };
+
+  const withNames = (entries) =>
+    entries.map((id) => ({ id, name: describeEntry(id) }));
+
   /** Which senders may trigger Home Assistant events. Empty allows everyone. */
   router.get("/allowlist", (req, res) => {
+    const entries = allowlist?.entries ?? [];
     res.json({
-      entries: allowlist?.entries ?? [],
+      entries,
+      // The same list with names, for clients that can show them.
+      details: withNames(entries),
       open: allowlist?.open ?? true,
     });
   });
@@ -238,7 +256,7 @@ export const createApiRouter = (
     validate(allowlistSchema),
     asyncRoute(async (req, res) => {
       const entries = await allowlist.replace(req.validated.entries);
-      res.json({ entries, open: allowlist.open });
+      res.json({ entries, details: withNames(entries), open: allowlist.open });
     }),
   );
 
@@ -266,6 +284,16 @@ export const createApiRouter = (
     }),
   );
 
+  /** Recent traffic, so the panel can show what actually went out. */
+  router.get("/messages", (req, res) => {
+    res.json({ messages: messageLog?.entries ?? [] });
+  });
+
+  /**
+   * Base URL and token, so the panel can build ready-to-paste snippets for
+   * Node-RED and curl. Only served over ingress, which Home Assistant has
+   * already authenticated.
+   */
   router.get("/connection", (req, res) => {
     if (req.get("X-Ingress-Path") === undefined) {
       return res.status(403).json({ error: "Only available through ingress" });

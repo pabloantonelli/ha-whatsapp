@@ -3,26 +3,24 @@
 Service and event reference. For installation and upgrading, see the
 [project README](https://github.com/pabloantonelli/hornero#readme).
 
-## New in v3
+## The services at a glance
 
-Coming from v2.x? These capabilities did not exist before:
+| Service                                 | What it does                                         |
+| --------------------------------------- | ---------------------------------------------------- |
+| `hornero.send_message`                  | Text, images, audio, documents, locations, reactions |
+| `hornero.send_media`                    | A snapshot or a recorded clip from a camera entity   |
+| `hornero.mark_read`                     | Mark a received message as read                      |
+| `hornero.set_status`                    | Change the profile status text                       |
+| `hornero.presence_subscribe`            | Follow a contact's online and typing status          |
+| `hornero.send_presence_update`          | Appear online, typing or recording                   |
+| `hornero.send_infinity_presence_update` | Keep a presence showing until stopped                |
 
-| Capability                                                | Where                                             |
-| --------------------------------------------------------- | ------------------------------------------------- |
-| Pair with an 8-digit code instead of a QR                 | Sidebar panel                                     |
-| See each client's live connection state                   | Sidebar panel, `GET /health`                      |
-| Restart or log out a client without restarting the add-on | Sidebar panel                                     |
-| Know when a message is delivered or read                  | `hornero_message_ack` event                       |
-| Get the id of the message you sent                        | `POST /api/v1/clients/:id/messages`               |
-| Check whether a number is on WhatsApp                     | `GET /api/v1/clients/:id/check/:phone`            |
-| Call the API from outside Home Assistant, authenticated   | `/api/v1` + bearer token                          |
-| See failed service calls as errors in the UI              | Any `hornero.*` service                           |
-| Send a camera snapshot without saving a file              | `hornero.send_media`                              |
-| Record a clip, including the seconds before the trigger   | `hornero.send_media` with `duration` + `lookback` |
-| Look up the JID of a group you are in                     | Sidebar panel, `GET /api/v1/clients/:id/chats`    |
+`send_message` and `send_media` return the message id, so a script can keep
+acting on it with `response_variable`.
 
-The five services inherited from v2.x are unchanged, so existing automations
-keep working as they are; `send_media` is the only new one.
+Rather than writing these from memory, use the **Snippet builder** tab of the
+Hornero panel: it fills in the fields and copies the call out as Home Assistant
+YAML, as an importable Node-RED node, or as `curl`.
 
 ## How to use
 
@@ -272,3 +270,57 @@ automation:
         message: Contact is online!
   mode: single
 ```
+
+---
+
+## HTTP API reference
+
+Needed only to reach the add-on from outside Home Assistant; inside it, use the
+services above. Every `/api/v1` route requires `Authorization: Bearer <token>`,
+using the `api_token` option or the one generated on first start, which is
+readable in `/config/custom_components/hornero/connection.json`.
+
+| Method      | Route                                    | Purpose                                        |
+| ----------- | ---------------------------------------- | ---------------------------------------------- |
+| `GET`       | `/health`                                | Version and per-client state (no token needed) |
+| `GET`       | `/api/v1/clients`                        | List clients and their state                   |
+| `GET`       | `/api/v1/clients/:id`                    | One client's state                             |
+| `POST`      | `/api/v1/clients/:id/messages`           | Send a message; returns its `messageId`        |
+| `POST`      | `/api/v1/clients/:id/media`              | Send a camera snapshot or clip                 |
+| `POST`      | `/api/v1/clients/:id/read`               | Mark messages as read                          |
+| `GET`       | `/api/v1/clients/:id/qr`                 | Current QR code (`?format=png` for an image)   |
+| `POST`      | `/api/v1/clients/:id/pairing-code`       | Request an 8-digit pairing code                |
+| `GET`       | `/api/v1/clients/:id/chats`              | Groups and contacts, with their IDs            |
+| `GET`       | `/api/v1/clients/:id/avatar/:jid`        | Profile picture of a chat                      |
+| `GET`       | `/api/v1/clients/:id/check/:phone`       | Check whether a number is on WhatsApp          |
+| `POST`      | `/api/v1/clients/:id/status`             | Set the profile status text                    |
+| `POST`      | `/api/v1/clients/:id/presence`           | Send a presence update                         |
+| `POST`      | `/api/v1/clients/:id/presence/subscribe` | Subscribe to a contact's presence              |
+| `POST`      | `/api/v1/clients/:id/restart`            | Reconnect the client                           |
+| `POST`      | `/api/v1/clients/:id/logout`             | Drop the session and pair again                |
+| `GET`       | `/api/v1/messages`                       | Recent traffic, with delivery state            |
+| `GET` `PUT` | `/api/v1/allowlist`                      | Senders allowed to trigger events              |
+| `GET` `PUT` | `/api/v1/settings`                       | Behaviour settings, shared with the entities   |
+| `GET`       | `/api/v1/recent-senders`                 | Who wrote lately, allowed or ignored           |
+
+Errors come back as `{"error": "..."}` with a real HTTP status code.
+
+## Entities
+
+Each paired client is a device in Home Assistant:
+
+| Entity                             | Notes                                                             |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `binary_sensor.<client>_connected` | `device_class: connectivity`; watch it to catch a dropped session |
+| `sensor.<client>_status`           | `connected`, `reconnecting` or `disconnected`                     |
+| `image.<client>_qr`                | The pairing code; unavailable once paired                         |
+| `button.<client>_restart`          | Reconnect without restarting the add-on                           |
+| `button.<client>_logout`           | Drop the session so you can pair again                            |
+| `notify.<client>`                  | Sends to the default recipient set in the integration options     |
+| `notify.<name>`                    | One per allowed sender, named after the contact or group          |
+
+The add-on's behaviour is exposed as `switch.hornero_typing_indicator`,
+`switch.hornero_mark_read`, `switch.hornero_mark_online`,
+`number.hornero_typing_max_seconds` and `select.hornero_log_level`. These are
+the same settings as the panel's **Settings** tab — changing either updates the
+other.

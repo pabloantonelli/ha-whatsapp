@@ -102,7 +102,7 @@ describe("panel: snippet builder", () => {
     ]);
   });
 
-  it("tiene las seis pestañas", async () => {
+  it("tiene las siete pestañas", async () => {
     const window = await boot();
     const tabs = [...window.document.querySelectorAll("nav button")].map(
       (b) => b.dataset.tab,
@@ -111,6 +111,7 @@ describe("panel: snippet builder", () => {
     expect(tabs).toEqual([
       "status",
       "chats",
+      "messages",
       "builder",
       "incoming",
       "settings",

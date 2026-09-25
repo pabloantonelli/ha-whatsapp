@@ -15,6 +15,7 @@
     --muted: #6b7280;
     --border: #e3e6eb;
     --accent: #b65c38;
+    --clay: #b65c38;
     --accent-fg: #fff;
     --danger: #d93025;
     --warn: #e8a33d;
@@ -331,6 +332,9 @@
     <button data-tab="chats" data-i18n="tab_chats" aria-selected="false">
       Groups &amp; contacts
     </button>
+    <button data-tab="messages" data-i18n="tab_messages" aria-selected="false">
+      Messages
+    </button>
     <button data-tab="builder" data-i18n="tab_builder" aria-selected="false">
       Snippet builder
     </button>
@@ -354,13 +358,22 @@
         <select id="chat-client"></select>
         <button class="primary" id="chat-load" data-i18n="load">Load</button>
       </div>
-      <p class="msg">
-        Copy an ID and paste it into the <code>to</code> field of a service
-        call.
-      </p>
+      <p class="msg" data-i18n-html="copy_hint"></p>
       <div class="list" id="chat-list">
         <p class="empty">Press Load to fetch your groups and contacts.</p>
       </div>
+    </div>
+  </section>
+
+  <section data-panel="messages" hidden>
+    <div class="card">
+      <div class="row">
+        <button class="primary" id="messages-refresh" data-i18n="refresh">
+          Refresh
+        </button>
+      </div>
+      <p class="msg" data-i18n="messages_hint"></p>
+      <div class="list" id="messages-list"></div>
     </div>
   </section>
 
@@ -368,24 +381,42 @@
     <div class="card">
       <div class="row">
         <div class="field">
-          <label for="b-client">Client</label>
+          <label for="b-client" data-i18n="b_client">Client</label>
           <select id="b-client"></select>
         </div>
         <div class="field">
-          <label for="b-action">What do you want to do?</label>
+          <label for="b-action" data-i18n="b_action"
+            >What do you want to do?</label
+          >
           <select id="b-action">
-            <option value="text">Send a text message</option>
-            <option value="camera">Send a camera snapshot or clip</option>
-            <option value="image">Send an image from a URL</option>
-            <option value="audio">Send an audio message from a URL</option>
-            <option value="location">Send a location</option>
-            <option value="presence">Send a presence update</option>
-            <option value="status">Set the profile status</option>
-            <option value="listen-message">React to an incoming message</option>
-            <option value="listen-ack">
+            <option value="text" data-i18n="a_text">Send a text message</option>
+            <option value="camera" data-i18n="a_camera">
+              Send a camera snapshot or clip
+            </option>
+            <option value="image" data-i18n="a_image">
+              Send an image from a URL
+            </option>
+            <option value="audio" data-i18n="a_audio">
+              Send an audio message from a URL
+            </option>
+            <option value="location" data-i18n="a_location">
+              Send a location
+            </option>
+            <option value="presence" data-i18n="a_presence">
+              Send a presence update
+            </option>
+            <option value="status" data-i18n="a_status">
+              Set the profile status
+            </option>
+            <option value="listen-message" data-i18n="a_listen_msg">
+              React to an incoming message
+            </option>
+            <option value="listen-ack" data-i18n="a_listen_ack">
               React to a delivery or read receipt
             </option>
-            <option value="listen-presence">React to a presence update</option>
+            <option value="listen-presence" data-i18n="a_listen_pres">
+              React to a presence update
+            </option>
           </select>
         </div>
       </div>
@@ -403,11 +434,7 @@
       <div class="list" id="allow-list"></div>
 
       <p class="section-label" data-i18n="recent">Recent senders</p>
-      <p class="msg" style="margin-top: 0">
-        Whoever wrote to you lately. Use Allow here rather than typing an ID by
-        hand — WhatsApp often identifies people by a code that looks nothing
-        like their phone number.
-      </p>
+      <p class="msg" style="margin-top: 0" data-i18n-html="recent_hint"></p>
       <div class="list" id="recent-list"></div>
 
       <p class="section-label" data-i18n="add_manually">Add manually</p>
@@ -419,13 +446,7 @@
         />
         <button class="primary" id="allow-add" data-i18n="add">Add</button>
       </div>
-      <p class="msg">
-        Incoming messages are sent to Home Assistant as
-        <code>hornero_message</code> events, and automations act on them. While
-        this list is empty, anyone who writes to you can trigger them. Add a
-        group to accept everything posted in it, or a person to accept them
-        anywhere, groups included.
-      </p>
+      <p class="msg" data-i18n-html="incoming_hint"></p>
     </div>
   </section>
 
@@ -434,80 +455,99 @@
       <h3 style="margin-top: 0" data-i18n="behaviour">Behaviour</h3>
       <div id="settings-form"></div>
       <p class="msg" id="settings-msg"></p>
-      <p class="msg">
-        Saved here, not in the add-on options: changes apply immediately unless
-        noted. The add-on options only provide the initial values.
-      </p>
+      <p class="msg" data-i18n-html="settings_hint"></p>
     </div>
   </section>
 
   <section data-panel="help" hidden>
     <div class="card">
-      <h3 style="margin-top: 0">Services</h3>
+      <h3 style="margin-top: 0" data-i18n="h_services">Services</h3>
       <dl>
         <dt><code>hornero.send_message</code></dt>
-        <dd>Text, images, audio, locations</dd>
+        <dd data-i18n="s_text">Text, images, audio, locations</dd>
         <dt><code>hornero.send_media</code></dt>
-        <dd>Snapshot or clip from a camera</dd>
+        <dd data-i18n="s_media">Snapshot or clip from a camera</dd>
+        <dt><code>hornero.mark_read</code></dt>
+        <dd data-i18n="s_read">Mark a received message as read</dd>
         <dt><code>hornero.set_status</code></dt>
-        <dd>Profile status text</dd>
+        <dd data-i18n="s_status">Profile status text</dd>
         <dt><code>hornero.presence_subscribe</code></dt>
-        <dd>Follow a contact's presence</dd>
+        <dd data-i18n="s_sub">Follow a contact's presence</dd>
         <dt><code>hornero.send_presence_update</code></dt>
-        <dd>Show typing or online</dd>
+        <dd data-i18n="s_pres">Show typing or online</dd>
         <dt><code>hornero.send_infinity_presence_update</code></dt>
-        <dd>Keep showing it</dd>
+        <dd data-i18n="s_pres_inf">Keep showing it</dd>
       </dl>
-      <p class="msg">
-        Use the <strong>Snippet builder</strong> tab to fill these in and copy
-        them, rather than writing them from memory.
+      <p class="msg" data-i18n="h_svc_hint">
+        Use the Snippet builder tab to fill these in and copy them, rather than
+        writing them from memory.
       </p>
 
-      <h3>Events</h3>
+      <h3 data-i18n="h_entities">Entities</h3>
+      <dl>
+        <dt><code>binary_sensor.&lt;client&gt;_connected</code></dt>
+        <dd><code>sensor.&lt;client&gt;_status</code></dd>
+        <dt><code>image.&lt;client&gt;_qr</code></dt>
+        <dd>
+          <code>button.&lt;client&gt;_restart</code> ·
+          <code>button.&lt;client&gt;_logout</code>
+        </dd>
+        <dt><code>notify.&lt;client&gt;</code></dt>
+        <dd>
+          <code>switch.hornero_*</code> · <code>number.hornero_*</code> ·
+          <code>select.hornero_log_level</code>
+        </dd>
+      </dl>
+      <p class="msg" data-i18n="ent_hint">
+        Each paired client is a device in Home Assistant, with a connection
+        sensor, the pairing code as an image, and buttons.
+      </p>
+
+      <h3 data-i18n="h_events">Events</h3>
       <dl>
         <dt><code>hornero_message</code></dt>
-        <dd>A message arrived</dd>
+        <dd data-i18n="e_msg">A message arrived</dd>
         <dt><code>hornero_message_ack</code></dt>
-        <dd>A sent message was delivered or read</dd>
+        <dd data-i18n="e_ack">A sent message was delivered or read</dd>
         <dt><code>hornero_presence</code></dt>
-        <dd>A contact came online or is typing</dd>
+        <dd data-i18n="e_pres">A contact came online or is typing</dd>
       </dl>
 
-      <h3>Addressing</h3>
-      <p class="msg">
+      <h3 data-i18n="h_addressing">Addressing</h3>
+      <p class="msg" data-i18n-html="h_addr_hint">
         People are addressed by phone number with country code and no
-        <code>+</code> (for example <code>34600000000</code>). Groups need their
-        ID, which cannot be derived from a number — copy it from the
-        <strong>Groups &amp; contacts</strong> tab.
+        <code>+</code>.
       </p>
 
       <h3>Node-RED</h3>
-      <p class="msg">
+      <p class="msg" data-i18n-html="h_nodered_hint">
         No token needed: use a <code>call service</code> node for the services
-        above, and an <code>events: all</code> node for the events. The snippet
-        builder writes both out.
+        above, and an <code>events: all</code> node for the events.
       </p>
 
-      <h3>Full documentation</h3>
+      <h3 data-i18n="h_docs">Full documentation</h3>
       <p class="msg">
         <a
-          href="https://github.com/pabloantonelli/ha-whatsapp#readme"
+          href="https://github.com/pabloantonelli/hornero#readme"
           target="_blank"
           rel="noreferrer"
+          data-i18n="h_guide"
           >Guide and examples</a
         >
         ·
         <a
-          href="https://github.com/pabloantonelli/ha-whatsapp/blob/main/whatsapp_addon/DOCS.md"
+          href="https://github.com/pabloantonelli/hornero/blob/main/hornero/DOCS.md"
           target="_blank"
           rel="noreferrer"
+          data-i18n="h_reference"
           >Service reference</a
         >
         ·
         <a
-          href="https://github.com/pabloantonelli/ha-whatsapp/issues"
+          href="https://github.com/pabloantonelli/hornero/issues"
           target="_blank"
           rel="noreferrer"
+          data-i18n="h_report"
           >Report a problem</a
         >
       </p>
@@ -516,10 +556,10 @@
 
   <footer>
     <a
-      href="https://github.com/pabloantonelli/ha-whatsapp"
+      href="https://github.com/pabloantonelli/hornero"
       target="_blank"
       rel="noreferrer"
-      >ha-whatsapp</a
+      >hornero</a
     >
     by
     <a href="https://github.com/pabloantonelli" target="_blank" rel="noreferrer"
@@ -582,6 +622,62 @@
       saved_restart: "Saved — restart the add-on for this one to take effect.",
       restart_needed: "restart needed",
       unreachable: "Cannot reach the add-on:",
+      copy_hint:
+        "Copy an ID and paste it into the <code>to</code> field of a service call.",
+      b_client: "Client",
+      b_action: "What do you want to do?",
+      a_text: "Send a text message",
+      a_camera: "Send a camera snapshot or clip",
+      a_image: "Send an image from a URL",
+      a_audio: "Send an audio message from a URL",
+      a_location: "Send a location",
+      a_presence: "Send a presence update",
+      a_status: "Set the profile status",
+      a_read: "Mark a message as read",
+      a_listen_msg: "React to an incoming message",
+      a_listen_ack: "React to a delivery or read receipt",
+      a_listen_pres: "React to a presence update",
+      recent_hint:
+        "Whoever wrote to you lately. Use Allow here rather than typing an ID by hand — WhatsApp often identifies people by a code that looks nothing like their phone number.",
+      incoming_hint:
+        "Incoming messages reach Home Assistant as <code>hornero_message</code> events, and automations act on them. While this list is empty, anyone who writes to you can trigger them. Add a group to accept everything posted in it, or a person to accept them anywhere.",
+      settings_hint:
+        "These are shared with the Hornero entities in Home Assistant: change them here or there, whichever is handier. Changes apply immediately unless marked otherwise. The add-on options only provide the initial values.",
+      h_services: "Services",
+      h_entities: "Entities",
+      h_events: "Events",
+      h_addressing: "Addressing",
+      h_docs: "Full documentation",
+      h_guide: "Guide and examples",
+      h_reference: "Service reference",
+      h_report: "Report a problem",
+      h_svc_hint:
+        "Use the Snippet builder tab to fill these in and copy them, rather than writing them from memory.",
+      h_addr_hint:
+        "People are addressed by phone number with country code and no <code>+</code>, for example <code>34600000000</code>. Groups need their ID, which cannot be derived from a number — copy it from the Groups &amp; contacts tab.",
+      h_nodered_hint:
+        "No token needed: use a <code>call service</code> node for the services above, and an <code>events: all</code> node for the events. The snippet builder writes both out.",
+      e_msg: "A message arrived",
+      e_ack: "A sent message was delivered or read",
+      e_pres: "A contact came online or is typing",
+      s_text: "Text, images, audio, locations",
+      s_media: "Snapshot or clip from a camera",
+      s_read: "Mark a received message as read",
+      s_status: "Profile status text",
+      s_sub: "Follow a contact's presence",
+      s_pres: "Show typing or online",
+      s_pres_inf: "Keep showing it",
+      ent_hint:
+        "Each paired client is a device in Home Assistant, with a connection sensor, the pairing code as an image, and buttons. The settings below also appear there as switches.",
+      tab_messages: "Messages",
+      refresh: "Refresh",
+      no_messages: "Nothing sent or received yet.",
+      messages_hint:
+        "Recent traffic, newest first, with the delivery state of what you sent. Kept in memory only and cleared when the add-on restarts.",
+      st_sent: "sent",
+      st_delivered: "delivered",
+      st_read: "read",
+      st_failed: "failed",
     },
     es: {
       tab_status: "Estado",
@@ -633,6 +729,62 @@
       saved_restart: "Guardado: reiniciá el add-on para que esto tome efecto.",
       restart_needed: "requiere reinicio",
       unreachable: "No se puede llegar al add-on:",
+      copy_hint:
+        "Copiá un ID y pegalo en el campo <code>to</code> de un servicio.",
+      b_client: "Cliente",
+      b_action: "¿Qué querés hacer?",
+      a_text: "Enviar un mensaje de texto",
+      a_camera: "Enviar una captura o clip de cámara",
+      a_image: "Enviar una imagen desde una URL",
+      a_audio: "Enviar un audio desde una URL",
+      a_location: "Enviar una ubicación",
+      a_presence: "Enviar una actualización de presencia",
+      a_status: "Cambiar el estado del perfil",
+      a_read: "Marcar un mensaje como leído",
+      a_listen_msg: "Reaccionar a un mensaje entrante",
+      a_listen_ack: "Reaccionar a un acuse de entrega o lectura",
+      a_listen_pres: "Reaccionar a un cambio de presencia",
+      recent_hint:
+        "Quienes te escribieron últimamente. Usá Permitir acá en vez de escribir un ID a mano: WhatsApp suele identificar a la gente con un código que no se parece a su número.",
+      incoming_hint:
+        "Los mensajes entrantes llegan a Home Assistant como eventos <code>hornero_message</code>, y las automatizaciones actúan sobre ellos. Mientras esta lista esté vacía, cualquiera que te escriba puede dispararlas. Agregá un grupo para aceptar todo lo que se publique ahí, o una persona para aceptarla en cualquier lado.",
+      settings_hint:
+        "Estos ajustes son los mismos que las entidades de Hornero en Home Assistant: cambialos acá o allá, lo que te resulte más cómodo. Se aplican al instante salvo que estén marcados. Las opciones del add-on sólo dan los valores iniciales.",
+      h_services: "Servicios",
+      h_entities: "Entidades",
+      h_events: "Eventos",
+      h_addressing: "Cómo direccionar",
+      h_docs: "Documentación completa",
+      h_guide: "Guía y ejemplos",
+      h_reference: "Referencia de servicios",
+      h_report: "Reportar un problema",
+      h_svc_hint:
+        "Usá la pestaña Generador para completarlos y copiarlos, en vez de escribirlos de memoria.",
+      h_addr_hint:
+        "A las personas se las direcciona con el número con código de país y sin <code>+</code>, por ejemplo <code>34600000000</code>. Los grupos necesitan su ID, que no se puede deducir de un número: copialo de la pestaña Grupos y contactos.",
+      h_nodered_hint:
+        "No hace falta token: usá un nodo <code>call service</code> para los servicios de arriba y un nodo <code>events: all</code> para los eventos. El generador escribe ambos.",
+      e_msg: "Llegó un mensaje",
+      e_ack: "Un mensaje enviado se entregó o se leyó",
+      e_pres: "Un contacto se conectó o está escribiendo",
+      s_text: "Texto, imágenes, audio, ubicaciones",
+      s_media: "Captura o clip de una cámara",
+      s_read: "Marcar un mensaje recibido como leído",
+      s_status: "Texto de estado del perfil",
+      s_sub: "Seguir la presencia de un contacto",
+      s_pres: "Mostrar escribiendo o en línea",
+      s_pres_inf: "Mantenerlo mostrado",
+      ent_hint:
+        "Cada cliente vinculado es un dispositivo en Home Assistant, con un sensor de conexión, el código de vinculación como imagen y botones. Los ajustes de abajo también aparecen ahí como interruptores.",
+      tab_messages: "Mensajes",
+      refresh: "Actualizar",
+      no_messages: "Todavía no se envió ni recibió nada.",
+      messages_hint:
+        "Actividad reciente, lo más nuevo primero, con el estado de entrega de lo que enviaste. Se guarda sólo en memoria y se borra al reiniciar el add-on.",
+      st_sent: "enviado",
+      st_delivered: "entregado",
+      st_read: "leído",
+      st_failed: "falló",
     },
     "pt-BR": {
       tab_status: "Status",
@@ -684,6 +836,61 @@
       saved_restart: "Salvo — reinicie o add-on para que isto tenha efeito.",
       restart_needed: "requer reinício",
       unreachable: "Não foi possível acessar o add-on:",
+      copy_hint: "Copie um ID e cole no campo <code>to</code> de um serviço.",
+      b_client: "Cliente",
+      b_action: "O que você quer fazer?",
+      a_text: "Enviar uma mensagem de texto",
+      a_camera: "Enviar uma foto ou clipe da câmera",
+      a_image: "Enviar uma imagem de uma URL",
+      a_audio: "Enviar um áudio de uma URL",
+      a_location: "Enviar uma localização",
+      a_presence: "Enviar uma atualização de presença",
+      a_status: "Definir o status do perfil",
+      a_read: "Marcar uma mensagem como lida",
+      a_listen_msg: "Reagir a uma mensagem recebida",
+      a_listen_ack: "Reagir a um recibo de entrega ou leitura",
+      a_listen_pres: "Reagir a uma mudança de presença",
+      recent_hint:
+        "Quem escreveu para você recentemente. Use Permitir aqui em vez de digitar um ID à mão — o WhatsApp costuma identificar pessoas por um código que não se parece com o número.",
+      incoming_hint:
+        "As mensagens recebidas chegam ao Home Assistant como eventos <code>hornero_message</code>, e as automações agem sobre elas. Enquanto esta lista estiver vazia, qualquer um que escrever pode dispará-las. Adicione um grupo para aceitar tudo que for publicado nele, ou uma pessoa para aceitá-la em qualquer lugar.",
+      settings_hint:
+        "Estes ajustes são os mesmos das entidades do Hornero no Home Assistant: altere aqui ou lá, como for mais prático. Aplicam-se imediatamente, salvo indicação em contrário. As opções do add-on fornecem apenas os valores iniciais.",
+      h_services: "Serviços",
+      h_entities: "Entidades",
+      h_events: "Eventos",
+      h_addressing: "Endereçamento",
+      h_docs: "Documentação completa",
+      h_guide: "Guia e exemplos",
+      h_reference: "Referência de serviços",
+      h_report: "Relatar um problema",
+      h_svc_hint:
+        "Use a aba Gerador para preenchê-los e copiá-los, em vez de escrevê-los de memória.",
+      h_addr_hint:
+        "As pessoas são endereçadas pelo número com código do país e sem <code>+</code>, por exemplo <code>34600000000</code>. Os grupos precisam do ID, que não pode ser deduzido de um número — copie-o da aba Grupos e contatos.",
+      h_nodered_hint:
+        "Não é preciso token: use um nó <code>call service</code> para os serviços acima e um nó <code>events: all</code> para os eventos. O gerador escreve os dois.",
+      e_msg: "Chegou uma mensagem",
+      e_ack: "Uma mensagem enviada foi entregue ou lida",
+      e_pres: "Um contato ficou online ou está digitando",
+      s_text: "Texto, imagens, áudio, localizações",
+      s_media: "Foto ou clipe de uma câmera",
+      s_read: "Marcar uma mensagem recebida como lida",
+      s_status: "Texto de status do perfil",
+      s_sub: "Acompanhar a presença de um contato",
+      s_pres: "Mostrar digitando ou online",
+      s_pres_inf: "Manter exibindo",
+      ent_hint:
+        "Cada cliente pareado é um dispositivo no Home Assistant, com um sensor de conexão, o código de pareamento como imagem e botões. Os ajustes abaixo também aparecem lá como interruptores.",
+      tab_messages: "Mensagens",
+      refresh: "Atualizar",
+      no_messages: "Nada enviado ou recebido ainda.",
+      messages_hint:
+        "Atividade recente, mais novo primeiro, com o estado de entrega do que você enviou. Fica só na memória e é apagada ao reiniciar o add-on.",
+      st_sent: "enviado",
+      st_delivered: "entregue",
+      st_read: "lido",
+      st_failed: "falhou",
     },
     de: {
       tab_status: "Status",
@@ -735,6 +942,62 @@
       saved_restart: "Gespeichert — für diese Option das Add-on neu starten.",
       restart_needed: "Neustart nötig",
       unreachable: "Add-on nicht erreichbar:",
+      copy_hint:
+        "Eine ID kopieren und in das Feld <code>to</code> eines Dienstes einfügen.",
+      b_client: "Client",
+      b_action: "Was möchten Sie tun?",
+      a_text: "Textnachricht senden",
+      a_camera: "Kamerabild oder Clip senden",
+      a_image: "Bild von einer URL senden",
+      a_audio: "Audionachricht von einer URL senden",
+      a_location: "Standort senden",
+      a_presence: "Präsenz senden",
+      a_status: "Profilstatus setzen",
+      a_read: "Nachricht als gelesen markieren",
+      a_listen_msg: "Auf eingehende Nachricht reagieren",
+      a_listen_ack: "Auf Zustell- oder Lesebestätigung reagieren",
+      a_listen_pres: "Auf Präsenzänderung reagieren",
+      recent_hint:
+        "Wer Ihnen zuletzt geschrieben hat. Hier auf Erlauben tippen, statt eine ID von Hand einzugeben — WhatsApp kennzeichnet Personen oft mit einem Code, der nichts mit ihrer Nummer zu tun hat.",
+      incoming_hint:
+        "Eingehende Nachrichten erreichen Home Assistant als <code>hornero_message</code>-Ereignisse, auf die Automationen reagieren. Solange diese Liste leer ist, kann jeder, der schreibt, sie auslösen. Fügen Sie eine Gruppe hinzu, um alles darin zu akzeptieren, oder eine Person, um sie überall zu akzeptieren.",
+      settings_hint:
+        "Diese Einstellungen teilen sich mit den Hornero-Entitäten in Home Assistant: Ändern Sie sie hier oder dort, wie es bequemer ist. Änderungen gelten sofort, sofern nicht anders vermerkt. Die Add-on-Optionen liefern nur die Startwerte.",
+      h_services: "Dienste",
+      h_entities: "Entitäten",
+      h_events: "Ereignisse",
+      h_addressing: "Adressierung",
+      h_docs: "Vollständige Dokumentation",
+      h_guide: "Anleitung und Beispiele",
+      h_reference: "Dienstreferenz",
+      h_report: "Problem melden",
+      h_svc_hint:
+        "Nutzen Sie den Snippet-Generator, um diese auszufüllen und zu kopieren, statt sie aus dem Kopf zu schreiben.",
+      h_addr_hint:
+        "Personen werden über die Nummer mit Ländervorwahl ohne <code>+</code> angesprochen, etwa <code>34600000000</code>. Gruppen brauchen ihre ID, die sich nicht aus einer Nummer ableiten lässt — kopieren Sie sie im Tab Gruppen & Kontakte.",
+      h_nodered_hint:
+        "Kein Token nötig: ein <code>call service</code>-Knoten für die Dienste oben und ein <code>events: all</code>-Knoten für die Ereignisse. Der Generator schreibt beides.",
+      e_msg: "Eine Nachricht ist eingegangen",
+      e_ack: "Eine gesendete Nachricht wurde zugestellt oder gelesen",
+      e_pres: "Ein Kontakt ist online oder schreibt",
+      s_text: "Text, Bilder, Audio, Standorte",
+      s_media: "Standbild oder Clip einer Kamera",
+      s_read: "Empfangene Nachricht als gelesen markieren",
+      s_status: "Profilstatustext",
+      s_sub: "Präsenz eines Kontakts verfolgen",
+      s_pres: "Als schreibend oder online anzeigen",
+      s_pres_inf: "Dauerhaft anzeigen",
+      ent_hint:
+        "Jeder gekoppelte Client ist ein Gerät in Home Assistant, mit Verbindungssensor, dem Kopplungscode als Bild und Schaltflächen. Die Einstellungen unten erscheinen dort ebenfalls als Schalter.",
+      tab_messages: "Nachrichten",
+      refresh: "Aktualisieren",
+      no_messages: "Noch nichts gesendet oder empfangen.",
+      messages_hint:
+        "Letzter Verkehr, neueste zuerst, mit dem Zustellstatus Ihrer Nachrichten. Nur im Speicher und beim Neustart des Add-ons gelöscht.",
+      st_sent: "gesendet",
+      st_delivered: "zugestellt",
+      st_read: "gelesen",
+      st_failed: "fehlgeschlagen",
     },
     fr: {
       tab_status: "Statut",
@@ -788,6 +1051,62 @@
         "Enregistré — redémarrez le module pour que cela prenne effet.",
       restart_needed: "redémarrage requis",
       unreachable: "Module injoignable :",
+      copy_hint:
+        "Copiez un ID et collez-le dans le champ <code>to</code> d'un service.",
+      b_client: "Client",
+      b_action: "Que voulez-vous faire ?",
+      a_text: "Envoyer un message texte",
+      a_camera: "Envoyer une capture ou un clip de caméra",
+      a_image: "Envoyer une image depuis une URL",
+      a_audio: "Envoyer un audio depuis une URL",
+      a_location: "Envoyer une position",
+      a_presence: "Envoyer une présence",
+      a_status: "Définir le statut du profil",
+      a_read: "Marquer un message comme lu",
+      a_listen_msg: "Réagir à un message entrant",
+      a_listen_ack: "Réagir à un accusé de réception ou de lecture",
+      a_listen_pres: "Réagir à un changement de présence",
+      recent_hint:
+        "Qui vous a écrit récemment. Utilisez Autoriser ici plutôt que de saisir un ID à la main — WhatsApp identifie souvent les gens par un code sans rapport avec leur numéro.",
+      incoming_hint:
+        "Les messages entrants arrivent dans Home Assistant comme événements <code>hornero_message</code>, et les automatisations y réagissent. Tant que cette liste est vide, quiconque vous écrit peut les déclencher. Ajoutez un groupe pour accepter tout ce qui y est publié, ou une personne pour l'accepter partout.",
+      settings_hint:
+        "Ces réglages sont partagés avec les entités Hornero dans Home Assistant : modifiez-les ici ou là, au plus pratique. Ils s'appliquent immédiatement sauf mention contraire. Les options du module ne fournissent que les valeurs initiales.",
+      h_services: "Services",
+      h_entities: "Entités",
+      h_events: "Événements",
+      h_addressing: "Adressage",
+      h_docs: "Documentation complète",
+      h_guide: "Guide et exemples",
+      h_reference: "Référence des services",
+      h_report: "Signaler un problème",
+      h_svc_hint:
+        "Utilisez l'onglet Générateur pour les remplir et les copier, plutôt que de les écrire de mémoire.",
+      h_addr_hint:
+        "Les personnes sont désignées par leur numéro avec indicatif et sans <code>+</code>, par exemple <code>34600000000</code>. Les groupes ont besoin de leur ID, qui ne se déduit pas d'un numéro — copiez-le depuis l'onglet Groupes et contacts.",
+      h_nodered_hint:
+        "Aucun jeton nécessaire : un nœud <code>call service</code> pour les services ci-dessus et un nœud <code>events: all</code> pour les événements. Le générateur écrit les deux.",
+      e_msg: "Un message est arrivé",
+      e_ack: "Un message envoyé a été remis ou lu",
+      e_pres: "Un contact est en ligne ou écrit",
+      s_text: "Texte, images, audio, positions",
+      s_media: "Capture ou clip d'une caméra",
+      s_read: "Marquer un message reçu comme lu",
+      s_status: "Texte de statut du profil",
+      s_sub: "Suivre la présence d'un contact",
+      s_pres: "Afficher en train d'écrire ou en ligne",
+      s_pres_inf: "Le maintenir affiché",
+      ent_hint:
+        "Chaque client appairé est un appareil dans Home Assistant, avec un capteur de connexion, le code d'appairage en image et des boutons. Les réglages ci-dessous y apparaissent aussi sous forme d'interrupteurs.",
+      tab_messages: "Messages",
+      refresh: "Actualiser",
+      no_messages: "Rien envoyé ni reçu pour l'instant.",
+      messages_hint:
+        "Activité récente, la plus récente en premier, avec l'état de remise de vos envois. Conservée en mémoire seulement et effacée au redémarrage du module.",
+      st_sent: "envoyé",
+      st_delivered: "remis",
+      st_read: "lu",
+      st_failed: "échec",
     },
     it: {
       tab_status: "Stato",
@@ -839,6 +1158,62 @@
       saved_restart: "Salvato — riavvia il componente perché abbia effetto.",
       restart_needed: "riavvio necessario",
       unreachable: "Componente irraggiungibile:",
+      copy_hint:
+        "Copia un ID e incollalo nel campo <code>to</code> di un servizio.",
+      b_client: "Client",
+      b_action: "Cosa vuoi fare?",
+      a_text: "Inviare un messaggio di testo",
+      a_camera: "Inviare uno scatto o una clip della telecamera",
+      a_image: "Inviare un'immagine da un URL",
+      a_audio: "Inviare un audio da un URL",
+      a_location: "Inviare una posizione",
+      a_presence: "Inviare una presenza",
+      a_status: "Impostare lo stato del profilo",
+      a_read: "Segnare un messaggio come letto",
+      a_listen_msg: "Reagire a un messaggio in arrivo",
+      a_listen_ack: "Reagire a una conferma di consegna o lettura",
+      a_listen_pres: "Reagire a un cambio di presenza",
+      recent_hint:
+        "Chi ti ha scritto di recente. Usa Consenti qui invece di digitare un ID a mano — WhatsApp identifica spesso le persone con un codice che non somiglia al loro numero.",
+      incoming_hint:
+        "I messaggi in arrivo raggiungono Home Assistant come eventi <code>hornero_message</code>, e le automazioni agiscono su di essi. Finché questo elenco è vuoto, chiunque ti scriva può attivarle. Aggiungi un gruppo per accettare tutto ciò che vi viene pubblicato, o una persona per accettarla ovunque.",
+      settings_hint:
+        "Queste impostazioni sono condivise con le entità Hornero in Home Assistant: modificale qui o lì, come preferisci. Si applicano subito salvo diversa indicazione. Le opzioni del componente forniscono solo i valori iniziali.",
+      h_services: "Servizi",
+      h_entities: "Entità",
+      h_events: "Eventi",
+      h_addressing: "Indirizzamento",
+      h_docs: "Documentazione completa",
+      h_guide: "Guida ed esempi",
+      h_reference: "Riferimento dei servizi",
+      h_report: "Segnalare un problema",
+      h_svc_hint:
+        "Usa la scheda Generatore per compilarli e copiarli, invece di scriverli a memoria.",
+      h_addr_hint:
+        "Le persone si indirizzano con il numero con prefisso internazionale e senza <code>+</code>, ad esempio <code>34600000000</code>. I gruppi richiedono il loro ID, che non si può dedurre da un numero — copialo dalla scheda Gruppi e contatti.",
+      h_nodered_hint:
+        "Nessun token necessario: un nodo <code>call service</code> per i servizi sopra e un nodo <code>events: all</code> per gli eventi. Il generatore scrive entrambi.",
+      e_msg: "È arrivato un messaggio",
+      e_ack: "Un messaggio inviato è stato consegnato o letto",
+      e_pres: "Un contatto è online o sta scrivendo",
+      s_text: "Testo, immagini, audio, posizioni",
+      s_media: "Scatto o clip da una telecamera",
+      s_read: "Segnare come letto un messaggio ricevuto",
+      s_status: "Testo di stato del profilo",
+      s_sub: "Seguire la presenza di un contatto",
+      s_pres: "Mostrare come online o che scrive",
+      s_pres_inf: "Mantenerlo visibile",
+      ent_hint:
+        "Ogni client associato è un dispositivo in Home Assistant, con un sensore di connessione, il codice di associazione come immagine e pulsanti. Le impostazioni qui sotto compaiono lì anche come interruttori.",
+      tab_messages: "Messaggi",
+      refresh: "Aggiorna",
+      no_messages: "Ancora nulla inviato o ricevuto.",
+      messages_hint:
+        "Attività recente, dalla più nuova, con lo stato di consegna di ciò che hai inviato. Resta solo in memoria e si cancella al riavvio del componente.",
+      st_sent: "inviato",
+      st_delivered: "consegnato",
+      st_read: "letto",
+      st_failed: "non riuscito",
     },
   };
 
@@ -862,6 +1237,11 @@
   function translateDocument() {
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       el.textContent = t(el.dataset.i18n);
+    });
+    // These translations contain inline markup, so they are set as HTML. The
+    // strings are ours, never user input.
+    document.querySelectorAll("[data-i18n-html]").forEach((el) => {
+      el.innerHTML = t(el.dataset.i18nHtml);
     });
     document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
       el.placeholder = t(el.dataset.i18nPlaceholder);
@@ -902,7 +1282,8 @@
       p.hidden = p.dataset.panel !== btn.dataset.tab;
     });
     if (btn.dataset.tab === "incoming") refreshRecent();
-    if (btn.dataset.tab === "settings") loadSettings();
+    if (btn.dataset.tab === "settings") loadSettings({ force: true });
+    if (btn.dataset.tab === "messages") refreshMessages({ force: true });
   });
 
   /* -------------------------------------------------------------- status */
@@ -1575,6 +1956,73 @@
     setTimeout(() => (btn.textContent = original || restore), 1600);
   }
 
+  /* ----------------------------------------------------------- messages */
+
+  const STATUS_KEYS = {
+    sent: "st_sent",
+    delivered: "st_delivered",
+    read: "st_read",
+    played: "st_read",
+    failed: "st_failed",
+  };
+
+  function renderMessages(messages) {
+    const list = document.getElementById("messages-list");
+
+    if (!messages.length) {
+      list.innerHTML = `<p class="empty">${t("no_messages")}</p>`;
+      return;
+    }
+
+    list.innerHTML = messages
+      .map((m) => {
+        const when = new Date(m.at).toLocaleString();
+        const outgoing = m.direction === "out";
+        const who = m.name || m.jid;
+        const status = outgoing
+          ? `<span class="group-tag">${t(STATUS_KEYS[m.status] || "st_sent")}</span>`
+          : "";
+        const arrow = outgoing ? "↑" : "↓";
+
+        return `
+      <div class="chat">
+        <div class="avatar" style="background: ${outgoing ? "var(--clay)" : "var(--muted)"}">
+          ${arrow}
+        </div>
+        <div class="chat-main">
+          <div class="chat-name">${esc(who)} ${status}</div>
+          <div class="jid">${esc(m.preview || "")}</div>
+          <div class="chat-meta">${when}${m.error ? " · " + esc(m.error) : ""}</div>
+        </div>
+      </div>`;
+      })
+      .join("");
+  }
+
+  let messagesSignature = null;
+
+  async function refreshMessages({ force = false } = {}) {
+    try {
+      const { messages } = await api("/messages");
+      const signature = JSON.stringify(messages);
+      if (!force && signature === messagesSignature) return;
+      messagesSignature = signature;
+      renderMessages(messages);
+    } catch (err) {
+      document.getElementById("messages-list").innerHTML =
+        `<p class="empty">${esc(err.message)}</p>`;
+    }
+  }
+
+  function messagesTabVisible() {
+    const panel = document.querySelector('[data-panel="messages"]');
+    return panel && !panel.hidden;
+  }
+
+  document
+    .getElementById("messages-refresh")
+    .addEventListener("click", () => refreshMessages({ force: true }));
+
   /* ---------------------------------------------------------- allowlist */
 
   let allowEntries = [];
@@ -1747,15 +2195,37 @@
     ).join("");
   }
 
-  async function loadSettings() {
+  let settingsSignature = null;
+
+  /**
+   * The same settings are editable from the Home Assistant entities, so this
+   * polls while the tab is open. It only re-renders on a real change, and
+   * never while a control has focus, so it cannot fight the user mid-edit.
+   */
+  async function loadSettings({ force = false } = {}) {
     try {
       const res = await api("/settings");
-      settingsValues = res.settings;
       restartRequired = res.restartRequired || [];
+
+      const signature = JSON.stringify(res.settings);
+      const editing = document
+        .getElementById("settings-form")
+        ?.contains(document.activeElement);
+
+      if (!force && signature === settingsSignature) return;
+      if (!force && editing) return;
+
+      settingsSignature = signature;
+      settingsValues = res.settings;
       renderSettings();
     } catch (err) {
       document.getElementById("settings-msg").textContent = err.message;
     }
+  }
+
+  function settingsTabVisible() {
+    const panel = document.querySelector('[data-panel="settings"]');
+    return panel && !panel.hidden;
   }
 
   document
@@ -1780,6 +2250,7 @@
           body: JSON.stringify({ [key]: value }),
         });
         settingsValues = res.settings;
+        settingsSignature = JSON.stringify(res.settings);
         note.classList.remove("err");
         note.textContent = restartRequired.includes(key)
           ? t("saved_restart")
@@ -1864,4 +2335,9 @@
   loadSettings();
   tick();
   setInterval(tick, 5000);
+  // Settings can also change from the Home Assistant entities.
+  setInterval(() => {
+    if (settingsTabVisible()) loadSettings();
+    if (messagesTabVisible()) refreshMessages();
+  }, 5000);
 </script>

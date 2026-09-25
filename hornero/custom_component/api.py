@@ -62,6 +62,10 @@ class HorneroApi:
         data = await self._request("GET", "/api/v1/clients")
         return data.get("clients", [])
 
+    async def allowlist(self) -> list[dict]:
+        data = await self._request("GET", "/api/v1/allowlist")
+        return data.get("details", [])
+
     async def settings(self) -> dict:
         data = await self._request("GET", "/api/v1/settings")
         return data.get("settings", {})

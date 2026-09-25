@@ -30,12 +30,15 @@ class HorneroCoordinator(DataUpdateCoordinator):
         try:
             clients = await self.api.clients()
             settings = await self.api.settings()
+            allowlist = await self.api.allowlist()
         except HorneroError as err:
             raise UpdateFailed(str(err)) from err
 
         return {
             "clients": {client["clientId"]: client for client in clients},
             "settings": settings,
+            # Drives one notify entity per allowed sender.
+            "allowlist": allowlist,
         }
 
     def client(self, client_id: str) -> dict:
@@ -43,3 +46,7 @@ class HorneroCoordinator(DataUpdateCoordinator):
 
     def setting(self, key: str):
         return (self.data or {}).get("settings", {}).get(key)
+
+    @property
+    def allowlist(self) -> list[dict]:
+        return (self.data or {}).get("allowlist", [])

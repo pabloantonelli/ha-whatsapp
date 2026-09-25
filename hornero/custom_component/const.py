@@ -23,4 +23,6 @@ SERVICES = (
     "send_infinity_presence_update",
 )
 
-UPDATE_INTERVAL_SECONDS = 30
+# The same settings are editable from the add-on panel, so this is also how
+# quickly an entity catches up with a change made there.
+UPDATE_INTERVAL_SECONDS = 15

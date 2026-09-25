@@ -96,18 +96,32 @@ Automatizaciones listas. Tocá para importar:
 
 Cada cliente vinculado aparece como un dispositivo:
 
-| Entidad                                | Para qué                                      |
-| -------------------------------------- | --------------------------------------------- |
-| `binary_sensor.<cliente>_connected`    | Condiciones y alertas de sesión caída         |
-| `sensor.<cliente>_status`              | Conectado, reconectando o desconectado        |
-| `image.<cliente>_qr`                   | El código de vinculación, en un panel         |
-| `button.<cliente>_restart` / `_logout` | Reconectar o desvincular                      |
-| `notify.<cliente>`                     | Cualquier blueprint que espere un notificador |
+| Entidad                                | Para qué                                                        |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `binary_sensor.<cliente>_connected`    | Condiciones y alertas de sesión caída                           |
+| `sensor.<cliente>_status`              | Conectado, reconectando o desconectado                          |
+| `image.<cliente>_qr`                   | El código de vinculación, en un panel                           |
+| `button.<cliente>_restart` / `_logout` | Reconectar o desvincular                                        |
+| `notify.<cliente>`                     | Envía al destinatario por defecto de las opciones               |
+| `notify.<nombre>`                      | Una por remitente permitido, con el nombre del contacto o grupo |
 
 El comportamiento del add-on también está expuesto:
 `switch.hornero_typing_indicator`, `switch.hornero_mark_read`,
 `switch.hornero_mark_online`, `number.hornero_typing_max_seconds` y
 `select.hornero_log_level`.
+
+### Entidades notify
+
+Una entidad notify es un único destino —Home Assistant no le da campo de
+destinatario—, así que Hornero crea **una por cada remitente permitido**, con
+el nombre del contacto o del grupo. Aparecen y desaparecen a medida que editás
+la lista de Entrantes, y sirven para cualquier blueprint que espere un
+notificador.
+
+También hay una entidad `notify.<cliente>` que envía a un destinatario fijo,
+configurable en **Ajustes → Dispositivos y servicios → Hornero → Configurar**.
+Para un destinatario que varía, o uno que no está en la lista, usá
+`hornero.send_message`.
 
 ## El panel de Hornero
 
@@ -117,6 +131,8 @@ Seis pestañas en la barra lateral:
 - **Grupos y contactos** — tus chats con foto y buscador. Copiás el ID de un
   grupo directo al servicio; el ID de un grupo no se puede deducir de un
   número, así que esta es la forma de conseguirlo.
+- **Mensajes** — qué se envió y se recibió últimamente, con el estado de
+  entrega de cada mensaje saliente.
 - **Generador** — elegís una acción, completás los campos y copiás la llamada
   como YAML de Home Assistant, como nodo importable de Node-RED, o como `curl`.
 - **Entrantes** — quién puede disparar tus automatizaciones.
@@ -184,6 +200,10 @@ refresh_hours: 0
 Esto siembra los ajustes en una instalación nueva. Después manda la pestaña
 **Ajustes** y las entidades de tipo interruptor, así que cambiar el
 comportamiento no requiere reiniciar.
+
+Los dos editan los mismos ajustes guardados, así que un cambio en uno aparece
+en el otro: el panel se refresca mientras su pestaña está abierta, y las
+entidades en su siguiente sondeo, en unos quince segundos.
 
 ## Eventos
 
