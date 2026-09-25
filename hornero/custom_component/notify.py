@@ -16,6 +16,7 @@ from homeassistant.components.notify import NotifyEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -43,18 +44,29 @@ async def async_setup_entry(
 
     @callback
     def sync_allowlist_entities() -> None:
-        """Adds an entity for each newly allowed sender."""
+        """Adds an entity per newly allowed sender, and drops the ones removed."""
         client_id = next(iter(coordinator.data["clients"]), None)
         if client_id is None:
             return
 
-        new = []
-        for item in coordinator.allowlist:
-            jid = item.get("id")
-            if not jid or jid in known:
-                continue
-            known.add(jid)
-            new.append(HorneroContactNotify(coordinator, client_id, item))
+        allowed = {item["id"]: item for item in coordinator.allowlist if item.get("id")}
+
+        new = [
+            HorneroContactNotify(coordinator, client_id, item)
+            for jid, item in allowed.items()
+            if jid not in known
+        ]
+        known.update(allowed)
+
+        # Home Assistant will not let the user delete an entity its config entry
+        # still provides, so removing it from the registry is up to us.
+        registry = er.async_get(hass)
+        for jid in known - set(allowed):
+            known.discard(jid)
+            unique_id = f"{DOMAIN}_{client_id}_notify_{jid}"
+            entity_id = registry.async_get_entity_id("notify", DOMAIN, unique_id)
+            if entity_id:
+                registry.async_remove(entity_id)
 
         if new:
             async_add_entities(new)

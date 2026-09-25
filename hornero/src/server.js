@@ -7,6 +7,7 @@ import { loadConfig, VERSION } from "./config.js";
 import { HomeAssistant } from "./homeassistant.js";
 import { BaileysClient } from "./baileys-client.js";
 import { AllowlistStore } from "./allowlist.js";
+import { passesMentionRule } from "./mentions.js";
 import { RecentSenders } from "./recent-senders.js";
 import { SettingsStore } from "./settings.js";
 import { MessageLog } from "./message-log.js";
@@ -67,6 +68,20 @@ const main = async () => {
         );
         return;
       }
+
+      if (
+        !passesMentionRule(msg, {
+          ownJids: client.ownJids,
+          enabled: settings.get("groupsRequireMention"),
+        })
+      ) {
+        logger.debug(
+          { client: key, from: msg?.key?.remoteJid },
+          "group message ignored: it does not mention or quote Hornero",
+        );
+        return;
+      }
+
       if (settings.get("markRead")) {
         client
           .markRead(msg.key)

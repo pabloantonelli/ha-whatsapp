@@ -18,6 +18,7 @@ SWITCHES = {
     "typing_indicator": "typingIndicator",
     "mark_read": "markRead",
     "mark_online": "markOnline",
+    "groups_require_mention": "groupsRequireMention",
 }
 
 

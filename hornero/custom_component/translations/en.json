@@ -213,6 +213,9 @@
       },
       "mark_online": {
         "name": "Appear online"
+      },
+      "groups_require_mention": {
+        "name": "Groups: only when mentioned"
       }
     },
     "number": {

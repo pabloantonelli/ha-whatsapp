@@ -153,6 +153,15 @@ export class BaileysClient extends EventEmitter2 {
     return this.#lastQr;
   }
 
+  /**
+   * Both forms of this account's own identity, phone and LID. A group may
+   * address it either way, so mention matching needs both.
+   */
+  get ownJids() {
+    const user = this.#conn?.user;
+    return [user?.id, user?.lid].filter(Boolean);
+  }
+
   /** Opens the socket. Must be awaited by the caller so failures surface. */
   async start() {
     this.#stopped = false;

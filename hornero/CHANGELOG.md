@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.0.2
+
+### ✨ Added
+
+- **Groups: only when mentioned.** With Hornero's number in a group, every
+  message anyone posted there became a `hornero_message` event. The new
+  `switch.hornero_groups_require_mention` passes a group message on only when
+  it mentions Hornero or replies to something Hornero sent. Direct chats are
+  unaffected. Off by default, so nothing changes until you turn it on.
+
+### 🐛 Fixed
+
+- **Notify entities for removed contacts could not be deleted.** Taking a
+  contact off the Incoming list left its entity behind, unavailable, with Home
+  Assistant's own Delete button greyed out — it refuses to remove an entity the
+  integration still provides. They are now dropped from the entity registry as
+  the allowlist changes.
+- **Untranslated strings in the panel**: the Incoming tab's summary line, and
+  every label and hint on the Settings tab, were hardcoded in English.
+
 ## 4.0.1
 
 First release with images published for the Hornero name, and the panel fixes

@@ -213,6 +213,9 @@
       },
       "mark_online": {
         "name": "Apparaître en ligne"
+      },
+      "groups_require_mention": {
+        "name": "Groupes : seulement si mentionné"
       }
     },
     "number": {

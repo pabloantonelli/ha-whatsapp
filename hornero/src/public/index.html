@@ -609,7 +609,31 @@
       no_contacts:
         "No contacts synced yet — WhatsApp sends them gradually after pairing.",
       members: "members",
-      who_triggers: "Who may trigger automations",
+      who_triggers: "Who may write to Hornero",
+      allow_only:
+        "Only these {n} senders reach Home Assistant; everyone else is ignored.",
+      set_markRead: "Mark incoming messages as read",
+      set_markRead_hint:
+        "Shows the blue ticks to whoever wrote, and clears the unread badge on your phone.",
+      set_groupsRequireMention:
+        "In groups, only when Hornero is mentioned or quoted",
+      set_groupsRequireMention_hint:
+        "Without this, every message posted in a group where Hornero is a member becomes an event.",
+      set_typingIndicator: "Show the typing indicator",
+      set_typingIndicator_hint:
+        "Sends “typing…” (or “recording…” for voice notes) before a message, and pauses first.",
+      set_typingMaxSeconds: "Longest typing pause (seconds)",
+      set_typingMaxSeconds_hint:
+        "The actual wait varies with the message length. 0 sends immediately.",
+      set_markOnline: "Appear online while connected",
+      set_markOnline_hint:
+        "Careful: while WhatsApp considers you online here, your phone stops getting notifications.",
+      set_refreshHours: "Periodic reconnect (hours)",
+      set_refreshHours_hint:
+        "0 disables it. Not needed on Baileys 7; only for working around a stability problem.",
+      set_logLevel: "Log level",
+      set_logLevel_hint:
+        "Raise it to debug or trace when diagnosing a problem.",
       recent: "Recent senders",
       add_manually: "Add manually",
       add: "Add",
@@ -640,7 +664,7 @@
       recent_hint:
         "Whoever wrote to you lately. Use Allow here rather than typing an ID by hand — WhatsApp often identifies people by a code that looks nothing like their phone number.",
       incoming_hint:
-        "Incoming messages reach Home Assistant as <code>hornero_message</code> events, and automations act on them. While this list is empty, anyone who writes to you can trigger them. Add a group to accept everything posted in it, or a person to accept them anywhere.",
+        "Incoming messages reach Home Assistant as <code>hornero_message</code> events, and automations act on them. While this list is empty, anyone who writes to you can trigger them. Add a group to accept everything posted in it, or a person to accept them anywhere. In a group this accepts everything anyone posts; to receive only what is addressed to Hornero, turn on <b>Groups: only when Hornero is mentioned or quoted</b> under Settings.",
       settings_hint:
         "These are shared with the Hornero entities in Home Assistant: change them here or there, whichever is handier. Changes apply immediately unless marked otherwise. The add-on options only provide the initial values.",
       h_services: "Services",
@@ -716,7 +740,30 @@
       no_contacts:
         "Todavía no hay contactos: WhatsApp los sincroniza de a poco tras vincular.",
       members: "miembros",
-      who_triggers: "Quién puede disparar automatizaciones",
+      who_triggers: "Quién puede escribirle a Hornero",
+      allow_only:
+        "Solo estos {n} remitentes llegan a Home Assistant; el resto se ignora.",
+      set_markRead: "Marcar como leídos los mensajes entrantes",
+      set_markRead_hint:
+        "Muestra el doble tilde azul a quien escribió y saca el globo de no leídos del teléfono.",
+      set_groupsRequireMention: "En grupos, solo si arrobás o citás a Hornero",
+      set_groupsRequireMention_hint:
+        "Sin esto, cualquier mensaje escrito en un grupo donde Hornero es miembro se convierte en un evento.",
+      set_typingIndicator: "Mostrar el indicador de escritura",
+      set_typingIndicator_hint:
+        "Envía “escribiendo…” (o “grabando…” en las notas de voz) antes del mensaje, con una pausa previa.",
+      set_typingMaxSeconds: "Pausa máxima de escritura (segundos)",
+      set_typingMaxSeconds_hint:
+        "La espera real varía con el largo del mensaje. 0 envía al instante.",
+      set_markOnline: "Aparecer en línea mientras está conectado",
+      set_markOnline_hint:
+        "Cuidado: mientras WhatsApp te considera en línea acá, el teléfono deja de recibir notificaciones.",
+      set_refreshHours: "Reconexión periódica (horas)",
+      set_refreshHours_hint:
+        "0 la desactiva. No hace falta en Baileys 7; solo para sortear un problema de estabilidad.",
+      set_logLevel: "Nivel de registro",
+      set_logLevel_hint:
+        "Subilo a debug o trace para diagnosticar un problema.",
       recent: "Remitentes recientes",
       add_manually: "Agregar a mano",
       add: "Agregar",
@@ -747,7 +794,7 @@
       recent_hint:
         "Quienes te escribieron últimamente. Usá Permitir acá en vez de escribir un ID a mano: WhatsApp suele identificar a la gente con un código que no se parece a su número.",
       incoming_hint:
-        "Los mensajes entrantes llegan a Home Assistant como eventos <code>hornero_message</code>, y las automatizaciones actúan sobre ellos. Mientras esta lista esté vacía, cualquiera que te escriba puede dispararlas. Agregá un grupo para aceptar todo lo que se publique ahí, o una persona para aceptarla en cualquier lado.",
+        "Los mensajes entrantes llegan a Home Assistant como eventos <code>hornero_message</code>, y las automatizaciones actúan sobre ellos. Mientras esta lista esté vacía, cualquiera que te escriba puede dispararlas. Agregá un grupo para aceptar todo lo que se publique ahí, o una persona para aceptarla en cualquier lado. En un grupo esto acepta todo lo que escriba cualquiera; para recibir solo lo dirigido a Hornero, activá <b>En grupos, solo si arrobás o citás a Hornero</b> en Ajustes.",
       settings_hint:
         "Estos ajustes son los mismos que las entidades de Hornero en Home Assistant: cambialos acá o allá, lo que te resulte más cómodo. Se aplican al instante salvo que estén marcados. Las opciones del add-on sólo dan los valores iniciales.",
       h_services: "Servicios",
@@ -823,7 +870,31 @@
       no_contacts:
         "Ainda sem contatos — o WhatsApp os sincroniza aos poucos após o pareamento.",
       members: "membros",
-      who_triggers: "Quem pode disparar automações",
+      who_triggers: "Quem pode escrever para o Hornero",
+      allow_only:
+        "Apenas estes {n} remetentes chegam ao Home Assistant; o resto é ignorado.",
+      set_markRead: "Marcar as mensagens recebidas como lidas",
+      set_markRead_hint:
+        "Mostra os tiques azuis a quem escreveu e limpa o selo de não lidas no telemóvel.",
+      set_groupsRequireMention:
+        "Em grupos, apenas quando mencionam ou citam o Hornero",
+      set_groupsRequireMention_hint:
+        "Sem isto, qualquer mensagem escrita num grupo onde o Hornero é membro vira um evento.",
+      set_typingIndicator: "Mostrar o indicador de escrita",
+      set_typingIndicator_hint:
+        "Envia “a escrever…” (ou “a gravar…” nas mensagens de voz) antes da mensagem, com uma pausa.",
+      set_typingMaxSeconds: "Pausa máxima de escrita (segundos)",
+      set_typingMaxSeconds_hint:
+        "A espera real varia com o comprimento da mensagem. 0 envia de imediato.",
+      set_markOnline: "Aparecer online enquanto está ligado",
+      set_markOnline_hint:
+        "Atenção: enquanto o WhatsApp o considera online aqui, o telemóvel deixa de receber notificações.",
+      set_refreshHours: "Reconexão periódica (horas)",
+      set_refreshHours_hint:
+        "0 desativa. Não é preciso no Baileys 7; só para contornar um problema de estabilidade.",
+      set_logLevel: "Nível de registo",
+      set_logLevel_hint:
+        "Suba para debug ou trace ao diagnosticar um problema.",
       recent: "Remetentes recentes",
       add_manually: "Adicionar manualmente",
       add: "Adicionar",
@@ -853,7 +924,7 @@
       recent_hint:
         "Quem escreveu para você recentemente. Use Permitir aqui em vez de digitar um ID à mão — o WhatsApp costuma identificar pessoas por um código que não se parece com o número.",
       incoming_hint:
-        "As mensagens recebidas chegam ao Home Assistant como eventos <code>hornero_message</code>, e as automações agem sobre elas. Enquanto esta lista estiver vazia, qualquer um que escrever pode dispará-las. Adicione um grupo para aceitar tudo que for publicado nele, ou uma pessoa para aceitá-la em qualquer lugar.",
+        "As mensagens recebidas chegam ao Home Assistant como eventos <code>hornero_message</code>, e as automações agem sobre elas. Enquanto esta lista estiver vazia, qualquer um que escrever pode dispará-las. Adicione um grupo para aceitar tudo que for publicado nele, ou uma pessoa para aceitá-la em qualquer lugar. Num grupo isto aceita tudo o que qualquer um escreva; para receber só o que é dirigido ao Hornero, ligue <b>Em grupos, apenas quando mencionam ou citam o Hornero</b> em Definições.",
       settings_hint:
         "Estes ajustes são os mesmos das entidades do Hornero no Home Assistant: altere aqui ou lá, como for mais prático. Aplicam-se imediatamente, salvo indicação em contrário. As opções do add-on fornecem apenas os valores iniciais.",
       h_services: "Serviços",
@@ -929,7 +1000,30 @@
       no_contacts:
         "Noch keine Kontakte — WhatsApp überträgt sie nach dem Koppeln nach und nach.",
       members: "Mitglieder",
-      who_triggers: "Wer Automationen auslösen darf",
+      who_triggers: "Wer Hornero schreiben darf",
+      allow_only:
+        "Nur diese {n} Absender erreichen Home Assistant; alle anderen werden ignoriert.",
+      set_markRead: "Eingehende Nachrichten als gelesen markieren",
+      set_markRead_hint:
+        "Zeigt dem Absender die blauen Haken und entfernt die Ungelesen-Markierung auf dem Telefon.",
+      set_groupsRequireMention:
+        "In Gruppen nur, wenn Hornero erwähnt oder zitiert wird",
+      set_groupsRequireMention_hint:
+        "Ohne dies wird jede Nachricht in einer Gruppe mit Hornero als Mitglied zu einem Ereignis.",
+      set_typingIndicator: "Tippanzeige senden",
+      set_typingIndicator_hint:
+        "Sendet „schreibt …“ (oder „nimmt auf …“ bei Sprachnachrichten) vor der Nachricht, mit kurzer Pause.",
+      set_typingMaxSeconds: "Längste Tipppause (Sekunden)",
+      set_typingMaxSeconds_hint:
+        "Die tatsächliche Wartezeit hängt von der Nachrichtenlänge ab. 0 sendet sofort.",
+      set_markOnline: "Bei Verbindung als online erscheinen",
+      set_markOnline_hint:
+        "Achtung: solange WhatsApp dich hier als online sieht, bekommt dein Telefon keine Benachrichtigungen.",
+      set_refreshHours: "Regelmäßiger Neuverbindungsintervall (Stunden)",
+      set_refreshHours_hint:
+        "0 schaltet es ab. Bei Baileys 7 unnötig; nur als Notbehelf bei Stabilitätsproblemen.",
+      set_logLevel: "Protokollstufe",
+      set_logLevel_hint: "Für die Fehlersuche auf debug oder trace anheben.",
       recent: "Letzte Absender",
       add_manually: "Manuell hinzufügen",
       add: "Hinzufügen",
@@ -960,7 +1054,7 @@
       recent_hint:
         "Wer Ihnen zuletzt geschrieben hat. Hier auf Erlauben tippen, statt eine ID von Hand einzugeben — WhatsApp kennzeichnet Personen oft mit einem Code, der nichts mit ihrer Nummer zu tun hat.",
       incoming_hint:
-        "Eingehende Nachrichten erreichen Home Assistant als <code>hornero_message</code>-Ereignisse, auf die Automationen reagieren. Solange diese Liste leer ist, kann jeder, der schreibt, sie auslösen. Fügen Sie eine Gruppe hinzu, um alles darin zu akzeptieren, oder eine Person, um sie überall zu akzeptieren.",
+        "Eingehende Nachrichten erreichen Home Assistant als <code>hornero_message</code>-Ereignisse, auf die Automationen reagieren. Solange diese Liste leer ist, kann jeder, der schreibt, sie auslösen. Fügen Sie eine Gruppe hinzu, um alles darin zu akzeptieren, oder eine Person, um sie überall zu akzeptieren. In einer Gruppe wird damit alles angenommen, was jemand schreibt; für nur an Hornero gerichtete Nachrichten aktiviere <b>In Gruppen nur, wenn Hornero erwähnt oder zitiert wird</b> in den Einstellungen.",
       settings_hint:
         "Diese Einstellungen teilen sich mit den Hornero-Entitäten in Home Assistant: Ändern Sie sie hier oder dort, wie es bequemer ist. Änderungen gelten sofort, sofern nicht anders vermerkt. Die Add-on-Optionen liefern nur die Startwerte.",
       h_services: "Dienste",
@@ -1036,7 +1130,31 @@
       no_contacts:
         "Aucun contact pour l'instant — WhatsApp les synchronise progressivement après l'appairage.",
       members: "membres",
-      who_triggers: "Qui peut déclencher les automatisations",
+      who_triggers: "Qui peut écrire à Hornero",
+      allow_only:
+        "Seuls ces {n} expéditeurs atteignent Home Assistant ; les autres sont ignorés.",
+      set_markRead: "Marquer les messages reçus comme lus",
+      set_markRead_hint:
+        "Affiche les coches bleues à l’expéditeur et efface la pastille de non-lus sur le téléphone.",
+      set_groupsRequireMention:
+        "Dans les groupes, seulement si Hornero est mentionné ou cité",
+      set_groupsRequireMention_hint:
+        "Sans cela, chaque message écrit dans un groupe où Hornero est membre devient un événement.",
+      set_typingIndicator: "Afficher l’indicateur de saisie",
+      set_typingIndicator_hint:
+        "Envoie « en train d’écrire… » (ou « enregistre… » pour les notes vocales) avant le message, après une pause.",
+      set_typingMaxSeconds: "Pause de saisie maximale (secondes)",
+      set_typingMaxSeconds_hint:
+        "L’attente réelle dépend de la longueur du message. 0 envoie immédiatement.",
+      set_markOnline: "Apparaître en ligne lorsque connecté",
+      set_markOnline_hint:
+        "Attention : tant que WhatsApp vous voit en ligne ici, votre téléphone ne reçoit plus de notifications.",
+      set_refreshHours: "Reconnexion périodique (heures)",
+      set_refreshHours_hint:
+        "0 la désactive. Inutile avec Baileys 7 ; seulement pour contourner un problème de stabilité.",
+      set_logLevel: "Niveau de journalisation",
+      set_logLevel_hint:
+        "Passez-le à debug ou trace pour diagnostiquer un problème.",
       recent: "Expéditeurs récents",
       add_manually: "Ajouter manuellement",
       add: "Ajouter",
@@ -1069,7 +1187,7 @@
       recent_hint:
         "Qui vous a écrit récemment. Utilisez Autoriser ici plutôt que de saisir un ID à la main — WhatsApp identifie souvent les gens par un code sans rapport avec leur numéro.",
       incoming_hint:
-        "Les messages entrants arrivent dans Home Assistant comme événements <code>hornero_message</code>, et les automatisations y réagissent. Tant que cette liste est vide, quiconque vous écrit peut les déclencher. Ajoutez un groupe pour accepter tout ce qui y est publié, ou une personne pour l'accepter partout.",
+        "Les messages entrants arrivent dans Home Assistant comme événements <code>hornero_message</code>, et les automatisations y réagissent. Tant que cette liste est vide, quiconque vous écrit peut les déclencher. Ajoutez un groupe pour accepter tout ce qui y est publié, ou une personne pour l'accepter partout. Dans un groupe, tout ce qu’écrit n’importe qui est accepté ; pour ne recevoir que ce qui s’adresse à Hornero, activez <b>Dans les groupes, seulement si Hornero est mentionné ou cité</b> dans les Réglages.",
       settings_hint:
         "Ces réglages sont partagés avec les entités Hornero dans Home Assistant : modifiez-les ici ou là, au plus pratique. Ils s'appliquent immédiatement sauf mention contraire. Les options du module ne fournissent que les valeurs initiales.",
       h_services: "Services",
@@ -1145,7 +1263,31 @@
       no_contacts:
         "Ancora nessun contatto — WhatsApp li sincronizza gradualmente dopo l'associazione.",
       members: "membri",
-      who_triggers: "Chi può attivare le automazioni",
+      who_triggers: "Chi può scrivere a Hornero",
+      allow_only:
+        "Solo questi {n} mittenti arrivano a Home Assistant; gli altri vengono ignorati.",
+      set_markRead: "Segnare come letti i messaggi in arrivo",
+      set_markRead_hint:
+        "Mostra le spunte blu a chi ha scritto e toglie il segnalino dei non letti dal telefono.",
+      set_groupsRequireMention:
+        "Nei gruppi, solo quando Hornero è menzionato o citato",
+      set_groupsRequireMention_hint:
+        "Senza questo, ogni messaggio scritto in un gruppo di cui Hornero fa parte diventa un evento.",
+      set_typingIndicator: "Mostrare l’indicatore di scrittura",
+      set_typingIndicator_hint:
+        "Invia “sta scrivendo…” (o “sta registrando…” per i messaggi vocali) prima del messaggio, con una pausa.",
+      set_typingMaxSeconds: "Pausa di scrittura massima (secondi)",
+      set_typingMaxSeconds_hint:
+        "L’attesa reale dipende dalla lunghezza del messaggio. 0 invia subito.",
+      set_markOnline: "Risultare online mentre è connesso",
+      set_markOnline_hint:
+        "Attenzione: finché WhatsApp ti considera online qui, il telefono smette di ricevere notifiche.",
+      set_refreshHours: "Riconnessione periodica (ore)",
+      set_refreshHours_hint:
+        "0 la disattiva. Non serve con Baileys 7; solo per aggirare un problema di stabilità.",
+      set_logLevel: "Livello di log",
+      set_logLevel_hint:
+        "Alzalo a debug o trace per diagnosticare un problema.",
       recent: "Mittenti recenti",
       add_manually: "Aggiungi manualmente",
       add: "Aggiungi",
@@ -1176,7 +1318,7 @@
       recent_hint:
         "Chi ti ha scritto di recente. Usa Consenti qui invece di digitare un ID a mano — WhatsApp identifica spesso le persone con un codice che non somiglia al loro numero.",
       incoming_hint:
-        "I messaggi in arrivo raggiungono Home Assistant come eventi <code>hornero_message</code>, e le automazioni agiscono su di essi. Finché questo elenco è vuoto, chiunque ti scriva può attivarle. Aggiungi un gruppo per accettare tutto ciò che vi viene pubblicato, o una persona per accettarla ovunque.",
+        "I messaggi in arrivo raggiungono Home Assistant come eventi <code>hornero_message</code>, e le automazioni agiscono su di essi. Finché questo elenco è vuoto, chiunque ti scriva può attivarle. Aggiungi un gruppo per accettare tutto ciò che vi viene pubblicato, o una persona per accettarla ovunque. In un gruppo così si accetta tutto ciò che scrive chiunque; per ricevere solo quanto è rivolto a Hornero, attiva <b>Nei gruppi, solo quando Hornero è menzionato o citato</b> in Impostazioni.",
       settings_hint:
         "Queste impostazioni sono condivise con le entità Hornero in Home Assistant: modificale qui o lì, come preferisci. Si applicano subito salvo diversa indicazione. Le opzioni del componente forniscono solo i valori iniziali.",
       h_services: "Servizi",
@@ -2032,7 +2174,7 @@
     const stateLine = document.getElementById("allow-state");
 
     stateLine.textContent = allowEntries.length
-      ? `Only these ${allowEntries.length} sender(s) can trigger automations.`
+      ? t("allow_only").replace("{n}", allowEntries.length)
       : t("allow_empty");
     stateLine.className = allowEntries.length ? "msg" : "msg err";
 
@@ -2115,46 +2257,17 @@
 
   /* ---------------------------------------------------------- settings */
 
+  // Labels and hints come from the dictionary, keyed set_<name>[_hint].
   const SETTINGS_FIELDS = [
-    [
-      "markRead",
-      "boolean",
-      "Mark incoming messages as read",
-      "Shows the blue ticks to whoever wrote, and clears the unread badge on your phone.",
-    ],
-    [
-      "typingIndicator",
-      "boolean",
-      "Show the typing indicator",
-      "Sends “typing…” (or “recording…” for voice notes) before a message, and pauses first.",
-    ],
-    [
-      "typingMaxSeconds",
-      "number",
-      "Longest typing pause (seconds)",
-      "The actual wait varies with the message length. 0 sends immediately.",
-      0,
-      10,
-    ],
-    [
-      "markOnline",
-      "boolean",
-      "Appear online while connected",
-      "Careful: while WhatsApp considers you online here, your phone stops getting notifications.",
-    ],
-    [
-      "refreshHours",
-      "number",
-      "Periodic reconnect (hours)",
-      "0 disables it. Not needed on Baileys 7; only for working around a stability problem.",
-      0,
-      48,
-    ],
+    ["markRead", "boolean"],
+    ["groupsRequireMention", "boolean"],
+    ["typingIndicator", "boolean"],
+    ["typingMaxSeconds", "number", 0, 10],
+    ["markOnline", "boolean"],
+    ["refreshHours", "number", 0, 48],
     [
       "logLevel",
       "select",
-      "Log level",
-      "Raise it to debug or trace when diagnosing a problem.",
       ["trace", "debug", "info", "warn", "error", "fatal"],
     ],
   ];
@@ -2164,7 +2277,7 @@
 
   function renderSettings() {
     document.getElementById("settings-form").innerHTML = SETTINGS_FIELDS.map(
-      ([key, type, label, hint, a, b]) => {
+      ([key, type, a, b]) => {
         const value = settingsValues[key];
         const note = restartRequired.includes(key)
           ? ` <span class="group-tag">${t("restart_needed")}</span>`
@@ -2186,8 +2299,8 @@
         return `
       <div class="row" style="align-items: flex-start">
         <div class="field">
-          <label>${label}${note}</label>
-          <p class="msg" style="margin: 0">${hint}</p>
+          <label>${t("set_" + key)}${note}</label>
+          <p class="msg" style="margin: 0">${t("set_" + key + "_hint")}</p>
         </div>
         <div style="flex: 0 0 auto; padding-top: 4px">${control}</div>
       </div>`;

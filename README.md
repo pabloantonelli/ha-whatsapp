@@ -105,7 +105,16 @@ Each paired client appears as a device:
 
 The add-on's behaviour is exposed too: `switch.hornero_typing_indicator`,
 `switch.hornero_mark_read`, `switch.hornero_mark_online`,
-`number.hornero_typing_max_seconds` and `select.hornero_log_level`.
+`switch.hornero_groups_require_mention`, `number.hornero_typing_max_seconds`
+and `select.hornero_log_level`.
+
+### Keeping group noise out
+
+With Hornero's number in a group, every message posted there would reach Home
+Assistant. Turn on `switch.hornero_groups_require_mention` — or the matching
+switch in the panel's Incoming tab — and a group message is only passed on when
+it mentions Hornero or replies to a message Hornero sent. Direct chats are
+never filtered this way.
 
 ### Notify entities
 

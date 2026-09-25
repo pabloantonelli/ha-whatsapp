@@ -107,8 +107,16 @@ Cada cliente vinculado aparece como un dispositivo:
 
 El comportamiento del add-on también está expuesto:
 `switch.hornero_typing_indicator`, `switch.hornero_mark_read`,
-`switch.hornero_mark_online`, `number.hornero_typing_max_seconds` y
-`select.hornero_log_level`.
+`switch.hornero_mark_online`, `switch.hornero_groups_require_mention`,
+`number.hornero_typing_max_seconds` y `select.hornero_log_level`.
+
+### Cómo callar el ruido de los grupos
+
+Con el número de Hornero en un grupo, todo lo que se escriba ahí llegaría a
+Home Assistant. Activá `switch.hornero_groups_require_mention` —o el
+interruptor equivalente en la pestaña Entrantes del panel— y un mensaje de
+grupo solo pasa cuando menciona a Hornero o responde a un mensaje que Hornero
+envió. Los chats directos nunca se filtran así.
 
 ### Entidades notify
 

@@ -213,6 +213,9 @@
       },
       "mark_online": {
         "name": "Aparecer en línea"
+      },
+      "groups_require_mention": {
+        "name": "Grupos: solo si me mencionan"
       }
     },
     "number": {

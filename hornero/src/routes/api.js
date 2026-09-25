@@ -71,6 +71,7 @@ const readSchema = z.object({
 const settingsSchema = z
   .object({
     markRead: z.boolean(),
+    groupsRequireMention: z.boolean(),
     typingIndicator: z.boolean(),
     typingMaxSeconds: z.number().int().min(0).max(10),
     markOnline: z.boolean(),

@@ -273,6 +273,26 @@ automation:
 
 ---
 
+## Who may write to Hornero
+
+Every incoming message becomes a `hornero_message` event, and automations act
+on those, so an unfiltered inbox means any stranger can trigger them. Two
+filters narrow it down, both editable in the panel's **Incoming** tab:
+
+**The allowlist.** While it is empty every sender gets through. Add a person to
+accept their messages anywhere, or a group to accept everything posted in it.
+Add senders from the **Recent senders** list rather than typing an id: WhatsApp
+often addresses people by a LID (`173478…@lid`) that looks nothing like their
+phone number, and that is the id an incoming message carries.
+
+**Groups: only when mentioned.** With Hornero's number in a group, every
+message anyone posts there reaches Home Assistant. Turn on
+`switch.hornero_groups_require_mention` and a group message is only passed on
+when it mentions Hornero's number or replies to a message Hornero sent. Direct
+chats are never filtered this way.
+
+---
+
 ## HTTP API reference
 
 Needed only to reach the add-on from outside Home Assistant; inside it, use the
@@ -321,6 +341,7 @@ Each paired client is a device in Home Assistant:
 
 The add-on's behaviour is exposed as `switch.hornero_typing_indicator`,
 `switch.hornero_mark_read`, `switch.hornero_mark_online`,
+`switch.hornero_groups_require_mention`,
 `number.hornero_typing_max_seconds` and `select.hornero_log_level`. These are
 the same settings as the panel's **Settings** tab — changing either updates the
 other.

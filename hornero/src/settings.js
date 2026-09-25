@@ -10,6 +10,7 @@ import path from "node:path";
 
 export const DEFAULTS = {
   markRead: false,
+  groupsRequireMention: false,
   typingIndicator: true,
   typingMaxSeconds: 3,
   markOnline: false,
@@ -24,6 +25,7 @@ const LOG_LEVELS = ["trace", "debug", "info", "warn", "error", "fatal"];
 
 const coerce = {
   markRead: Boolean,
+  groupsRequireMention: Boolean,
   typingIndicator: Boolean,
   markOnline: Boolean,
   typingMaxSeconds: (v) =>
