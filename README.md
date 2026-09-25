@@ -35,7 +35,8 @@ something that lives in your home and carries messages.
 
 - Home Assistant OS or Supervised. This is an add-on; Container and Core
   installations cannot run it.
-- Architectures: `aarch64`, `amd64`, `armhf`, `armv7`, `i386`.
+- Architectures: `aarch64` and `amd64` — Home Assistant no longer builds
+  32-bit targets.
 - A phone with WhatsApp, to pair the account.
 
 > **Hornero uses an unofficial interface to WhatsApp.** WhatsApp does not

@@ -13,6 +13,10 @@ Assistant integration rather than a handful of services.
 - **You must pair your phone again**, and uninstall the old add-on first — the
   Supervisor treats the new slug as a new install.
 - The pre-3.0 HTTP endpoints (`/sendMessage` and friends) are removed.
+- **Only `aarch64` and `amd64` are supported.** Home Assistant's own builder no
+  longer produces `armv7`, `armhf` or `i386` images, so those platforms cannot
+  be published for. A 32-bit Raspberry Pi install needs to move to the 64-bit
+  version of Home Assistant OS.
 
 ### ✨ New
 

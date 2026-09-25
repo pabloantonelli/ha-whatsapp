@@ -22,7 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, amd64, armhf, armv7, i386]
+        # Home Assistant's builder no longer supports 32-bit targets.
+        arch: [aarch64, amd64]
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4
