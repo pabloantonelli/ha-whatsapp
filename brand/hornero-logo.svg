@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 750" width="750" height="750">
+  <!-- Square canvas so the renderer centres it; the usable logo is the middle
+       750x300 band, cropped out when exporting. -->
+  <defs>
+    <linearGradient id="clay" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0%" stop-color="#D4774E"/>
+      <stop offset="55%" stop-color="#B65C38"/>
+      <stop offset="100%" stop-color="#8E4227"/>
+    </linearGradient>
+    <mask id="doorway">
+      <rect width="750" height="750" fill="#fff"/>
+      <path d="M150 457 v-64 a26 26 0 0 1 52 0 v64 Z" fill="#000"/>
+    </mask>
+  </defs>
+
+  <g mask="url(#doorway)">
+    <path d="M42 457 a98 133 0 0 1 196 0 Z" fill="url(#clay)"/>
+    <path d="M65 457 a75 104 0 0 1 150 0" fill="none" stroke="#7C3F26"
+          stroke-width="5" opacity="0.24" stroke-linecap="round"/>
+    <path d="M88 457 a52 73 0 0 1 104 0" fill="none" stroke="#7C3F26"
+          stroke-width="4" opacity="0.18" stroke-linecap="round"/>
+  </g>
+
+  <path d="M150 457 v-64 a26 26 0 0 1 52 0 v64 Z" fill="#48230F"/>
+  <path d="M150 457 v-64 a26 26 0 0 1 52 0" fill="none" stroke="#7C3F26"
+        stroke-width="6" stroke-linecap="round"/>
+  <rect x="30" y="453" width="220" height="13" rx="6.5" fill="#7C3F26"/>
+
+  <text x="288" y="404" font-family="Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="106" font-weight="600" fill="#7C3F26">Hornero</text>
+  <text x="292" y="450" font-family="Avenir Next, Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="29" font-weight="500" fill="#B65C38" letter-spacing="3">FOR HOME ASSISTANT</text>
+</svg>

@@ -1,0 +1,161 @@
+[
+  {
+    "id": "hornero-send",
+    "type": "subflow",
+    "name": "Hornero: send message",
+    "info": "Sends a WhatsApp message through the Hornero add-on.\n\nSet the recipient and client in the node, or override them per message with `msg.to` and `msg.clientId`. The text comes from `msg.payload`.\n\nCopy a group ID from the Groups & contacts tab of the Hornero panel.",
+    "category": "Hornero",
+    "in": [
+      {
+        "x": 50,
+        "y": 60,
+        "wires": [
+          {
+            "id": "hornero-send-call"
+          }
+        ]
+      }
+    ],
+    "out": [
+      {
+        "x": 500,
+        "y": 60,
+        "wires": [
+          {
+            "id": "hornero-send-call",
+            "port": 0
+          }
+        ]
+      }
+    ],
+    "env": [
+      {
+        "name": "CLIENT",
+        "type": "str",
+        "value": "default",
+        "ui": {
+          "label": {
+            "en-US": "Client"
+          },
+          "type": "input",
+          "opts": {
+            "types": ["str"]
+          }
+        }
+      },
+      {
+        "name": "TO",
+        "type": "str",
+        "value": "",
+        "ui": {
+          "label": {
+            "en-US": "Recipient (number or group ID)"
+          },
+          "type": "input",
+          "opts": {
+            "types": ["str"]
+          }
+        }
+      }
+    ],
+    "color": "#B65C38",
+    "icon": "font-awesome/fa-comment"
+  },
+  {
+    "id": "hornero-send-call",
+    "type": "api-call-service",
+    "z": "hornero-send",
+    "name": "hornero.send_message",
+    "server": "",
+    "version": 5,
+    "domain": "hornero",
+    "service": "send_message",
+    "areaId": [],
+    "deviceId": [],
+    "entityId": [],
+    "data": "{\"clientId\": \"{{msg.clientId || env.CLIENT}}\", \"to\": \"{{msg.to || env.TO}}\", \"body\": {\"text\": \"{{payload}}\"}}",
+    "dataType": "json",
+    "mergeContext": "",
+    "mustacheAltTags": false,
+    "outputProperties": [],
+    "queue": "none",
+    "x": 270,
+    "y": 60,
+    "wires": [[]]
+  },
+  {
+    "id": "hornero-receive",
+    "type": "subflow",
+    "name": "Hornero: receive message",
+    "info": "Fires for every incoming WhatsApp message.\n\n`msg.payload` carries the event data; the sender is in `msg.payload.key.remoteJid` and the text in `msg.payload.text`.\n\nSet FROM to only pass messages from one sender, matching a phone number or a group ID. Note that the add-on's own allowlist, in the Incoming tab, is what actually stops strangers from reaching Home Assistant.",
+    "category": "Hornero",
+    "in": [],
+    "out": [
+      {
+        "x": 620,
+        "y": 60,
+        "wires": [
+          {
+            "id": "hornero-receive-filter",
+            "port": 0
+          }
+        ]
+      }
+    ],
+    "env": [
+      {
+        "name": "FROM",
+        "type": "str",
+        "value": "",
+        "ui": {
+          "label": {
+            "en-US": "Only from (blank = everyone)"
+          },
+          "type": "input",
+          "opts": {
+            "types": ["str"]
+          }
+        }
+      }
+    ],
+    "color": "#B65C38",
+    "icon": "font-awesome/fa-inbox"
+  },
+  {
+    "id": "hornero-receive-event",
+    "type": "server-events",
+    "z": "hornero-receive",
+    "name": "hornero_message",
+    "server": "",
+    "version": 3,
+    "eventType": "hornero_message",
+    "exposeAsEntityConfig": "",
+    "waitForRunning": true,
+    "outputProperties": [
+      {
+        "property": "payload",
+        "propertyType": "msg",
+        "value": "",
+        "valueType": "eventData"
+      }
+    ],
+    "x": 180,
+    "y": 60,
+    "wires": [["hornero-receive-filter"]]
+  },
+  {
+    "id": "hornero-receive-filter",
+    "type": "function",
+    "z": "hornero-receive",
+    "name": "filter sender",
+    "func": "// Blank FROM lets everything through.\nconst wanted = (env.get('FROM') || '').trim();\nif (!wanted) return msg;\n\n// WhatsApp may address someone by phone number or by LID, so compare\n// every identifier the event carries.\nconst key = msg.payload?.key || {};\nconst ids = [key.remoteJid, key.remoteJidAlt, key.participant, key.participantAlt]\n  .filter(Boolean)\n  .map((id) => id.replace(/:\\d+(?=@)/, ''));\n\nconst digits = wanted.replace(/\\D/g, '');\nconst match = ids.some(\n  (id) => id === wanted || id.startsWith(digits + '@'),\n);\n\nreturn match ? msg : null;\n",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 410,
+    "y": 60,
+    "wires": [[]]
+  }
+]

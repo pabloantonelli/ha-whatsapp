@@ -1,0 +1,234 @@
+{
+  "config": {
+    "step": {
+      "confirm": {
+        "description": "¿Configurar Hornero? Usará el add-on que corre en este equipo."
+      },
+      "user": {
+        "description": "Dirección del add-on Hornero y su token de API.",
+        "data": {
+          "base_url": "Dirección",
+          "token": "Token de API"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se puede llegar al add-on Hornero. ¿Está en marcha?"
+    },
+    "abort": {
+      "already_configured": "Hornero ya está configurado.",
+      "cannot_connect": "No se puede llegar al add-on Hornero. ¿Está en marcha?"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "default_recipient": "Destinatario por defecto"
+        },
+        "data_description": {
+          "default_recipient": "Número o ID de grupo al que envía la entidad de notificación."
+        }
+      }
+    }
+  },
+  "services": {
+    "send_message": {
+      "name": "Enviar mensaje",
+      "description": "Envía un mensaje de WhatsApp.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Número con código de país, o ID de grupo."
+        },
+        "body": {
+          "name": "Mensaje",
+          "description": "Contenido del mensaje, por ejemplo {\"text\": \"Hola\"}."
+        },
+        "options": {
+          "name": "Opciones",
+          "description": "Opciones extra que se pasan a la librería de mensajería."
+        },
+        "typing": {
+          "name": "Indicador de escritura",
+          "description": "Poné false para enviar de inmediato, en alertas urgentes."
+        }
+      }
+    },
+    "send_media": {
+      "name": "Enviar multimedia",
+      "description": "Envía una captura o un clip de una cámara o entidad de imagen.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Número con código de país, o ID de grupo."
+        },
+        "entity_id": {
+          "name": "Cámara o imagen",
+          "description": "La entidad de la que capturar."
+        },
+        "caption": {
+          "name": "Descripción",
+          "description": "Texto que acompaña al archivo."
+        },
+        "duration": {
+          "name": "Duración del video",
+          "description": "Graba un clip de estos segundos en vez de una foto."
+        },
+        "lookback": {
+          "name": "Segundos previos",
+          "description": "Incluye además estos segundos grabados antes de la llamada."
+        },
+        "typing": {
+          "name": "Indicador de escritura",
+          "description": "Poné false para enviar de inmediato, en alertas urgentes."
+        }
+      }
+    },
+    "mark_read": {
+      "name": "Marcar como leído",
+      "description": "Marca como leído un mensaje recibido.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "messageId": {
+          "name": "ID del mensaje",
+          "description": "El id que trae un evento hornero_message."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Número con código de país, o ID de grupo."
+        },
+        "keys": {
+          "name": "Claves de mensaje",
+          "description": "Alternativamente, el objeto key completo del evento."
+        }
+      }
+    },
+    "set_status": {
+      "name": "Cambiar estado",
+      "description": "Cambia el mensaje de estado del perfil.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "status": {
+          "name": "Estado",
+          "description": "Nuevo mensaje de estado del perfil."
+        }
+      }
+    },
+    "presence_subscribe": {
+      "name": "Suscribirse a presencia",
+      "description": "Sigue el estado en línea y de escritura de un contacto.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "userId": {
+          "name": "Contacto",
+          "description": "El contacto a seguir."
+        }
+      }
+    },
+    "send_presence_update": {
+      "name": "Enviar presencia",
+      "description": "Aparecer en línea, escribiendo o grabando.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "type": {
+          "name": "Presencia",
+          "description": "Qué presencia mostrar."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Número con código de país, o ID de grupo."
+        }
+      }
+    },
+    "send_infinity_presence_update": {
+      "name": "Mantener presencia",
+      "description": "Mantiene una presencia hasta que se detenga.",
+      "fields": {
+        "clientId": {
+          "name": "Cliente",
+          "description": "Qué cuenta vinculada usar."
+        },
+        "type": {
+          "name": "Presencia",
+          "description": "Qué presencia mostrar."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Número con código de país, o ID de grupo."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "connected": {
+        "name": "Conectado"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Estado"
+      }
+    },
+    "image": {
+      "qr": {
+        "name": "Código de vinculación"
+      }
+    },
+    "button": {
+      "restart": {
+        "name": "Reiniciar"
+      },
+      "logout": {
+        "name": "Cerrar sesión"
+      }
+    },
+    "switch": {
+      "typing_indicator": {
+        "name": "Indicador de escritura"
+      },
+      "mark_read": {
+        "name": "Marcar como leído"
+      },
+      "mark_online": {
+        "name": "Aparecer en línea"
+      }
+    },
+    "number": {
+      "typing_max_seconds": {
+        "name": "Pausa de escritura"
+      }
+    },
+    "select": {
+      "log_level": {
+        "name": "Nivel de registro"
+      }
+    },
+    "notify": {
+      "notify": {
+        "name": "Notificar"
+      }
+    }
+  }
+}

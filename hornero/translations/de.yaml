@@ -1,0 +1,47 @@
+---
+configuration:
+  clients:
+    name: Clients
+    description: >-
+      Ein Eintrag pro WhatsApp-Konto. Jedes wird separat gekoppelt und
+      über diesen Namen im Feld clientId angesprochen.
+  api_token:
+    name: API-Token
+    description: >-
+      Token zum Schutz der HTTP-API. Leer lassen, um beim ersten Start
+      eines zu erzeugen.
+  allowed_senders:
+    name: Erlaubte Absender
+    description: >-
+      Nur diese Absender dürfen Home-Assistant-Ereignisse auslösen. Leer
+      akzeptiert alle. Füllt die Liste beim ersten Start; danach im Tab
+      Incoming bearbeiten.
+  mark_read:
+    name: Eingehende als gelesen markieren
+    description: >-
+      Zeigt dem Absender die blauen Haken und entfernt die
+      Ungelesen-Markierung auf dem Telefon.
+  typing_indicator:
+    name: Schreibanzeige
+    description: >-
+      Zeigt vor dem Senden „schreibt…“ nach einer kurzen Pause. Die Pause
+      verhindert außerdem gleichmäßige Nachrichtensalven.
+  typing_max_seconds:
+    name: Maximale Schreibpause
+    description: >-
+      Obergrenze in Sekunden. Die tatsächliche Wartezeit richtet sich nach
+      der Nachrichtenlänge. 0 sendet sofort.
+  log_level:
+    name: Protokollstufe
+    description: >-
+      Wie ausführlich das Add-on protokolliert.
+  mark_online:
+    name: Online erscheinen
+    description: >-
+      Achtung: Solange WhatsApp Sie hier als online sieht, erhält Ihr
+      Telefon keine Benachrichtigungen.
+  refresh_hours:
+    name: Periodischer Neuverbindungsaufbau
+    description: >-
+      Erzwingt alle N Stunden eine neue Verbindung. 0 deaktiviert dies;
+      bei Baileys 7 nicht nötig.

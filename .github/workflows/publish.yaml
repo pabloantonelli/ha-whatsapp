@@ -1,0 +1,53 @@
+---
+name: Publish
+
+# yamllint disable-line rule:truthy
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to build (defaults to the one in config.yaml)
+        required: false
+        type: string
+
+jobs:
+  publish:
+    name: Build ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, amd64, armhf, armv7, i386]
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v4
+
+      - name: ℹ️ Gather add-on information
+        id: information
+        uses: frenck/action-addon-information@v1.4.2
+        with:
+          path: ./hornero
+
+      - name: 🔑 Log in to the GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Builds the image users download instead of compiling it themselves,
+      # which on a Raspberry Pi is the difference between seconds and minutes.
+      - name: 🏗 Build and publish
+        uses: home-assistant/builder@2026.09.0
+        with:
+          args: |
+            --${{ matrix.arch }} \
+            --target /data/hornero \
+            --image hornero-{arch} \
+            --docker-hub ghcr.io/${{ github.repository_owner }} \
+            --addon

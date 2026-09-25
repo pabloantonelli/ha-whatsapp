@@ -1,0 +1,165 @@
+---
+send_message:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    to:
+      required: true
+      example: 391234567890@s.whatsapp.net
+      selector:
+        text:
+    body:
+      required: true
+      example: '{"text": "Hello"}'
+      selector:
+        object:
+    options:
+      required: false
+      advanced: true
+      selector:
+        object:
+    typing:
+      required: false
+      selector:
+        boolean:
+
+send_media:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    to:
+      required: true
+      example: 391234567890@s.whatsapp.net
+      selector:
+        text:
+    entity_id:
+      required: true
+      example: camera.front_door
+      selector:
+        entity:
+          domain:
+            - camera
+            - image
+    caption:
+      required: false
+      selector:
+        text:
+    duration:
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 120
+          unit_of_measurement: seconds
+    lookback:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 60
+          unit_of_measurement: seconds
+    typing:
+      required: false
+      selector:
+        boolean:
+
+mark_read:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    messageId:
+      required: false
+      example: 3EB0ABC123
+      selector:
+        text:
+    to:
+      required: false
+      example: 391234567890@s.whatsapp.net
+      selector:
+        text:
+    keys:
+      required: false
+      advanced: true
+      selector:
+        object:
+
+set_status:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    status:
+      required: true
+      example: Available
+      selector:
+        text:
+
+presence_subscribe:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    userId:
+      required: true
+      example: 391234567890@s.whatsapp.net
+      selector:
+        text:
+
+send_presence_update:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    type:
+      required: true
+      example: composing
+      selector:
+        select:
+          options:
+            - available
+            - unavailable
+            - composing
+            - recording
+            - paused
+    to:
+      required: false
+      selector:
+        text:
+
+send_infinity_presence_update:
+  fields:
+    clientId:
+      required: true
+      example: default
+      selector:
+        text:
+    type:
+      required: true
+      example: available
+      selector:
+        select:
+          options:
+            - available
+            - unavailable
+            - composing
+            - recording
+            - paused
+    to:
+      required: false
+      selector:
+        text:

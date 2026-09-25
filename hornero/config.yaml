@@ -1,0 +1,41 @@
+---
+name: Hornero
+version: "4.0.0"
+slug: hornero
+description: Send and receive WhatsApp messages from Home Assistant, powered by Baileys
+url: "https://github.com/pabloantonelli/hornero"
+image: ghcr.io/pabloantonelli/hornero-{arch}
+homeassistant_api: true
+hassio_api: true
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+init: false
+ingress: true
+ingress_port: 3000
+panel_icon: mdi:bird
+panel_title: Hornero
+discovery:
+  - hornero
+map:
+  - config:rw
+  - media:rw
+options:
+  clients:
+    - default
+  log_level: info
+schema:
+  clients:
+    - str
+  api_token: password?
+  allowed_senders:
+    - str?
+  mark_read: bool?
+  typing_indicator: bool?
+  typing_max_seconds: int(0,10)?
+  log_level: list(trace|debug|info|warn|error|fatal)?
+  mark_online: bool?
+  refresh_hours: int(0,48)?

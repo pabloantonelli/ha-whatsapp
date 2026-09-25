@@ -1,0 +1,234 @@
+{
+  "config": {
+    "step": {
+      "confirm": {
+        "description": "Set up Hornero? It will use the add-on running on this machine."
+      },
+      "user": {
+        "description": "Address of the Hornero add-on and its API token.",
+        "data": {
+          "base_url": "Address",
+          "token": "API token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach the Hornero add-on. Is it running?"
+    },
+    "abort": {
+      "already_configured": "Hornero is already set up.",
+      "cannot_connect": "Cannot reach the Hornero add-on. Is it running?"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "default_recipient": "Default recipient"
+        },
+        "data_description": {
+          "default_recipient": "Phone number or group ID the notify entity sends to."
+        }
+      }
+    }
+  },
+  "services": {
+    "send_message": {
+      "name": "Send message",
+      "description": "Send a WhatsApp message.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "to": {
+          "name": "Recipient",
+          "description": "Phone number with country code, or a group ID."
+        },
+        "body": {
+          "name": "Message",
+          "description": "Message content, for example {\"text\": \"Hello\"}."
+        },
+        "options": {
+          "name": "Options",
+          "description": "Extra options passed through to the messaging library."
+        },
+        "typing": {
+          "name": "Typing indicator",
+          "description": "Set to false to send immediately, for urgent alerts."
+        }
+      }
+    },
+    "send_media": {
+      "name": "Send media",
+      "description": "Send a snapshot or a recorded clip from a camera or image entity.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "to": {
+          "name": "Recipient",
+          "description": "Phone number with country code, or a group ID."
+        },
+        "entity_id": {
+          "name": "Camera or image",
+          "description": "The entity to capture from."
+        },
+        "caption": {
+          "name": "Caption",
+          "description": "Text sent along with the media."
+        },
+        "duration": {
+          "name": "Video duration",
+          "description": "Record a clip of this many seconds instead of a still image."
+        },
+        "lookback": {
+          "name": "Lookback",
+          "description": "Also include this many seconds recorded before the call."
+        },
+        "typing": {
+          "name": "Typing indicator",
+          "description": "Set to false to send immediately, for urgent alerts."
+        }
+      }
+    },
+    "mark_read": {
+      "name": "Mark as read",
+      "description": "Mark a received message as read.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "messageId": {
+          "name": "Message ID",
+          "description": "The id from a hornero_message event."
+        },
+        "to": {
+          "name": "Recipient",
+          "description": "Phone number with country code, or a group ID."
+        },
+        "keys": {
+          "name": "Message keys",
+          "description": "Alternatively, the whole key object from the event."
+        }
+      }
+    },
+    "set_status": {
+      "name": "Set status",
+      "description": "Set the profile status message.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "status": {
+          "name": "Status",
+          "description": "New profile status message."
+        }
+      }
+    },
+    "presence_subscribe": {
+      "name": "Subscribe to presence",
+      "description": "Follow a contact's online and typing status.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "userId": {
+          "name": "Contact",
+          "description": "The contact to follow."
+        }
+      }
+    },
+    "send_presence_update": {
+      "name": "Send presence",
+      "description": "Show as online, typing or recording.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "type": {
+          "name": "Presence",
+          "description": "Which presence to show."
+        },
+        "to": {
+          "name": "Recipient",
+          "description": "Phone number with country code, or a group ID."
+        }
+      }
+    },
+    "send_infinity_presence_update": {
+      "name": "Keep sending presence",
+      "description": "Keep showing a presence until stopped.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Which paired account to use."
+        },
+        "type": {
+          "name": "Presence",
+          "description": "Which presence to show."
+        },
+        "to": {
+          "name": "Recipient",
+          "description": "Phone number with country code, or a group ID."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "connected": {
+        "name": "Connected"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status"
+      }
+    },
+    "image": {
+      "qr": {
+        "name": "Pairing code"
+      }
+    },
+    "button": {
+      "restart": {
+        "name": "Restart"
+      },
+      "logout": {
+        "name": "Log out"
+      }
+    },
+    "switch": {
+      "typing_indicator": {
+        "name": "Typing indicator"
+      },
+      "mark_read": {
+        "name": "Mark as read"
+      },
+      "mark_online": {
+        "name": "Appear online"
+      }
+    },
+    "number": {
+      "typing_max_seconds": {
+        "name": "Typing pause"
+      }
+    },
+    "select": {
+      "log_level": {
+        "name": "Log level"
+      }
+    },
+    "notify": {
+      "notify": {
+        "name": "Notify"
+      }
+    }
+  }
+}

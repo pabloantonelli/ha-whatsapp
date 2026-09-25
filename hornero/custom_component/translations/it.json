@@ -1,0 +1,234 @@
+{
+  "config": {
+    "step": {
+      "confirm": {
+        "description": "Configurare Hornero? Userà il componente aggiuntivo in esecuzione su questa macchina."
+      },
+      "user": {
+        "description": "Indirizzo del componente Hornero e il suo token API.",
+        "data": {
+          "base_url": "Indirizzo",
+          "token": "Token API"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile raggiungere il componente Hornero. È in esecuzione?"
+    },
+    "abort": {
+      "already_configured": "Hornero è già configurato.",
+      "cannot_connect": "Impossibile raggiungere il componente Hornero. È in esecuzione?"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "default_recipient": "Destinatario predefinito"
+        },
+        "data_description": {
+          "default_recipient": "Numero o ID gruppo a cui invia l'entità di notifica."
+        }
+      }
+    }
+  },
+  "services": {
+    "send_message": {
+      "name": "Invia messaggio",
+      "description": "Invia un messaggio WhatsApp.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Numero con prefisso internazionale, o ID gruppo."
+        },
+        "body": {
+          "name": "Messaggio",
+          "description": "Contenuto del messaggio, ad esempio {\"text\": \"Ciao\"}."
+        },
+        "options": {
+          "name": "Opzioni",
+          "description": "Opzioni aggiuntive passate alla libreria di messaggistica."
+        },
+        "typing": {
+          "name": "Indicatore di scrittura",
+          "description": "Imposta false per inviare subito, per avvisi urgenti."
+        }
+      }
+    },
+    "send_media": {
+      "name": "Invia contenuto",
+      "description": "Invia uno scatto o una clip da una telecamera o entità immagine.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Numero con prefisso internazionale, o ID gruppo."
+        },
+        "entity_id": {
+          "name": "Telecamera o immagine",
+          "description": "L'entità da cui catturare."
+        },
+        "caption": {
+          "name": "Didascalia",
+          "description": "Testo inviato insieme al contenuto."
+        },
+        "duration": {
+          "name": "Durata del video",
+          "description": "Registra una clip di questi secondi invece di uno scatto."
+        },
+        "lookback": {
+          "name": "Secondi precedenti",
+          "description": "Include anche questi secondi registrati prima della chiamata."
+        },
+        "typing": {
+          "name": "Indicatore di scrittura",
+          "description": "Imposta false per inviare subito, per avvisi urgenti."
+        }
+      }
+    },
+    "mark_read": {
+      "name": "Segna come letto",
+      "description": "Segna come letto un messaggio ricevuto.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "messageId": {
+          "name": "ID messaggio",
+          "description": "L'id proveniente da un evento hornero_message."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Numero con prefisso internazionale, o ID gruppo."
+        },
+        "keys": {
+          "name": "Chiavi messaggio",
+          "description": "In alternativa, l'intero oggetto key dell'evento."
+        }
+      }
+    },
+    "set_status": {
+      "name": "Imposta stato",
+      "description": "Imposta il messaggio di stato del profilo.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "status": {
+          "name": "Stato",
+          "description": "Nuovo messaggio di stato del profilo."
+        }
+      }
+    },
+    "presence_subscribe": {
+      "name": "Iscriviti alla presenza",
+      "description": "Segue lo stato online e di scrittura di un contatto.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "userId": {
+          "name": "Contatto",
+          "description": "Il contatto da seguire."
+        }
+      }
+    },
+    "send_presence_update": {
+      "name": "Invia presenza",
+      "description": "Apparire online, mentre si scrive o si registra.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "type": {
+          "name": "Presenza",
+          "description": "Quale presenza mostrare."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Numero con prefisso internazionale, o ID gruppo."
+        }
+      }
+    },
+    "send_infinity_presence_update": {
+      "name": "Mantieni presenza",
+      "description": "Mantiene una presenza finché non viene interrotta.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Quale account associato usare."
+        },
+        "type": {
+          "name": "Presenza",
+          "description": "Quale presenza mostrare."
+        },
+        "to": {
+          "name": "Destinatario",
+          "description": "Numero con prefisso internazionale, o ID gruppo."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "connected": {
+        "name": "Connesso"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Stato"
+      }
+    },
+    "image": {
+      "qr": {
+        "name": "Codice di associazione"
+      }
+    },
+    "button": {
+      "restart": {
+        "name": "Riavvia"
+      },
+      "logout": {
+        "name": "Disconnetti"
+      }
+    },
+    "switch": {
+      "typing_indicator": {
+        "name": "Indicatore di scrittura"
+      },
+      "mark_read": {
+        "name": "Segna come letto"
+      },
+      "mark_online": {
+        "name": "Apparire online"
+      }
+    },
+    "number": {
+      "typing_max_seconds": {
+        "name": "Pausa di scrittura"
+      }
+    },
+    "select": {
+      "log_level": {
+        "name": "Livello di log"
+      }
+    },
+    "notify": {
+      "notify": {
+        "name": "Notifica"
+      }
+    }
+  }
+}

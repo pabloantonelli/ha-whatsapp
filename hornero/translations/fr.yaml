@@ -1,0 +1,47 @@
+---
+configuration:
+  clients:
+    name: Clients
+    description: >-
+      Une entrée par compte WhatsApp. Chacun s'appaire séparément et se
+      désigne par ce nom dans le champ clientId.
+  api_token:
+    name: Jeton d'API
+    description: >-
+      Jeton protégeant l'API HTTP. Laissez vide pour en générer un au
+      premier démarrage.
+  allowed_senders:
+    name: Expéditeurs autorisés
+    description: >-
+      Seuls ces expéditeurs peuvent déclencher des événements Home
+      Assistant. Vide accepte tout le monde. Initialise la liste au
+      premier démarrage ; modifiez-la ensuite depuis l'onglet Incoming.
+  mark_read:
+    name: Marquer les messages reçus comme lus
+    description: >-
+      Affiche les coches bleues à l'expéditeur et retire le badge de
+      non-lus sur votre téléphone.
+  typing_indicator:
+    name: Indicateur de saisie
+    description: >-
+      Affiche « en train d'écrire… » avant l'envoi, après une brève pause.
+      Cette pause évite aussi les rafales régulières.
+  typing_max_seconds:
+    name: Pause de saisie maximale
+    description: >-
+      Limite en secondes. L'attente réelle varie selon la longueur du
+      message. 0 envoie immédiatement.
+  log_level:
+    name: Niveau de journalisation
+    description: >-
+      Quantité de détails écrits dans le journal du module.
+  mark_online:
+    name: Apparaître en ligne
+    description: >-
+      Attention : tant que WhatsApp vous considère en ligne ici, votre
+      téléphone ne reçoit plus de notifications.
+  refresh_hours:
+    name: Reconnexion périodique
+    description: >-
+      Force une reconnexion toutes les N heures. 0 la désactive ; inutile
+      avec Baileys 7.

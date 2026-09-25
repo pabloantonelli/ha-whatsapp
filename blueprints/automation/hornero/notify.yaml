@@ -1,0 +1,63 @@
+---
+blueprint:
+  name: Hornero — send a message when something happens
+  description: >-
+    Sends a WhatsApp message through Hornero when an entity changes to a given
+    state. Use it for a door left open, a washing machine finishing, or
+    anything else worth a message.
+  domain: automation
+  source_url: https://github.com/pabloantonelli/hornero/blob/main/blueprints/automation/hornero/notify.yaml
+  input:
+    trigger_entity:
+      name: Entity to watch
+      selector:
+        entity: {}
+    trigger_state:
+      name: State that triggers the message
+      default: "on"
+      selector:
+        text: {}
+    client_id:
+      name: Hornero client
+      default: default
+      selector:
+        text: {}
+    recipient:
+      name: Recipient
+      description: Phone number with country code, or a group ID.
+      selector:
+        text: {}
+    message:
+      name: Message
+      description: Templates work here, for example {{ states('sensor.x') }}.
+      selector:
+        text:
+          multiline: true
+    urgent:
+      name: Urgent
+      description: >-
+        Send immediately, skipping the typing indicator and its pause.
+      default: false
+      selector:
+        boolean: {}
+
+mode: queued
+max: 10
+
+variables:
+  urgent: !input urgent
+  message: !input message
+
+triggers:
+  - trigger: state
+    entity_id: !input trigger_entity
+    to: !input trigger_state
+
+actions:
+  - action: hornero.send_message
+    data:
+      clientId: !input client_id
+      to: !input recipient
+      typing: "{{ not urgent }}"
+      body:
+        text: "{{ message }}"

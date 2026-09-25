@@ -1,0 +1,1867 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hornero</title>
+<link
+  rel="icon"
+  href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23F1E0CE'/%3E%3Cpath d='M76 430 a180 244 0 0 1 360 0 Z' fill='%23B65C38'/%3E%3Cpath d='M274 430 v-116 a48 48 0 0 1 96 0 v116 Z' fill='%2348230F'/%3E%3C/svg%3E"
+/>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f2f4f7;
+    --card: #fff;
+    --fg: #16191d;
+    --muted: #6b7280;
+    --border: #e3e6eb;
+    --accent: #b65c38;
+    --accent-fg: #fff;
+    --danger: #d93025;
+    --warn: #e8a33d;
+    --code-bg: #f7f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121417;
+      --card: #1c1f24;
+      --fg: #e8eaed;
+      --muted: #9aa0a6;
+      --border: #2e3238;
+      --code-bg: #15181c;
+    }
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 20px 16px 40px;
+    background: var(--bg);
+    color: var(--fg);
+    font:
+      15px/1.5 system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+  }
+  .wrap {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+  .ver {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  nav button {
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 10px 14px;
+    font: inherit;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  nav button[aria-selected="true"] {
+    color: var(--fg);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .name {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex: 0 0 auto;
+  }
+  .dot.on {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(182, 92, 56, 0.22);
+  }
+  .dot.off {
+    background: var(--danger);
+  }
+  .dot.wait {
+    background: var(--warn);
+  }
+  .pill {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    margin: 14px 0 0;
+    font-size: 0.88rem;
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+  }
+
+  .row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    align-items: center;
+  }
+  input,
+  select,
+  button,
+  textarea {
+    font: inherit;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+  }
+  input,
+  select {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+  button {
+    cursor: pointer;
+  }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-fg);
+    font-weight: 600;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .field {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .qr {
+    margin-top: 16px;
+    text-align: center;
+  }
+  .qr img {
+    width: 250px;
+    max-width: 100%;
+    border-radius: 10px;
+    background: #fff;
+    padding: 10px;
+  }
+  .code {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 1.7rem;
+    letter-spacing: 0.26em;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
+  }
+  .msg {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .msg.err {
+    color: var(--danger);
+  }
+
+  .list {
+    max-height: 420px;
+    overflow-y: auto;
+    margin-top: 12px;
+  }
+  .chat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+  .chat:hover {
+    background: var(--bg);
+  }
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    object-fit: cover;
+    overflow: hidden;
+  }
+  .chat-main {
+    min-width: 0;
+    flex: 1;
+  }
+  .chat-name {
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jid {
+    font-family: ui-monospace, monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .group-tag {
+    font-size: 0.68rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  .empty {
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 10px 2px;
+  }
+  .section-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 14px 0 4px;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .out-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 8px;
+  }
+  .out-head .section-label {
+    margin: 0;
+    flex: 1;
+  }
+  .tiny {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+  }
+
+  footer {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: 30px;
+  }
+  footer a {
+    color: inherit;
+  }
+  [hidden] {
+    display: none !important;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Hornero</h1>
+    <span class="ver" id="version"></span>
+  </header>
+
+  <nav>
+    <button data-tab="status" data-i18n="tab_status" aria-selected="true">
+      Status
+    </button>
+    <button data-tab="chats" data-i18n="tab_chats" aria-selected="false">
+      Groups &amp; contacts
+    </button>
+    <button data-tab="builder" data-i18n="tab_builder" aria-selected="false">
+      Snippet builder
+    </button>
+    <button data-tab="incoming" data-i18n="tab_incoming" aria-selected="false">
+      Incoming
+    </button>
+    <button data-tab="settings" data-i18n="tab_settings" aria-selected="false">
+      Settings
+    </button>
+    <button data-tab="help" data-i18n="tab_help" aria-selected="false">
+      Help
+    </button>
+  </nav>
+
+  <section data-panel="status"><div id="clients"></div></section>
+
+  <section data-panel="chats" hidden>
+    <div class="card">
+      <div class="row">
+        <input type="search" data-i18n-placeholder="search" id="chat-search" />
+        <select id="chat-client"></select>
+        <button class="primary" id="chat-load" data-i18n="load">Load</button>
+      </div>
+      <p class="msg">
+        Copy an ID and paste it into the <code>to</code> field of a service
+        call.
+      </p>
+      <div class="list" id="chat-list">
+        <p class="empty">Press Load to fetch your groups and contacts.</p>
+      </div>
+    </div>
+  </section>
+
+  <section data-panel="builder" hidden>
+    <div class="card">
+      <div class="row">
+        <div class="field">
+          <label for="b-client">Client</label>
+          <select id="b-client"></select>
+        </div>
+        <div class="field">
+          <label for="b-action">What do you want to do?</label>
+          <select id="b-action">
+            <option value="text">Send a text message</option>
+            <option value="camera">Send a camera snapshot or clip</option>
+            <option value="image">Send an image from a URL</option>
+            <option value="audio">Send an audio message from a URL</option>
+            <option value="location">Send a location</option>
+            <option value="presence">Send a presence update</option>
+            <option value="status">Set the profile status</option>
+            <option value="listen-message">React to an incoming message</option>
+            <option value="listen-ack">
+              React to a delivery or read receipt
+            </option>
+            <option value="listen-presence">React to a presence update</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" id="b-fields"></div>
+      <div id="b-output"></div>
+    </div>
+  </section>
+
+  <section data-panel="incoming" hidden>
+    <div class="card">
+      <h3 style="margin-top: 0" data-i18n="who_triggers">
+        Who may trigger automations
+      </h3>
+      <p class="msg" id="allow-state"></p>
+      <div class="list" id="allow-list"></div>
+
+      <p class="section-label" data-i18n="recent">Recent senders</p>
+      <p class="msg" style="margin-top: 0">
+        Whoever wrote to you lately. Use Allow here rather than typing an ID by
+        hand — WhatsApp often identifies people by a code that looks nothing
+        like their phone number.
+      </p>
+      <div class="list" id="recent-list"></div>
+
+      <p class="section-label" data-i18n="add_manually">Add manually</p>
+      <div class="row">
+        <input
+          type="text"
+          id="allow-input"
+          placeholder="Phone number or group ID"
+        />
+        <button class="primary" id="allow-add" data-i18n="add">Add</button>
+      </div>
+      <p class="msg">
+        Incoming messages are sent to Home Assistant as
+        <code>hornero_message</code> events, and automations act on them. While
+        this list is empty, anyone who writes to you can trigger them. Add a
+        group to accept everything posted in it, or a person to accept them
+        anywhere, groups included.
+      </p>
+    </div>
+  </section>
+
+  <section data-panel="settings" hidden>
+    <div class="card">
+      <h3 style="margin-top: 0" data-i18n="behaviour">Behaviour</h3>
+      <div id="settings-form"></div>
+      <p class="msg" id="settings-msg"></p>
+      <p class="msg">
+        Saved here, not in the add-on options: changes apply immediately unless
+        noted. The add-on options only provide the initial values.
+      </p>
+    </div>
+  </section>
+
+  <section data-panel="help" hidden>
+    <div class="card">
+      <h3 style="margin-top: 0">Services</h3>
+      <dl>
+        <dt><code>hornero.send_message</code></dt>
+        <dd>Text, images, audio, locations</dd>
+        <dt><code>hornero.send_media</code></dt>
+        <dd>Snapshot or clip from a camera</dd>
+        <dt><code>hornero.set_status</code></dt>
+        <dd>Profile status text</dd>
+        <dt><code>hornero.presence_subscribe</code></dt>
+        <dd>Follow a contact's presence</dd>
+        <dt><code>hornero.send_presence_update</code></dt>
+        <dd>Show typing or online</dd>
+        <dt><code>hornero.send_infinity_presence_update</code></dt>
+        <dd>Keep showing it</dd>
+      </dl>
+      <p class="msg">
+        Use the <strong>Snippet builder</strong> tab to fill these in and copy
+        them, rather than writing them from memory.
+      </p>
+
+      <h3>Events</h3>
+      <dl>
+        <dt><code>hornero_message</code></dt>
+        <dd>A message arrived</dd>
+        <dt><code>hornero_message_ack</code></dt>
+        <dd>A sent message was delivered or read</dd>
+        <dt><code>hornero_presence</code></dt>
+        <dd>A contact came online or is typing</dd>
+      </dl>
+
+      <h3>Addressing</h3>
+      <p class="msg">
+        People are addressed by phone number with country code and no
+        <code>+</code> (for example <code>34600000000</code>). Groups need their
+        ID, which cannot be derived from a number — copy it from the
+        <strong>Groups &amp; contacts</strong> tab.
+      </p>
+
+      <h3>Node-RED</h3>
+      <p class="msg">
+        No token needed: use a <code>call service</code> node for the services
+        above, and an <code>events: all</code> node for the events. The snippet
+        builder writes both out.
+      </p>
+
+      <h3>Full documentation</h3>
+      <p class="msg">
+        <a
+          href="https://github.com/pabloantonelli/ha-whatsapp#readme"
+          target="_blank"
+          rel="noreferrer"
+          >Guide and examples</a
+        >
+        ·
+        <a
+          href="https://github.com/pabloantonelli/ha-whatsapp/blob/main/whatsapp_addon/DOCS.md"
+          target="_blank"
+          rel="noreferrer"
+          >Service reference</a
+        >
+        ·
+        <a
+          href="https://github.com/pabloantonelli/ha-whatsapp/issues"
+          target="_blank"
+          rel="noreferrer"
+          >Report a problem</a
+        >
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <a
+      href="https://github.com/pabloantonelli/ha-whatsapp"
+      target="_blank"
+      rel="noreferrer"
+      >ha-whatsapp</a
+    >
+    by
+    <a href="https://github.com/pabloantonelli" target="_blank" rel="noreferrer"
+      >Pablo Antonelli</a
+    >
+  </footer>
+</div>
+
+<script>
+  /* ------------------------------------------------------------------ i18n */
+
+  const STRINGS = {
+    en: {
+      tab_status: "Status",
+      tab_chats: "Groups & contacts",
+      tab_builder: "Snippet builder",
+      tab_incoming: "Incoming",
+      tab_settings: "Settings",
+      tab_help: "Help",
+      connected: "Connected",
+      reconnecting: "Reconnecting…",
+      not_paired: "Not paired",
+      number: "Number",
+      name: "Name",
+      since: "Connected since",
+      restart: "Restart",
+      logout: "Log out",
+      waiting_qr: "Waiting for a QR code…",
+      pair_hint:
+        "Or pair with an 8-digit code — enter your number with country code:",
+      get_code: "Get code",
+      code_hint:
+        "In WhatsApp: Linked devices › Link with phone number, then enter this code.",
+      search: "Search by name…",
+      load: "Load",
+      loading: "Loading…",
+      press_load: "Press Load to fetch your groups and contacts.",
+      copy_id: "Copy ID",
+      allow: "Allow",
+      remove: "Remove",
+      copy: "Copy",
+      copied: "Copied",
+      copy_failed: "Copy failed",
+      groups: "Groups",
+      contacts: "Contacts",
+      no_groups: "No groups found.",
+      no_contacts:
+        "No contacts synced yet — WhatsApp sends them gradually after pairing.",
+      members: "members",
+      who_triggers: "Who may trigger automations",
+      recent: "Recent senders",
+      add_manually: "Add manually",
+      add: "Add",
+      allow_empty: "Empty: messages from anyone are passed to Home Assistant.",
+      nobody_wrote: "Nobody has written yet.",
+      allowed: "allowed",
+      ignored: "ignored",
+      behaviour: "Behaviour",
+      saved: "Saved.",
+      saved_restart: "Saved — restart the add-on for this one to take effect.",
+      restart_needed: "restart needed",
+      unreachable: "Cannot reach the add-on:",
+    },
+    es: {
+      tab_status: "Estado",
+      tab_chats: "Grupos y contactos",
+      tab_builder: "Generador",
+      tab_incoming: "Entrantes",
+      tab_settings: "Ajustes",
+      tab_help: "Ayuda",
+      connected: "Conectado",
+      reconnecting: "Reconectando…",
+      not_paired: "Sin vincular",
+      number: "Número",
+      name: "Nombre",
+      since: "Conectado desde",
+      restart: "Reiniciar",
+      logout: "Cerrar sesión",
+      waiting_qr: "Esperando el código QR…",
+      pair_hint:
+        "O vinculá con un código de 8 dígitos: ingresá tu número con código de país:",
+      get_code: "Obtener código",
+      code_hint:
+        "En WhatsApp: Dispositivos vinculados › Vincular con número, e ingresá este código.",
+      search: "Buscar por nombre…",
+      load: "Cargar",
+      loading: "Cargando…",
+      press_load: "Tocá Cargar para traer tus grupos y contactos.",
+      copy_id: "Copiar ID",
+      allow: "Permitir",
+      remove: "Quitar",
+      copy: "Copiar",
+      copied: "Copiado",
+      copy_failed: "No se pudo copiar",
+      groups: "Grupos",
+      contacts: "Contactos",
+      no_groups: "No se encontraron grupos.",
+      no_contacts:
+        "Todavía no hay contactos: WhatsApp los sincroniza de a poco tras vincular.",
+      members: "miembros",
+      who_triggers: "Quién puede disparar automatizaciones",
+      recent: "Remitentes recientes",
+      add_manually: "Agregar a mano",
+      add: "Agregar",
+      allow_empty: "Vacía: los mensajes de cualquiera llegan a Home Assistant.",
+      nobody_wrote: "Todavía no escribió nadie.",
+      allowed: "permitido",
+      ignored: "ignorado",
+      behaviour: "Comportamiento",
+      saved: "Guardado.",
+      saved_restart: "Guardado: reiniciá el add-on para que esto tome efecto.",
+      restart_needed: "requiere reinicio",
+      unreachable: "No se puede llegar al add-on:",
+    },
+    "pt-BR": {
+      tab_status: "Status",
+      tab_chats: "Grupos e contatos",
+      tab_builder: "Gerador",
+      tab_incoming: "Recebidas",
+      tab_settings: "Ajustes",
+      tab_help: "Ajuda",
+      connected: "Conectado",
+      reconnecting: "Reconectando…",
+      not_paired: "Não pareado",
+      number: "Número",
+      name: "Nome",
+      since: "Conectado desde",
+      restart: "Reiniciar",
+      logout: "Sair",
+      waiting_qr: "Aguardando o QR code…",
+      pair_hint:
+        "Ou pareie com um código de 8 dígitos — informe seu número com código do país:",
+      get_code: "Obter código",
+      code_hint:
+        "No WhatsApp: Dispositivos conectados › Conectar com número, e informe este código.",
+      search: "Buscar por nome…",
+      load: "Carregar",
+      loading: "Carregando…",
+      press_load: "Toque em Carregar para buscar seus grupos e contatos.",
+      copy_id: "Copiar ID",
+      allow: "Permitir",
+      remove: "Remover",
+      copy: "Copiar",
+      copied: "Copiado",
+      copy_failed: "Falha ao copiar",
+      groups: "Grupos",
+      contacts: "Contatos",
+      no_groups: "Nenhum grupo encontrado.",
+      no_contacts:
+        "Ainda sem contatos — o WhatsApp os sincroniza aos poucos após o pareamento.",
+      members: "membros",
+      who_triggers: "Quem pode disparar automações",
+      recent: "Remetentes recentes",
+      add_manually: "Adicionar manualmente",
+      add: "Adicionar",
+      allow_empty: "Vazia: mensagens de qualquer um chegam ao Home Assistant.",
+      nobody_wrote: "Ninguém escreveu ainda.",
+      allowed: "permitido",
+      ignored: "ignorado",
+      behaviour: "Comportamento",
+      saved: "Salvo.",
+      saved_restart: "Salvo — reinicie o add-on para que isto tenha efeito.",
+      restart_needed: "requer reinício",
+      unreachable: "Não foi possível acessar o add-on:",
+    },
+    de: {
+      tab_status: "Status",
+      tab_chats: "Gruppen & Kontakte",
+      tab_builder: "Snippet-Generator",
+      tab_incoming: "Eingehend",
+      tab_settings: "Einstellungen",
+      tab_help: "Hilfe",
+      connected: "Verbunden",
+      reconnecting: "Verbinde neu…",
+      not_paired: "Nicht gekoppelt",
+      number: "Nummer",
+      name: "Name",
+      since: "Verbunden seit",
+      restart: "Neu starten",
+      logout: "Abmelden",
+      waiting_qr: "Warte auf QR-Code…",
+      pair_hint:
+        "Oder mit achtstelligem Code koppeln — Nummer mit Ländervorwahl eingeben:",
+      get_code: "Code anfordern",
+      code_hint:
+        "In WhatsApp: Verknüpfte Geräte › Mit Nummer verknüpfen, dann diesen Code eingeben.",
+      search: "Nach Name suchen…",
+      load: "Laden",
+      loading: "Lädt…",
+      press_load: "Auf Laden tippen, um Gruppen und Kontakte zu holen.",
+      copy_id: "ID kopieren",
+      allow: "Erlauben",
+      remove: "Entfernen",
+      copy: "Kopieren",
+      copied: "Kopiert",
+      copy_failed: "Kopieren fehlgeschlagen",
+      groups: "Gruppen",
+      contacts: "Kontakte",
+      no_groups: "Keine Gruppen gefunden.",
+      no_contacts:
+        "Noch keine Kontakte — WhatsApp überträgt sie nach dem Koppeln nach und nach.",
+      members: "Mitglieder",
+      who_triggers: "Wer Automationen auslösen darf",
+      recent: "Letzte Absender",
+      add_manually: "Manuell hinzufügen",
+      add: "Hinzufügen",
+      allow_empty: "Leer: Nachrichten von allen gelangen zu Home Assistant.",
+      nobody_wrote: "Noch hat niemand geschrieben.",
+      allowed: "erlaubt",
+      ignored: "ignoriert",
+      behaviour: "Verhalten",
+      saved: "Gespeichert.",
+      saved_restart: "Gespeichert — für diese Option das Add-on neu starten.",
+      restart_needed: "Neustart nötig",
+      unreachable: "Add-on nicht erreichbar:",
+    },
+    fr: {
+      tab_status: "Statut",
+      tab_chats: "Groupes et contacts",
+      tab_builder: "Générateur",
+      tab_incoming: "Entrants",
+      tab_settings: "Réglages",
+      tab_help: "Aide",
+      connected: "Connecté",
+      reconnecting: "Reconnexion…",
+      not_paired: "Non appairé",
+      number: "Numéro",
+      name: "Nom",
+      since: "Connecté depuis",
+      restart: "Redémarrer",
+      logout: "Déconnecter",
+      waiting_qr: "En attente du QR code…",
+      pair_hint:
+        "Ou appairez avec un code à 8 chiffres — saisissez votre numéro avec l'indicatif :",
+      get_code: "Obtenir le code",
+      code_hint:
+        "Dans WhatsApp : Appareils liés › Lier avec le numéro, puis saisir ce code.",
+      search: "Rechercher par nom…",
+      load: "Charger",
+      loading: "Chargement…",
+      press_load: "Appuyez sur Charger pour récupérer groupes et contacts.",
+      copy_id: "Copier l'ID",
+      allow: "Autoriser",
+      remove: "Retirer",
+      copy: "Copier",
+      copied: "Copié",
+      copy_failed: "Échec de la copie",
+      groups: "Groupes",
+      contacts: "Contacts",
+      no_groups: "Aucun groupe trouvé.",
+      no_contacts:
+        "Aucun contact pour l'instant — WhatsApp les synchronise progressivement après l'appairage.",
+      members: "membres",
+      who_triggers: "Qui peut déclencher les automatisations",
+      recent: "Expéditeurs récents",
+      add_manually: "Ajouter manuellement",
+      add: "Ajouter",
+      allow_empty:
+        "Vide : les messages de n'importe qui parviennent à Home Assistant.",
+      nobody_wrote: "Personne n'a encore écrit.",
+      allowed: "autorisé",
+      ignored: "ignoré",
+      behaviour: "Comportement",
+      saved: "Enregistré.",
+      saved_restart:
+        "Enregistré — redémarrez le module pour que cela prenne effet.",
+      restart_needed: "redémarrage requis",
+      unreachable: "Module injoignable :",
+    },
+    it: {
+      tab_status: "Stato",
+      tab_chats: "Gruppi e contatti",
+      tab_builder: "Generatore",
+      tab_incoming: "In arrivo",
+      tab_settings: "Impostazioni",
+      tab_help: "Guida",
+      connected: "Connesso",
+      reconnecting: "Riconnessione…",
+      not_paired: "Non associato",
+      number: "Numero",
+      name: "Nome",
+      since: "Connesso da",
+      restart: "Riavvia",
+      logout: "Disconnetti",
+      waiting_qr: "In attesa del QR…",
+      pair_hint:
+        "Oppure associa con un codice di 8 cifre — inserisci il numero con prefisso:",
+      get_code: "Ottieni codice",
+      code_hint:
+        "In WhatsApp: Dispositivi collegati › Collega con numero, poi inserisci questo codice.",
+      search: "Cerca per nome…",
+      load: "Carica",
+      loading: "Caricamento…",
+      press_load: "Tocca Carica per recuperare gruppi e contatti.",
+      copy_id: "Copia ID",
+      allow: "Consenti",
+      remove: "Rimuovi",
+      copy: "Copia",
+      copied: "Copiato",
+      copy_failed: "Copia non riuscita",
+      groups: "Gruppi",
+      contacts: "Contatti",
+      no_groups: "Nessun gruppo trovato.",
+      no_contacts:
+        "Ancora nessun contatto — WhatsApp li sincronizza gradualmente dopo l'associazione.",
+      members: "membri",
+      who_triggers: "Chi può attivare le automazioni",
+      recent: "Mittenti recenti",
+      add_manually: "Aggiungi manualmente",
+      add: "Aggiungi",
+      allow_empty: "Vuota: i messaggi di chiunque arrivano a Home Assistant.",
+      nobody_wrote: "Non ha ancora scritto nessuno.",
+      allowed: "consentito",
+      ignored: "ignorato",
+      behaviour: "Comportamento",
+      saved: "Salvato.",
+      saved_restart: "Salvato — riavvia il componente perché abbia effetto.",
+      restart_needed: "riavvio necessario",
+      unreachable: "Componente irraggiungibile:",
+    },
+  };
+
+  /** Picks the closest translation for the browser's language. */
+  const LANG = (() => {
+    const wanted = (navigator.languages || [navigator.language || "en"]).map(
+      (l) => l,
+    );
+    for (const tag of wanted) {
+      if (STRINGS[tag]) return tag;
+      const base = tag.split("-")[0];
+      const match = Object.keys(STRINGS).find((k) => k.split("-")[0] === base);
+      if (match) return match;
+    }
+    return "en";
+  })();
+
+  const t = (key) => STRINGS[LANG][key] ?? STRINGS.en[key] ?? key;
+
+  /** Applies translations to the static markup. */
+  function translateDocument() {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+      el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+  }
+
+  const api = (p, opts) =>
+    fetch("api/v1" + p, opts).then(async (r) => {
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || r.statusText);
+      return data;
+    });
+
+  const esc = (v) =>
+    String(v).replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
+    );
+
+  const state = { clients: [], chats: {}, connection: null, pairing: {} };
+
+  /* ---------------------------------------------------------------- tabs */
+
+  document.querySelector("nav").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-tab]");
+    if (!btn) return;
+    document
+      .querySelectorAll("nav button")
+      .forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+    document.querySelectorAll("[data-panel]").forEach((p) => {
+      p.hidden = p.dataset.panel !== btn.dataset.tab;
+    });
+    if (btn.dataset.tab === "incoming") refreshRecent();
+    if (btn.dataset.tab === "settings") loadSettings();
+  });
+
+  /* -------------------------------------------------------------- status */
+
+  function renderClients(clients) {
+    document.getElementById("clients").innerHTML = clients
+      .map((c) => {
+        const cls = c.connected ? "on" : c.reconnecting ? "wait" : "off";
+        const label = c.connected
+          ? t("connected")
+          : c.reconnecting
+            ? t("reconnecting")
+            : t("not_paired");
+        return `
+      <div class="card" data-id="${esc(c.clientId)}">
+        <div class="head">
+          <span class="dot ${cls}"></span>
+          <span class="name">${esc(c.clientId)}</span>
+          <span class="pill">${label}</span>
+        </div>
+        <dl>
+          <dt>${t("number")}</dt><dd>${esc(c.phone || "—")}</dd>
+          <dt>${t("name")}</dt><dd>${esc(c.name || "—")}</dd>
+          <dt>${t("since")}</dt>
+          <dd>${c.lastConnectedAt ? new Date(c.lastConnectedAt).toLocaleString() : "—"}</dd>
+        </dl>
+        <div class="body"></div>
+      </div>`;
+      })
+      .join("");
+
+    clients.forEach(renderClientBody);
+  }
+
+  async function renderClientBody(c) {
+    const body = document.querySelector(`.card[data-id="${c.clientId}"] .body`);
+    if (!body) return;
+
+    if (c.connected) {
+      body.innerHTML = `<div class="row">
+        <button data-act="restart">${t("restart")}</button>
+        <button data-act="logout">${t("logout")}</button>
+      </div>`;
+      return;
+    }
+
+    let qr = `<p class="msg">${t("waiting_qr")}</p>`;
+    try {
+      const { dataUrl } = await api(`/clients/${c.clientId}/qr`);
+      qr = `<div class="qr"><img src="${dataUrl}" alt="QR code"></div>`;
+    } catch {
+      /* no QR yet */
+    }
+
+    const saved = state.pairing[c.clientId] || {};
+    body.innerHTML = `${qr}
+      <p class="msg">${t("pair_hint")}</p>
+      <div class="row">
+        <input type="tel" placeholder="5491111111111" data-field="phone">
+        <button class="primary" data-act="pair">${t("get_code")}</button>
+      </div>
+      <div class="code" data-field="code">${esc(saved.code || "")}</div>
+      <p class="msg ${saved.error ? "err" : ""}" data-field="msg">${esc(saved.error || "")}</p>`;
+  }
+
+  /* --------------------------------------------------------------- chats */
+
+  function chatRow(item, clientId, isGroup) {
+    const initial = (item.name || "?").trim().charAt(0).toUpperCase();
+    const hue = [...item.id].reduce((a, ch) => a + ch.charCodeAt(0), 0) % 360;
+    return `
+      <div class="chat">
+        <div class="avatar"
+             style="background: hsl(${hue} 55% 45%)"
+             data-avatar="${esc(item.id)}"
+             data-client="${esc(clientId)}">${esc(initial)}</div>
+        <div class="chat-main">
+          <div class="chat-name">
+            ${esc(item.name)}
+            ${isGroup ? `<span class="group-tag">${item.participants} ${t("members")}</span>` : ""}
+          </div>
+          <div class="jid">${esc(item.id)}</div>
+        </div>
+        <button class="tiny" data-act="copy" data-jid="${esc(item.id)}">${t("copy_id")}</button>
+        <button class="tiny" data-act="allow-add-chat" data-jid="${esc(item.id)}">${t("allow")}</button>
+      </div>`;
+  }
+
+  function renderChats() {
+    const clientId = document.getElementById("chat-client").value;
+    const chats = state.chats[clientId];
+    const list = document.getElementById("chat-list");
+    if (!chats) {
+      list.innerHTML =
+        '<p class="empty">Press Load to fetch your groups and contacts.</p>';
+      return;
+    }
+
+    const needle = document
+      .getElementById("chat-search")
+      .value.trim()
+      .toLowerCase();
+    const hit = (n) => !needle || n.toLowerCase().includes(needle);
+    const groups = chats.groups.filter((g) => hit(g.name));
+    const contacts = chats.contacts.filter((c) => hit(c.name));
+
+    list.innerHTML = `
+      <p class="section-label">${t("groups")} (${groups.length})</p>
+      ${
+        groups.length
+          ? groups.map((g) => chatRow(g, clientId, true)).join("")
+          : `<p class="empty">${t("no_groups")}</p>`
+      }
+      <p class="section-label">${t("contacts")} (${contacts.length})</p>
+      ${
+        contacts.length
+          ? contacts.map((c) => chatRow(c, clientId, false)).join("")
+          : `<p class="empty">${t("no_contacts")}</p>`
+      }`;
+
+    loadAvatars();
+  }
+
+  /**
+   * Avatars are one request per chat, so only fetch the ones actually on
+   * screen. Failures are expected: most chats have no picture set.
+   */
+  const avatarSeen = new WeakSet();
+  let avatarObserver = null;
+
+  /**
+   * Created lazily and guarded: if IntersectionObserver were missing, doing
+   * this at load time would kill the whole script, panel and all.
+   */
+  function getAvatarObserver() {
+    if (avatarObserver || typeof IntersectionObserver === "undefined") {
+      return avatarObserver;
+    }
+
+    avatarObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target;
+          avatarObserver.unobserve(el);
+          if (avatarSeen.has(el)) continue;
+          avatarSeen.add(el);
+
+          const url = `api/v1/clients/${el.dataset.client}/avatar/${encodeURIComponent(el.dataset.avatar)}`;
+          fetch(url)
+            .then((r) => (r.ok ? r.blob() : Promise.reject()))
+            .then((blob) => {
+              el.style.backgroundImage = `url(${URL.createObjectURL(blob)})`;
+              el.style.backgroundSize = "cover";
+              el.textContent = "";
+            })
+            .catch(() => {
+              /* keep the initial */
+            });
+        }
+      },
+      { rootMargin: "80px" },
+    );
+
+    return avatarObserver;
+  }
+
+  function loadAvatars() {
+    const observer = getAvatarObserver();
+    if (!observer) return;
+    document
+      .querySelectorAll("[data-avatar]")
+      .forEach((el) => observer.observe(el));
+  }
+
+  document.getElementById("chat-search").addEventListener("input", renderChats);
+  document
+    .getElementById("chat-client")
+    .addEventListener("change", renderChats);
+  document.getElementById("chat-load").addEventListener("click", async (e) => {
+    const clientId = document.getElementById("chat-client").value;
+    const list = document.getElementById("chat-list");
+    e.target.disabled = true;
+    list.innerHTML = `<p class="empty">${t("loading")}</p>`;
+    try {
+      state.chats[clientId] = await api(`/clients/${clientId}/chats`);
+      renderChats();
+    } catch (err) {
+      list.innerHTML = `<p class="empty err msg">${esc(err.message)}</p>`;
+    } finally {
+      e.target.disabled = false;
+    }
+  });
+
+  /* ------------------------------------------------------------- builder */
+
+  const FIELDS = {
+    text: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["text", "Message", "text", "Hello from Home Assistant"],
+    ],
+    camera: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["entity", "Camera or image entity", "text", "camera.front_door"],
+      ["caption", "Caption (optional)", "text", "Someone is at the door"],
+      ["duration", "Clip seconds (empty = snapshot)", "number", ""],
+      ["lookback", "Lookback seconds (optional)", "number", ""],
+    ],
+    image: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["url", "Image URL", "text", "https://example.com/photo.jpg"],
+      ["caption", "Caption (optional)", "text", ""],
+    ],
+    audio: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["url", "Audio URL", "text", "https://example.com/clip.mp3"],
+      ["ptt", "Send as voice note (true/false)", "text", "true"],
+    ],
+    location: [
+      ["to", "Recipient (number or group ID)", "text", "5491111111111"],
+      ["lat", "Latitude", "text", "-34.6037"],
+      ["lng", "Longitude", "text", "-58.3816"],
+    ],
+    presence: [
+      ["to", "Recipient (optional)", "text", "5491111111111"],
+      [
+        "type",
+        "available | unavailable | composing | recording | paused",
+        "text",
+        "composing",
+      ],
+      ["infinity", "Keep sending it (true/false)", "text", "false"],
+    ],
+    status: [["status", "New profile status", "text", "Available"]],
+    "listen-message": [],
+    "listen-ack": [],
+    "listen-presence": [],
+  };
+
+  const EVENTS = {
+    "listen-message": "hornero_message",
+    "listen-ack": "hornero_message_ack",
+    "listen-presence": "hornero_presence",
+  };
+
+  function builderValues() {
+    const values = {};
+    document
+      .querySelectorAll("#b-fields [data-key]")
+      .forEach((el) => (values[el.dataset.key] = el.value.trim()));
+    return values;
+  }
+
+  function renderBuilderFields() {
+    const action = document.getElementById("b-action").value;
+    document.getElementById("b-fields").innerHTML = FIELDS[action]
+      .map(
+        ([key, label, type, placeholder]) => `
+        <div class="field">
+          <label for="f-${key}">${esc(label)}</label>
+          <input id="f-${key}" data-key="${key}" type="${type}" placeholder="${esc(placeholder)}">
+        </div>`,
+      )
+      .join("");
+    renderBuilderOutput();
+  }
+
+  /** Builds the Home Assistant service call for the chosen action. */
+  function buildServiceCall(action, v, clientId) {
+    const to = v.to || "5491111111111";
+
+    switch (action) {
+      case "text":
+        return {
+          action: "hornero.send_message",
+          data: { clientId, to, body: { text: v.text || "Hello" } },
+        };
+      case "camera": {
+        const data = {
+          clientId,
+          to,
+          entity_id: v.entity || "camera.front_door",
+        };
+        if (v.caption) data.caption = v.caption;
+        if (v.duration) data.duration = Number(v.duration);
+        if (v.lookback) data.lookback = Number(v.lookback);
+        return { action: "hornero.send_media", data };
+      }
+      case "image": {
+        const image = { url: v.url || "https://example.com/photo.jpg" };
+        const body = { image };
+        if (v.caption) body.caption = v.caption;
+        return {
+          action: "hornero.send_message",
+          data: { clientId, to, body },
+        };
+      }
+      case "audio":
+        return {
+          action: "hornero.send_message",
+          data: {
+            clientId,
+            to,
+            body: {
+              audio: { url: v.url || "https://example.com/clip.mp3" },
+              mimetype: "audio/mp4",
+              ptt: v.ptt !== "false",
+            },
+          },
+        };
+      case "location":
+        return {
+          action: "hornero.send_message",
+          data: {
+            clientId,
+            to,
+            body: {
+              location: {
+                degreesLatitude: Number(v.lat || 0),
+                degreesLongitude: Number(v.lng || 0),
+              },
+            },
+          },
+        };
+      case "presence":
+        return {
+          action:
+            v.infinity === "true"
+              ? "hornero.send_infinity_presence_update"
+              : "hornero.send_presence_update",
+          data: {
+            clientId,
+            type: v.type || "composing",
+            ...(v.to ? { to: v.to } : {}),
+          },
+        };
+      case "status":
+        return {
+          action: "hornero.set_status",
+          data: { clientId, status: v.status || "Available" },
+        };
+    }
+  }
+
+  /** The same call expressed as a direct HTTP request against /api/v1. */
+  function buildHttpCall(action, v, clientId) {
+    const call = buildServiceCall(action, v, clientId);
+    const { data } = call;
+    const base = `/api/v1/clients/${clientId}`;
+
+    switch (call.action) {
+      case "hornero.send_media": {
+        const body = { to: data.to, entityId: data.entity_id };
+        if (data.caption) body.caption = data.caption;
+        if (data.duration) body.duration = data.duration;
+        if (data.lookback) body.lookback = data.lookback;
+        return { path: `${base}/media`, body };
+      }
+      case "hornero.set_status":
+        return { path: `${base}/status`, body: { status: data.status } };
+      case "hornero.send_presence_update":
+        return {
+          path: `${base}/presence`,
+          body: { type: data.type, ...(data.to ? { to: data.to } : {}) },
+        };
+      case "hornero.send_infinity_presence_update":
+        return {
+          path: `${base}/presence`,
+          body: {
+            type: data.type,
+            ...(data.to ? { to: data.to } : {}),
+            infinity: true,
+          },
+        };
+      default:
+        return {
+          path: `${base}/messages`,
+          body: { to: data.to, body: data.body },
+        };
+    }
+  }
+
+  /** Quotes only the strings that would otherwise change meaning in YAML. */
+  function yamlScalar(value) {
+    if (typeof value !== "string") return value;
+    const plain = /^[A-Za-z0-9_][A-Za-z0-9_.@/-]*$/.test(value);
+    const reserved = /^(y|n|yes|no|true|false|on|off|null)$/i.test(value);
+    // All-digit values must stay quoted: YAML would read a phone number as an
+    // integer and drop any leading zero.
+    const numeric = /^[\d.]+$/.test(value);
+    return plain && !reserved && !numeric ? value : JSON.stringify(value);
+  }
+
+  /** Minimal YAML writer — enough for the shapes these snippets produce. */
+  function toYaml(value, indent = 0) {
+    const pad = "  ".repeat(indent);
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => `${pad}- ${toYaml(item, indent + 1).trimStart()}`)
+        .join("\n");
+    }
+    if (value && typeof value === "object") {
+      return Object.entries(value)
+        .map(([k, val]) => {
+          if (val && typeof val === "object") {
+            return `${pad}${k}:\n${toYaml(val, indent + 1)}`;
+          }
+          return `${pad}${k}: ${yamlScalar(val)}`;
+        })
+        .join("\n");
+    }
+    return `${pad}${value}`;
+  }
+
+  const nodeId = () => Math.random().toString(16).slice(2, 18);
+
+  const block = (title, hint, text) => `
+      <div class="out-head">
+        <span class="section-label">${title}</span>
+        <button class="tiny" data-act="copy-text">Copy</button>
+      </div>
+      ${hint ? `<p class="msg" style="margin-top:0">${hint}</p>` : ""}
+      <pre>${esc(text)}</pre>`;
+
+  /** Listening happens through Home Assistant events, no HTTP involved. */
+  function renderListener(action) {
+    const event = EVENTS[action];
+
+    const automation = {
+      alias: `React to ${event}`,
+      triggers: [{ trigger: "event", event_type: event }],
+      actions: [
+        {
+          action: "persistent_notification.create",
+          data: { message: "{{ trigger.event.data | to_json }}" },
+        },
+      ],
+    };
+
+    const flow = [
+      {
+        id: nodeId(),
+        type: "server-events",
+        name: event,
+        server: "",
+        version: 3,
+        eventType: event,
+        exposeAsEntityConfig: "",
+        waitForRunning: true,
+        outputProperties: [
+          {
+            property: "payload",
+            propertyType: "msg",
+            value: "",
+            valueType: "eventData",
+          },
+        ],
+        x: 300,
+        y: 200,
+        wires: [[]],
+      },
+    ];
+
+    document.getElementById("b-output").innerHTML =
+      block(
+        "Home Assistant",
+        "An automation triggered by the event. The payload is in <code>trigger.event.data</code>.",
+        toYaml(automation),
+      ) +
+      block(
+        "Node-RED — fill in by hand",
+        "On an <code>events: all</code> node. The event data arrives in <code>msg.payload</code>.",
+        `Event type:  ${event}`,
+      ) +
+      block(
+        "Node-RED — import",
+        "Copy, then press <code>Ctrl+I</code> in Node-RED and paste to import the node.",
+        JSON.stringify(flow, null, 2),
+      );
+  }
+
+  function renderBuilderOutput() {
+    const action = document.getElementById("b-action").value;
+    const clientId = document.getElementById("b-client").value || "default";
+    const v = builderValues();
+
+    if (EVENTS[action]) return renderListener(action);
+
+    const call = buildServiceCall(action, v, clientId);
+    const http = buildHttpCall(action, v, clientId);
+    // Either field can be missing if the Supervisor could not be reached.
+    const conn = state.connection || {};
+    const baseUrl = conn.baseUrl || "http://<add-on-hostname>:3000";
+    const token = conn.token || "<api-token>";
+    const url = `${baseUrl}${http.path}`;
+
+    // A Node-RED flow you can paste straight into Import (Ctrl+I). The
+    // call-service node talks to Home Assistant over websocket, so no token
+    // and no HTTP request node are involved.
+    const [domain, service] = call.action.split(".");
+    const nodered = [
+      {
+        id: nodeId(),
+        type: "api-call-service",
+        name: call.action,
+        server: "",
+        version: 5,
+        domain,
+        service,
+        areaId: [],
+        deviceId: [],
+        entityId: [],
+        data: JSON.stringify(call.data),
+        dataType: "json",
+        mergeContext: "",
+        mustacheAltTags: false,
+        outputProperties: [],
+        queue: "none",
+        x: 400,
+        y: 200,
+        wires: [[]],
+      },
+    ];
+
+    const curl = [
+      `curl -X POST ${url} \\`,
+      `  -H "Authorization: Bearer ${token}" \\`,
+      `  -H "Content-Type: application/json" \\`,
+      `  -d '${JSON.stringify(http.body)}'`,
+    ].join("\n");
+
+    document.getElementById("b-output").innerHTML =
+      block(
+        "Home Assistant",
+        "Paste into an automation or script in YAML mode.",
+        toYaml(call),
+      ) +
+      block(
+        "Node-RED — fill in by hand",
+        "On a <code>call service</code> node: set the action, then paste the data into the <code>Data</code> field.",
+        `Action: ${call.action}\n\nData:\n${JSON.stringify(call.data, null, 2)}`,
+      ) +
+      block(
+        "Node-RED — import",
+        "Or copy this, press <code>Ctrl+I</code> in Node-RED and paste to import the node already configured. Open it once to pick your Home Assistant server.",
+        JSON.stringify(nodered, null, 2),
+      ) +
+      block(
+        "curl",
+        "Only needed to call the add-on directly, from outside Home Assistant.",
+        curl,
+      );
+  }
+
+  document
+    .getElementById("b-action")
+    .addEventListener("change", renderBuilderFields);
+  document
+    .getElementById("b-client")
+    .addEventListener("change", renderBuilderOutput);
+  document
+    .getElementById("b-fields")
+    .addEventListener("input", renderBuilderOutput);
+
+  /* ------------------------------------------------------------- actions */
+
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+    const act = btn.dataset.act;
+
+    if (act === "copy-text") {
+      // Walk forward to this block's own <pre>; a hint paragraph may sit in
+      // between, and querying the parent would always return the first one.
+      let el = btn.closest(".out-head").nextElementSibling;
+      while (el && el.tagName !== "PRE") el = el.nextElementSibling;
+      if (el) await copy(btn, el.textContent);
+      return;
+    }
+    if (act === "copy") {
+      await copy(btn, btn.dataset.jid, "Copy ID");
+      return;
+    }
+
+    if (act === "allow-remove") {
+      await saveAllowlist(
+        allowEntries.filter((jid) => jid !== btn.dataset.jid),
+      );
+      return;
+    }
+    if (act === "allow-add-chat") {
+      btn.disabled = true;
+      try {
+        await saveAllowlist([...allowEntries, btn.dataset.jid]);
+        btn.textContent = "Allowed";
+      } finally {
+        btn.disabled = false;
+      }
+      return;
+    }
+
+    const card = btn.closest(".card");
+    const id = card?.dataset.id;
+    if (!id) return;
+
+    btn.disabled = true;
+    try {
+      if (act === "pair") {
+        const phone = card.querySelector('[data-field="phone"]').value.trim();
+        if (!phone) throw new Error("Enter a phone number first.");
+        const { code } = await api(`/clients/${id}/pairing-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone }),
+        });
+        state.pairing[id] = { code };
+        card.querySelector('[data-field="code"]').textContent = code;
+        const msg = card.querySelector('[data-field="msg"]');
+        msg.textContent = t("code_hint");
+        msg.classList.remove("err");
+      } else {
+        await api(`/clients/${id}/${act}`, { method: "POST" });
+      }
+    } catch (err) {
+      state.pairing[id] = { error: err.message };
+      const msg = card.querySelector('[data-field="msg"]');
+      if (msg) {
+        msg.textContent = err.message;
+        msg.classList.add("err");
+      }
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /**
+   * navigator.clipboard only exists in secure contexts, and ingress is served
+   * over plain HTTP, so fall back to a hidden textarea plus execCommand.
+   */
+  async function copy(btn, text, restore = "Copy") {
+    const original = btn.textContent;
+    let ok = false;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        ok = true;
+      }
+    } catch {
+      ok = false;
+    }
+
+    if (!ok) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+      document.body.appendChild(area);
+      area.select();
+      area.setSelectionRange(0, text.length);
+      try {
+        ok = document.execCommand("copy");
+      } catch {
+        ok = false;
+      }
+      document.body.removeChild(area);
+    }
+
+    btn.textContent = ok ? t("copied") : t("copy_failed");
+    setTimeout(() => (btn.textContent = original || restore), 1600);
+  }
+
+  /* ---------------------------------------------------------- allowlist */
+
+  let allowEntries = [];
+
+  function renderAllowlist() {
+    const list = document.getElementById("allow-list");
+    const stateLine = document.getElementById("allow-state");
+
+    stateLine.textContent = allowEntries.length
+      ? `Only these ${allowEntries.length} sender(s) can trigger automations.`
+      : t("allow_empty");
+    stateLine.className = allowEntries.length ? "msg" : "msg err";
+
+    list.innerHTML = allowEntries.length
+      ? allowEntries
+          .map(
+            (jid) => `
+      <div class="chat">
+        <div class="chat-main"><div class="jid">${esc(jid)}</div></div>
+        <button class="tiny" data-act="allow-remove" data-jid="${esc(jid)}">${t("remove")}</button>
+      </div>`,
+          )
+          .join("")
+      : "";
+  }
+
+  function renderRecent(senders) {
+    const list = document.getElementById("recent-list");
+
+    list.innerHTML = senders.length
+      ? senders
+          .map((sender) => {
+            const when = new Date(sender.at).toLocaleString();
+            const tag = sender.group
+              ? `<span class="group-tag">${t("groups")}</span>`
+              : "";
+            const status = sender.allowed ? t("allowed") : t("ignored");
+            return `
+      <div class="chat">
+        <div class="chat-main">
+          <div class="chat-name">${esc(sender.name || sender.id)} ${tag}</div>
+          <div class="jid">${esc(sender.id)}</div>
+          <div class="chat-meta">${when} · ${status}</div>
+        </div>
+        ${
+          sender.allowed
+            ? ""
+            : `<button class="tiny" data-act="allow-add-chat" data-jid="${esc(sender.id)}">${t("allow")}</button>`
+        }
+      </div>`;
+          })
+          .join("")
+      : `<p class="empty">${t("nobody_wrote")}</p>`;
+  }
+
+  async function refreshRecent() {
+    try {
+      const { senders } = await api("/recent-senders");
+      renderRecent(senders);
+    } catch {
+      /* shown empty */
+    }
+  }
+
+  async function saveAllowlist(entries) {
+    const res = await api("/allowlist", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entries }),
+    });
+    allowEntries = res.entries;
+    renderAllowlist();
+    refreshRecent();
+  }
+
+  document.getElementById("allow-add").addEventListener("click", async (e) => {
+    const input = document.getElementById("allow-input");
+    const value = input.value.trim();
+    if (!value) return;
+    e.target.disabled = true;
+    try {
+      await saveAllowlist([...allowEntries, value]);
+      input.value = "";
+    } catch (err) {
+      document.getElementById("allow-state").textContent = err.message;
+    } finally {
+      e.target.disabled = false;
+    }
+  });
+
+  /* ---------------------------------------------------------- settings */
+
+  const SETTINGS_FIELDS = [
+    [
+      "markRead",
+      "boolean",
+      "Mark incoming messages as read",
+      "Shows the blue ticks to whoever wrote, and clears the unread badge on your phone.",
+    ],
+    [
+      "typingIndicator",
+      "boolean",
+      "Show the typing indicator",
+      "Sends “typing…” (or “recording…” for voice notes) before a message, and pauses first.",
+    ],
+    [
+      "typingMaxSeconds",
+      "number",
+      "Longest typing pause (seconds)",
+      "The actual wait varies with the message length. 0 sends immediately.",
+      0,
+      10,
+    ],
+    [
+      "markOnline",
+      "boolean",
+      "Appear online while connected",
+      "Careful: while WhatsApp considers you online here, your phone stops getting notifications.",
+    ],
+    [
+      "refreshHours",
+      "number",
+      "Periodic reconnect (hours)",
+      "0 disables it. Not needed on Baileys 7; only for working around a stability problem.",
+      0,
+      48,
+    ],
+    [
+      "logLevel",
+      "select",
+      "Log level",
+      "Raise it to debug or trace when diagnosing a problem.",
+      ["trace", "debug", "info", "warn", "error", "fatal"],
+    ],
+  ];
+
+  let settingsValues = {};
+  let restartRequired = [];
+
+  function renderSettings() {
+    document.getElementById("settings-form").innerHTML = SETTINGS_FIELDS.map(
+      ([key, type, label, hint, a, b]) => {
+        const value = settingsValues[key];
+        const note = restartRequired.includes(key)
+          ? ` <span class="group-tag">${t("restart_needed")}</span>`
+          : "";
+
+        let control;
+        if (type === "boolean") {
+          control = `<input type="checkbox" data-setting="${key}" ${value ? "checked" : ""}>`;
+        } else if (type === "number") {
+          control = `<input type="number" data-setting="${key}" value="${value}" min="${a}" max="${b}">`;
+        } else {
+          control = `<select data-setting="${key}">${a
+            .map(
+              (o) => `<option ${o === value ? "selected" : ""}>${o}</option>`,
+            )
+            .join("")}</select>`;
+        }
+
+        return `
+      <div class="row" style="align-items: flex-start">
+        <div class="field">
+          <label>${label}${note}</label>
+          <p class="msg" style="margin: 0">${hint}</p>
+        </div>
+        <div style="flex: 0 0 auto; padding-top: 4px">${control}</div>
+      </div>`;
+      },
+    ).join("");
+  }
+
+  async function loadSettings() {
+    try {
+      const res = await api("/settings");
+      settingsValues = res.settings;
+      restartRequired = res.restartRequired || [];
+      renderSettings();
+    } catch (err) {
+      document.getElementById("settings-msg").textContent = err.message;
+    }
+  }
+
+  document
+    .getElementById("settings-form")
+    .addEventListener("change", async (e) => {
+      const el = e.target.closest("[data-setting]");
+      if (!el) return;
+
+      const key = el.dataset.setting;
+      const value =
+        el.type === "checkbox"
+          ? el.checked
+          : el.type === "number"
+            ? Number(el.value)
+            : el.value;
+
+      const note = document.getElementById("settings-msg");
+      try {
+        const res = await api("/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ [key]: value }),
+        });
+        settingsValues = res.settings;
+        note.classList.remove("err");
+        note.textContent = restartRequired.includes(key)
+          ? t("saved_restart")
+          : t("saved");
+        renderSettings();
+      } catch (err) {
+        note.classList.add("err");
+        note.textContent = err.message;
+      }
+    });
+
+  /* --------------------------------------------------------------- poll */
+
+  let signature = null;
+
+  function fillClientSelects(clients) {
+    const ids = clients.map((c) => c.clientId);
+    for (const sel of [
+      document.getElementById("chat-client"),
+      document.getElementById("b-client"),
+    ]) {
+      const current = sel.value;
+      sel.innerHTML = ids.map((id) => `<option>${esc(id)}</option>`).join("");
+      if (ids.includes(current)) sel.value = current;
+    }
+  }
+
+  async function tick() {
+    try {
+      const [{ clients }, health] = await Promise.all([
+        api("/clients"),
+        fetch("health").then((r) => r.json()),
+      ]);
+
+      document.getElementById("version").textContent = "v" + health.version;
+
+      // Re-render only on real changes; polling must not wipe what is being typed.
+      const next = JSON.stringify(
+        clients.map((c) => [
+          c.clientId,
+          c.connected,
+          c.reconnecting,
+          c.phone,
+          c.lastConnectedAt,
+          c.hasQr,
+        ]),
+      );
+      if (next === signature) return;
+      signature = next;
+
+      state.clients = clients;
+      fillClientSelects(clients);
+      renderClients(clients);
+    } catch (err) {
+      signature = null;
+      document.getElementById("clients").innerHTML =
+        `<div class="card"><p class="msg err">${t("unreachable")} ${esc(err.message)}</p></div>`;
+    }
+  }
+
+  api("/allowlist")
+    .then((res) => {
+      allowEntries = res.entries;
+      renderAllowlist();
+      refreshRecent();
+    })
+    .catch(() => {
+      /* shown as empty until it loads */
+    });
+
+  api("/connection")
+    .then((conn) => {
+      state.connection = conn;
+      renderBuilderOutput();
+    })
+    .catch(() => {
+      /* snippets fall back to placeholders */
+    });
+
+  translateDocument();
+  renderBuilderFields();
+  loadSettings();
+  tick();
+  setInterval(tick, 5000);
+</script>

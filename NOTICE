@@ -1,64 +1,40 @@
 # NOTICE
 
+Hornero — WhatsApp messaging for Home Assistant.
+
+Copyright © 2025-2026 Pablo Antonelli
+Licensed under the Apache License, Version 2.0.
+
+## Attribution
+
 This product includes software developed by Giuseppe Castaldo.
 
-## Original work
+Hornero began as a fork of the WhatsApp Home Assistant add-on created by
+Giuseppe Castaldo, and although it has since been substantially rewritten and
+is maintained independently under its own name, parts of its design originate
+in that work — in particular the shape of the Home Assistant service surface
+and the multi-client model.
 
-This project is derived from the WhatsApp Home Assistant add-on created by
-Giuseppe Castaldo.
+- Original repository: https://github.com/giuseppecastaldo/ha-addons
+- Original author: Giuseppe Castaldo
+- Original license: Apache License 2.0
+- Copyright © Giuseppe Castaldo
 
-- **Original repository:** https://github.com/giuseppecastaldo/ha-addons
-- **Original author:** Giuseppe Castaldo
-- **Original license:** Apache License 2.0
-- **Copyright © Giuseppe Castaldo**
-
-## This project
-
-- **Repository:** https://github.com/pabloantonelli/ha-whatsapp
-- **Maintainer:** Pablo Antonelli
-- **License:** Apache License 2.0
-- **Copyright © 2025-2026 Pablo Antonelli**
-- **Derived on:** December 31, 2025
-
-It started as a fork of the original add-on and is now maintained
-independently, under the same license. Substantial parts of the design —
-the Home Assistant service surface, the event names and the multi-client
-model — originate in the original work.
-
-## Modifications
-
-### Version 3.0.0
-
-Published under its own add-on slug (`ha_whatsapp`).
-
-- Pinned Baileys to 7.0.0-rc14 with a committed lockfile; removed the vendored
-  copy of Baileys 6.7.12.
-- Added an ingress panel for pairing by QR code or 8-digit pairing code.
-- Added an authenticated, schema-validated `/api/v1`, keeping the original
-  endpoints working unchanged for backwards compatibility.
-- Replaced the container-IP rewriting of the custom component with a stable
-  hostname published by the add-on at startup.
-- Reworked reconnection, error handling, logging and connection state
-  reporting; added a test suite and working CI.
-
-### Version 2.0.0 (December 31, 2025)
-
-- Updated Baileys from 6.7.12 to 7.0.0-rc.9.
-- Migrated from CommonJS to ES Modules.
-- Added a health check endpoint.
+This notice is required by section 4 of the Apache License 2.0 and is retained
+for every derivative work.
 
 ## Third-party components
 
-- **[Baileys](https://github.com/WhiskeySockets/Baileys)** — WhatsApp Web API
+- **[Baileys](https://github.com/WhiskeySockets/Baileys)** — WhatsApp Web
   library, MIT License.
-- Additional dependencies are listed in `whatsapp_addon/package.json`, each
-  under its own license.
+- Further dependencies are listed in `hornero/package.json`, each under its
+  own license.
 
 ## Disclaimer
 
-Both the original work and these modifications are provided "AS IS", WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-LICENSE file for the full terms.
+This software is provided "AS IS", WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the LICENSE file for the full terms.
 
-This project is not affiliated with, endorsed by, or connected to WhatsApp LLC
-or Meta Platforms, Inc.
+Hornero is not affiliated with, endorsed by, or connected to WhatsApp LLC or
+Meta Platforms, Inc. It uses an unofficial interface to WhatsApp; accounts can
+be blocked for automated or unusual activity.

@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: whatsapp_addon
+        working-directory: hornero
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: whatsapp_addon/package-lock.json
+          cache-dependency-path: hornero/package-lock.json
       - name: 📦 Install dependencies
         run: npm ci
       - name: 🧪 Run tests

@@ -1,96 +1,90 @@
-# Migrating from v2.x to v3.0.0
+# Migrating to Hornero v4
 
-v3 is installed as a **separate add-on**. Its slug changed from
-`whatsapp_addon` to `ha_whatsapp`, so the Supervisor treats it as a new
-install: it gets its own empty storage, and the WhatsApp session from v2 does
-not carry over.
+Version 4 is the same project under a new name. The add-on is no longer called
+"WhatsApp": it is **Hornero**, with its own slug, integration domain and
+service names.
+
+**There is no compatibility layer.** The old `whatsapp.*` services and
+`new_whatsapp_message` events are gone, so automations need editing. The rename
+is mechanical and the tables below cover it.
 
 ## Summary
 
-|                          | v2.x                            | v3.0.0                                           |
-| ------------------------ | ------------------------------- | ------------------------------------------------ |
-| Add-on slug              | `whatsapp_addon`                | `ha_whatsapp`                                    |
-| Integration domain       | `whatsapp`                      | `whatsapp` — unchanged                           |
-| Service names and fields | 5 services                      | the same 5, unchanged                            |
-| Pairing                  | QR in a persistent notification | sidebar panel: QR **or** 8-digit code            |
-| Session                  | must be re-paired               | —                                                |
-| HTTP API                 | 5 unauthenticated endpoints     | `/api/v1` with a token; old endpoints still work |
-| Node                     | unpinned                        | 20+                                              |
-
-**Your automations do not need any changes.** The integration domain and all
-five service names and fields are identical.
+|                    | v3 (`ha_whatsapp`)    | v4 (`hornero`)                                        |
+| ------------------ | --------------------- | ----------------------------------------------------- |
+| Add-on slug        | `ha_whatsapp`         | `hornero`                                             |
+| Integration domain | `whatsapp`            | `hornero`                                             |
+| Setup              | installed silently    | added from Devices & services                         |
+| Entities           | none                  | a device per client, with sensors and buttons         |
+| Image              | built on your machine | prebuilt, downloaded                                  |
+| Languages          | English               | English, Spanish, Portuguese, German, French, Italian |
+| Session            | must be paired again  | —                                                     |
 
 ## Before you start
 
-⚠️ **Uninstall the v2 add-on first.** If both are running and signed into the
-same number, they fight over the session and neither stays connected.
+⚠️ **Uninstall the v3 add-on first.** Two add-ons signed into the same number
+fight over the session and neither stays connected.
+
+⚠️ **You will pair your phone again.** The Supervisor treats a new slug as a
+new install, so `/data` starts empty.
 
 ## Steps
 
-1. **Settings → Add-ons → Whatsapp → Stop**, then **Uninstall**.
-2. Open the **Add-on Store**, find **WhatsApp** (v3) and install it.
-   If you do not see it, refresh the repository from the ⋮ menu.
-3. Enable **Show in sidebar** and **Start** the add-on.
-4. **Settings → System → Restart** to restart Home Assistant Core, so the
-   updated integration loads.
-5. Open **WhatsApp** in the sidebar and pair your phone, either by scanning the
-   QR code or by requesting an 8-digit code for your number.
-6. Verify with **Developer tools → Actions**:
+1. Note your current settings (clients, allowed senders) — they do not carry
+   over.
+2. **Settings → Add-ons → WhatsApp → Stop**, then **Uninstall**.
+3. In the **Add-on Store**, refresh the repository from the ⋮ menu, then
+   install **Hornero**.
+4. Enable **Show in sidebar** and **Start** it.
+5. **Settings → System → Restart** to restart Home Assistant Core.
+6. Accept the discovered **Hornero** integration, or add it from **Settings →
+   Devices & services**.
+7. Pair your phone from the sidebar panel.
+8. Update your automations using the tables below.
 
-   ```yaml
-   action: whatsapp.send_message
-   data:
-     clientId: default
-     to: "34600000000"
-     body:
-       text: Migrated to v3
-   ```
+## Renaming your automations
 
-## If you call the HTTP API directly
+### Services
 
-The v2 endpoints still exist and behave exactly as before, so nothing breaks.
-Moving to `/api/v1` gets you authentication, payload validation and, for sends,
-the message id in the response.
+| v3                                       | v4                                      |
+| ---------------------------------------- | --------------------------------------- |
+| `whatsapp.send_message`                  | `hornero.send_message`                  |
+| `whatsapp.send_media`                    | `hornero.send_media`                    |
+| `whatsapp.mark_read`                     | `hornero.mark_read`                     |
+| `whatsapp.set_status`                    | `hornero.set_status`                    |
+| `whatsapp.presence_subscribe`            | `hornero.presence_subscribe`            |
+| `whatsapp.send_presence_update`          | `hornero.send_presence_update`          |
+| `whatsapp.send_infinity_presence_update` | `hornero.send_infinity_presence_update` |
 
-| v2 endpoint                        | v1 equivalent                                               |
-| ---------------------------------- | ----------------------------------------------------------- |
-| `POST /sendMessage`                | `POST /api/v1/clients/:id/messages`                         |
-| `POST /setStatus`                  | `POST /api/v1/clients/:id/status`                           |
-| `POST /presenceSubscribe`          | `POST /api/v1/clients/:id/presence/subscribe`               |
-| `POST /sendPresenceUpdate`         | `POST /api/v1/clients/:id/presence`                         |
-| `POST /sendInfinityPresenceUpdate` | `POST /api/v1/clients/:id/presence` with `"infinity": true` |
+The fields are unchanged, so only the prefix moves.
 
-Differences to be aware of:
+### Events
 
-- `clientId` moves from the body into the URL.
-- `/api/v1` requires `Authorization: Bearer <token>`. The token is the
-  `api_token` option, or the one generated on first start; both are readable in
-  `/config/custom_components/whatsapp/connection.json`.
-- Responses are plain JSON (`{"messageId": "..."}`) instead of
-  `{"status": "OK"}`, and errors return `{"error": "..."}` with a real HTTP
-  status code.
+| v3                         | v4                    |
+| -------------------------- | --------------------- |
+| `new_whatsapp_message`     | `hornero_message`     |
+| `whatsapp_message_ack`     | `hornero_message_ack` |
+| `whatsapp_presence_update` | `hornero_presence`    |
 
-## Rolling back to v2.1.0
+### HTTP endpoints
 
-v2.1.0 is still tagged and released, and the `v2-maintenance` branch tracks it:
+The `/api/v1` routes are unchanged. The pre-3.0 endpoints (`/sendMessage` and
+friends), which v3 still accepted, have been removed.
 
-1. Uninstall the v3 add-on.
-2. Add the repository at the `v2-maintenance` branch, or install from the
-   [v2.1.0 release](https://github.com/pabloantonelli/ha-whatsapp/releases/tag/v2.1.0).
-3. Restart Home Assistant Core and pair again.
+## What you gain
 
-Rolling back also requires re-pairing: the two add-ons never share storage.
+- **Entities.** A `binary_sensor` for the connection, the pairing QR as an
+  `image` you can put on a dashboard, buttons to restart or unpair, and the
+  add-on settings as switches.
+- **Blueprints.** Three ready-made automations, importable with one click from
+  the README — including one that warns you when the session drops.
+- **A prebuilt image.** Installing no longer compiles anything on your machine,
+  which on a Raspberry Pi is minutes saved and a common failure avoided.
+- **Six languages** across the add-on options, the services and the panel.
 
-## Notable fixes in v3
+## Rolling back
 
-- `/health` reported `connected: false` even while connected. It now reports
-  the real state, and the Supervisor watchdog uses it to restart a dead add-on.
-- The integration's address was written into `whatsapp.py` as a fixed container
-  IP, which stopped working whenever Docker reassigned it. The add-on now
-  publishes a stable hostname that the integration re-reads at call time.
-- Failed service calls were silently swallowed; they now surface as errors in
-  the Home Assistant UI.
-- Only the first message of an incoming batch raised an event; the rest were
-  dropped.
-- Reconnections retried every second indefinitely; they now back off
-  exponentially.
+v3 remains tagged and released. Install it from the
+[v3.5.0 release](https://github.com/pabloantonelli/hornero/releases/tag/v3.5.0),
+restart Home Assistant Core and pair again. Rolling back also means
+re-pairing: the two add-ons never share storage.

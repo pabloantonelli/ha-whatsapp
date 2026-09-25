@@ -1,0 +1,234 @@
+{
+  "config": {
+    "step": {
+      "confirm": {
+        "description": "Hornero einrichten? Es verwendet das Add-on auf diesem Gerät."
+      },
+      "user": {
+        "description": "Adresse des Hornero-Add-ons und sein API-Token.",
+        "data": {
+          "base_url": "Adresse",
+          "token": "API-Token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Das Hornero-Add-on ist nicht erreichbar. Läuft es?"
+    },
+    "abort": {
+      "already_configured": "Hornero ist bereits eingerichtet.",
+      "cannot_connect": "Das Hornero-Add-on ist nicht erreichbar. Läuft es?"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "default_recipient": "Standardempfänger"
+        },
+        "data_description": {
+          "default_recipient": "Telefonnummer oder Gruppen-ID, an die die Benachrichtigungsentität sendet."
+        }
+      }
+    }
+  },
+  "services": {
+    "send_message": {
+      "name": "Nachricht senden",
+      "description": "Sendet eine WhatsApp-Nachricht.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "to": {
+          "name": "Empfänger",
+          "description": "Telefonnummer mit Ländervorwahl oder Gruppen-ID."
+        },
+        "body": {
+          "name": "Nachricht",
+          "description": "Nachrichteninhalt, zum Beispiel {\"text\": \"Hallo\"}."
+        },
+        "options": {
+          "name": "Optionen",
+          "description": "Zusätzliche Optionen für die Messaging-Bibliothek."
+        },
+        "typing": {
+          "name": "Schreibanzeige",
+          "description": "Auf false setzen, um bei dringenden Meldungen sofort zu senden."
+        }
+      }
+    },
+    "send_media": {
+      "name": "Medien senden",
+      "description": "Sendet ein Standbild oder einen Clip einer Kamera- oder Bildentität.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "to": {
+          "name": "Empfänger",
+          "description": "Telefonnummer mit Ländervorwahl oder Gruppen-ID."
+        },
+        "entity_id": {
+          "name": "Kamera oder Bild",
+          "description": "Die Entität, von der aufgenommen wird."
+        },
+        "caption": {
+          "name": "Bildunterschrift",
+          "description": "Text, der mit den Medien gesendet wird."
+        },
+        "duration": {
+          "name": "Videolänge",
+          "description": "Nimmt einen Clip dieser Länge auf statt eines Standbilds."
+        },
+        "lookback": {
+          "name": "Vorlaufzeit",
+          "description": "Nimmt zusätzlich diese Sekunden vor dem Aufruf mit auf."
+        },
+        "typing": {
+          "name": "Schreibanzeige",
+          "description": "Auf false setzen, um bei dringenden Meldungen sofort zu senden."
+        }
+      }
+    },
+    "mark_read": {
+      "name": "Als gelesen markieren",
+      "description": "Markiert eine empfangene Nachricht als gelesen.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "messageId": {
+          "name": "Nachrichten-ID",
+          "description": "Die ID aus einem hornero_message-Ereignis."
+        },
+        "to": {
+          "name": "Empfänger",
+          "description": "Telefonnummer mit Ländervorwahl oder Gruppen-ID."
+        },
+        "keys": {
+          "name": "Nachrichtenschlüssel",
+          "description": "Alternativ das vollständige Key-Objekt aus dem Ereignis."
+        }
+      }
+    },
+    "set_status": {
+      "name": "Status setzen",
+      "description": "Setzt den Profilstatus.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "status": {
+          "name": "Status",
+          "description": "Neue Profilstatusmeldung."
+        }
+      }
+    },
+    "presence_subscribe": {
+      "name": "Präsenz abonnieren",
+      "description": "Verfolgt den Online- und Schreibstatus eines Kontakts.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "userId": {
+          "name": "Kontakt",
+          "description": "Der zu verfolgende Kontakt."
+        }
+      }
+    },
+    "send_presence_update": {
+      "name": "Präsenz senden",
+      "description": "Als online, schreibend oder aufnehmend erscheinen.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "type": {
+          "name": "Präsenz",
+          "description": "Welche Präsenz angezeigt wird."
+        },
+        "to": {
+          "name": "Empfänger",
+          "description": "Telefonnummer mit Ländervorwahl oder Gruppen-ID."
+        }
+      }
+    },
+    "send_infinity_presence_update": {
+      "name": "Präsenz beibehalten",
+      "description": "Hält eine Präsenz aufrecht, bis sie gestoppt wird.",
+      "fields": {
+        "clientId": {
+          "name": "Client",
+          "description": "Welches gekoppelte Konto verwendet wird."
+        },
+        "type": {
+          "name": "Präsenz",
+          "description": "Welche Präsenz angezeigt wird."
+        },
+        "to": {
+          "name": "Empfänger",
+          "description": "Telefonnummer mit Ländervorwahl oder Gruppen-ID."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "connected": {
+        "name": "Verbunden"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status"
+      }
+    },
+    "image": {
+      "qr": {
+        "name": "Kopplungscode"
+      }
+    },
+    "button": {
+      "restart": {
+        "name": "Neu starten"
+      },
+      "logout": {
+        "name": "Abmelden"
+      }
+    },
+    "switch": {
+      "typing_indicator": {
+        "name": "Schreibanzeige"
+      },
+      "mark_read": {
+        "name": "Als gelesen markieren"
+      },
+      "mark_online": {
+        "name": "Online erscheinen"
+      }
+    },
+    "number": {
+      "typing_max_seconds": {
+        "name": "Schreibpause"
+      }
+    },
+    "select": {
+      "log_level": {
+        "name": "Protokollstufe"
+      }
+    },
+    "notify": {
+      "notify": {
+        "name": "Benachrichtigen"
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+---
+blueprint:
+  name: Hornero — send a camera snapshot or clip on motion
+  description: >-
+    When a motion or door sensor triggers, captures the camera and sends it
+    over WhatsApp. With a duration it records a clip instead of a snapshot, and
+    the lookback includes the seconds before the trigger — usually the part
+    worth seeing.
+  domain: automation
+  source_url: https://github.com/pabloantonelli/hornero/blob/main/blueprints/automation/hornero/camera.yaml
+  input:
+    motion_entity:
+      name: Motion or door sensor
+      selector:
+        entity:
+          domain: binary_sensor
+    camera_entity:
+      name: Camera
+      selector:
+        entity:
+          domain:
+            - camera
+            - image
+    client_id:
+      name: Hornero client
+      default: default
+      selector:
+        text: {}
+    recipient:
+      name: Recipient
+      description: Phone number with country code, or a group ID.
+      selector:
+        text: {}
+    caption:
+      name: Caption
+      default: Motion detected
+      selector:
+        text: {}
+    duration:
+      name: Clip length
+      description: >-
+        Seconds of video to record. Leave at 0 to send a still image instead.
+        Recording needs a camera that supports streaming.
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 120
+          unit_of_measurement: seconds
+    lookback:
+      name: Lookback
+      description: >-
+        Seconds recorded before the trigger to include in the clip. Only
+        applies when recording, and needs the stream to be preloaded.
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 60
+          unit_of_measurement: seconds
+    cooldown:
+      name: Cooldown
+      description: Wait this long before the automation can fire again.
+      default: 120
+      selector:
+        number:
+          min: 0
+          max: 3600
+          unit_of_measurement: seconds
+
+mode: single
+max_exceeded: silent
+
+variables:
+  client_id: !input client_id
+  recipient: !input recipient
+  camera_entity: !input camera_entity
+  caption: !input caption
+  duration: !input duration
+  lookback: !input lookback
+
+triggers:
+  - trigger: state
+    entity_id: !input motion_entity
+    to: "on"
+
+actions:
+  # Two explicit branches: a still image, or a recorded clip.
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ duration | int > 0 }}"
+        sequence:
+          - action: hornero.send_media
+            data:
+              clientId: "{{ client_id }}"
+              to: "{{ recipient }}"
+              entity_id: "{{ camera_entity }}"
+              caption: "{{ caption }}"
+              duration: "{{ duration | int }}"
+              lookback: "{{ lookback | int }}"
+    default:
+      - action: hornero.send_media
+        data:
+          clientId: "{{ client_id }}"
+          to: "{{ recipient }}"
+          entity_id: "{{ camera_entity }}"
+          caption: "{{ caption }}"
+  - delay:
+      seconds: !input cooldown

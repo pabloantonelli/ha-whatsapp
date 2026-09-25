@@ -1,0 +1,47 @@
+---
+configuration:
+  clients:
+    name: Clientes
+    description: >-
+      Una entrada por cuenta de WhatsApp. Cada una se vincula por separado
+      y se referencia con este nombre en el campo clientId.
+  api_token:
+    name: Token de API
+    description: >-
+      Token que protege la API HTTP. Dejalo vacío para generar uno en el
+      primer arranque.
+  allowed_senders:
+    name: Remitentes permitidos
+    description: >-
+      Sólo estos remitentes pueden disparar eventos de Home Assistant.
+      Vacío acepta a todos. Siembra la lista en el primer arranque;
+      después se edita desde la pestaña Incoming.
+  mark_read:
+    name: Marcar los entrantes como leídos
+    description: >-
+      Muestra las tildes azules a quien escribió y quita el globo de no
+      leídos en tu teléfono.
+  typing_indicator:
+    name: Indicador de escritura
+    description: >-
+      Muestra "escribiendo…" antes de enviar, tras una breve pausa. La
+      pausa además evita que los mensajes salgan en ráfaga.
+  typing_max_seconds:
+    name: Pausa máxima de escritura
+    description: >-
+      Tope en segundos. La espera real varía según el largo del mensaje. 0
+      envía de inmediato.
+  log_level:
+    name: Nivel de registro
+    description: >-
+      Cuánto detalle escribir en el log del add-on.
+  mark_online:
+    name: Aparecer en línea
+    description: >-
+      Cuidado: mientras WhatsApp te considera en línea acá, tu teléfono
+      deja de recibir notificaciones.
+  refresh_hours:
+    name: Reconexión periódica
+    description: >-
+      Fuerza una reconexión cada N horas. 0 la desactiva; no hace falta
+      con Baileys 7.

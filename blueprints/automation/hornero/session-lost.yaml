@@ -1,0 +1,58 @@
+---
+blueprint:
+  name: Hornero — alert when the WhatsApp session drops
+  description: >-
+    Notifies you through another channel when Hornero loses its WhatsApp
+    session, so you find out right away instead of discovering it when a
+    message never arrives. Pair the phone again from the Hornero panel.
+  domain: automation
+  source_url: https://github.com/pabloantonelli/hornero/blob/main/blueprints/automation/hornero/session-lost.yaml
+  input:
+    connection_entity:
+      name: Hornero connection sensor
+      description: The connectivity sensor of the client to watch.
+      selector:
+        entity:
+          domain: binary_sensor
+          integration: hornero
+    notifier:
+      name: How to notify you
+      description: >-
+        Another notifier — the mobile app, for instance. Do not pick Hornero
+        itself: it is the thing that is down.
+      selector:
+        entity:
+          domain: notify
+    grace_period:
+      name: Grace period
+      description: >-
+        Only alert if it stays disconnected this long, so brief reconnections
+        do not wake you up.
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 120
+          unit_of_measurement: minutes
+
+mode: single
+
+variables:
+  grace_period: !input grace_period
+
+triggers:
+  - trigger: state
+    entity_id: !input connection_entity
+    to: "off"
+    for:
+      minutes: !input grace_period
+
+actions:
+  - action: notify.send_message
+    target:
+      entity_id: !input notifier
+    data:
+      title: WhatsApp session lost
+      message: >-
+        Hornero has been disconnected for {{ grace_period }} minutes.
+        Open the Hornero panel to pair again.
