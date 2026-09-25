@@ -4,4 +4,6 @@
 #   MD036 emphasis         - used for callouts, not as headers
 #   MD026 header puncts    - questions in headers end with "?"
 #   MD024 duplicate header - repeated section names across checklists
-rules "~MD013,~MD029,~MD036,~MD026,~MD024"
+#   MD033 inline HTML      - the README opens with a centred logo and tagline
+#   MD002 first header     - which means the first heading is not the H1
+rules "~MD013,~MD029,~MD036,~MD026,~MD024,~MD033,~MD002"
