@@ -1,5 +1,38 @@
 # Changelog
 
+## 4.0.1
+
+First release with images published for the Hornero name, and the panel fixes
+that only surfaced once it was running.
+
+### 🐛 Fixed
+
+- **Broken links in the panel**: four pointed at the old repository and one at
+  `whatsapp_addon/DOCS.md`, a path that no longer exists.
+- **Half-translated interface.** The Help tab, the snippet builder and every
+  explanatory paragraph were still English. The dictionary goes from 46 to 93
+  strings across all six languages.
+- **The Settings tab showed stale values.** The panel and the Home Assistant
+  entities always shared one stored state, but the panel only read it when its
+  tab was opened, so a switch flipped in Home Assistant left it out of date. It
+  now polls while that tab is open, and skips the redraw while a control has
+  focus so it cannot fight an edit in progress.
+- **The notify entity showed as unavailable** with no hint why — it wanted a
+  default recipient that nothing asked for. Availability now tracks the WhatsApp
+  session alone, and the error names the screen to configure.
+
+### ✨ New
+
+- **Messages tab**: recent traffic with the delivery state of each outgoing
+  message — sent, delivered, read, or failed with the reason. Recorded in the
+  Baileys client, so services, notify entities and the HTTP API are all covered.
+  Held in memory only and cleared on restart.
+- **A notify entity per allowed sender**, named after the contact or group,
+  appearing and disappearing with the allowlist. A notify entity is a single
+  destination and takes no target, so one per contact is what makes it usable.
+- The Help tab now covers the entities and `mark_read`; `DOCS.md` gains the HTTP
+  API reference the README points at.
+
 ## 4.0.0
 
 The project is now **Hornero**. Same purpose, own identity — and a full Home
