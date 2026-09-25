@@ -43,7 +43,9 @@ jobs:
       # Builds the image users download instead of compiling it themselves,
       # which on a Raspberry Pi is the difference between seconds and minutes.
       - name: 🏗 Build and publish
-        uses: home-assistant/builder@2026.09.0
+        # Pinned to a tag whose builder image is actually published: newer
+        # action tags exist without a matching ghcr.io/home-assistant/*-builder.
+        uses: home-assistant/builder@2026.03.0
         with:
           args: |
             --${{ matrix.arch }} \
